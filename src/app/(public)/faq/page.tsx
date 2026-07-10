@@ -1,0 +1,58 @@
+import { JsonLd } from "@/components/JsonLd";
+
+export const metadata = { title: "FAQ" };
+
+const QUESTIONS = [
+  {
+    question: "Comment fonctionne la caution ?",
+    reponse:
+      "Elle est calculée automatiquement à partir du prix neuf estimé de l'objet et de son âge. Votre carte est enregistrée à la réservation (via Stripe) mais n'est débitée qu'en cas de dommage constaté à l'état des lieux de retour.",
+  },
+  {
+    question: "Comment récupère-t-on l'objet loué ?",
+    reponse:
+      "Selon l'annonce, soit en main à main directement avec le propriétaire (modalités à convenir via la messagerie interne), soit via notre point relais en Haute-Marne.",
+  },
+  {
+    question: "Quels sont les frais ?",
+    reponse:
+      "5 % du montant de la location sont ajoutés au paiement du locataire, et 10 % sont prélevés sur le reversement au propriétaire. Le circuit point relais ajoute un forfait supplémentaire à la charge du locataire.",
+  },
+  {
+    question: "Que se passe-t-il en cas de litige ou de dommage ?",
+    reponse:
+      "Vous pouvez signaler un problème directement depuis votre réservation. Notre équipe traite chaque litige individuellement, par email, et peut retenir tout ou partie de la caution selon les éléments transmis.",
+  },
+  {
+    question: "Puis-je louer et mettre en location en tant que professionnel ?",
+    reponse:
+      "Oui, un compte unique suffit : le statut particulier ou professionnel se choisit lors de votre première mise en location (SIRET requis pour les professionnels).",
+  },
+];
+
+export default function FaqPage() {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: QUESTIONS.map((q) => ({
+      "@type": "Question",
+      name: q.question,
+      acceptedAnswer: { "@type": "Answer", text: q.reponse },
+    })),
+  };
+
+  return (
+    <main className="mx-auto max-w-4xl px-4 py-12">
+      <JsonLd data={faqJsonLd} />
+      <h1 className="text-3xl font-semibold">Foire aux questions</h1>
+      <div className="mt-6 flex flex-col gap-6">
+        {QUESTIONS.map((q) => (
+          <div key={q.question}>
+            <h2 className="font-medium">{q.question}</h2>
+            <p className="mt-1 text-gray-600">{q.reponse}</p>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}

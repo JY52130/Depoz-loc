@@ -1,0 +1,372 @@
+// DepozLoc — schéma de données (Phase 1)
+// Modélise la section 10 de la base de connaissance.
+// Base : PostgreSQL + PostGIS (hébergée sur Supabase).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserStatus {
+  PARTICULIER
+  PRO
+}
+
+enum ListingStatus {
+  BROUILLON
+  EN_ATTENTE_MODERATION
+  EN_LIGNE
+  SUSPENDU
+}
+
+enum DeliveryMode {
+  P2P
+  POINT_RELAIS
+}
+
+enum BookingStatus {
+  RESERVEE
+  EN_COURS
+  RETOURNEE
+  CLOTUREE
+  ANNULEE
+  LITIGE
+}
+
+enum ConditionReportType {
+  ENTREE
+  SORTIE
+}
+
+enum ConditionReportAuthor {
+  PROPRIETAIRE
+  LOCATAIRE
+  STAFF
+}
+
+enum RelayStockStatus {
+  DEPOSE
+  RETIRE
+  RETOURNE
+}
+
+enum DisputeStatus {
+  OUVERT
+  EN_COURS
+  RESOLU
+  REJETE
+}
+
+// ---------------------------------------------------------------------------
+// Utilisateur
+// ---------------------------------------------------------------------------
+
+model User {
+  id                  String   @id @default(uuid())
+  // Lié à l'utilisateur Supabase Auth (auth.users.id) — pas de mot de passe stocké ici.
+  supabaseAuthId      String   @unique
+  email               String   @unique
+  nom                 String?
+  telephone           String?
+  statut              UserStatus @default(PARTICULIER)
+  siret               String?  // obligatoire si statut = PRO
+  numeroTva           String?
+  noteMoyenne         Float?
+  stripeAccountId     String?  // compte Stripe Connect (Express)
+  stripeOnboardingDone Boolean @default(false)
+  // Rôle interne (section 3.2) : donne accès au back-office (/admin). Aucune
+  // UI d'auto-promotion — à définir manuellement en base (voir README).
+  estAdmin            Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  listings            Listing[]        @relation("ProprietaireListings")
+  bookingsAsLocataire Booking[]        @relation("LocataireBookings")
+  bookingsAsProprietaire Booking[]     @relation("ProprietaireBookings")
+  conversations       ConversationParticipant[]
+  messagesSent        Message[]
+  reviewsWritten      Review[]         @relation("ReviewAuteur")
+  reviewsReceived     Review[]         @relation("ReviewCible")
+  conditionReports    ConditionReport[]
+  disputesOuverts     Dispute[]        @relation("DisputeOuvrePar")
+
+  @@index([statut])
+}
+
+// ---------------------------------------------------------------------------
+// Catégories
+// ---------------------------------------------------------------------------
+
+model Category {
+  id          String   @id @default(uuid())
+  nom         String
+  slug        String   @unique
+  description String?
+  ordre       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  listings    Listing[]
+}
+
+// ---------------------------------------------------------------------------
+// Annonce
+// ---------------------------------------------------------------------------
+
+model Listing {
+  id                String   @id @default(uuid())
+  slug              String   @unique
+  proprietaireId    String
+  proprietaire      User     @relation("ProprietaireListings", fields: [proprietaireId], references: [id])
+  categoryId        String
+  category          Category @relation(fields: [categoryId], references: [id])
+
+  titre             String
+  description       String
+  photos            String[] // URLs vers le storage S3-compatible / Supabase Storage
+
+  // Tarifs par palier (4 optionnels — voir section 9.1)
+  prixDemiJournee   Decimal? @db.Decimal(10, 2)
+  prixJournee       Decimal? @db.Decimal(10, 2)
+  prixSemaine       Decimal? @db.Decimal(10, 2)
+  prixMois          Decimal? @db.Decimal(10, 2)
+
+  // Caution (section 9.2)
+  prixNeufEstime    Decimal? @db.Decimal(10, 2)
+  ageMateriel       String?  // ex: "< 1 an", "1-3 ans", "3-5 ans", "> 5 ans"
+  montantCaution    Decimal? @db.Decimal(10, 2)
+  cautionEstimeeParIA Boolean @default(false)
+  attestationHonneur  Boolean @default(false)
+
+  modesRemise       DeliveryMode[]
+
+  // Géolocalisation
+  latitude          Float?
+  longitude         Float?
+  ville             String?
+  codePostal        String?
+  adresse           String?
+
+  statut            ListingStatus @default(BROUILLON)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  availabilities    Availability[]
+  bookings          Booking[]
+
+  @@index([categoryId])
+  @@index([ville])
+  @@index([statut])
+}
+
+// ---------------------------------------------------------------------------
+// Disponibilité
+// ---------------------------------------------------------------------------
+
+model Availability {
+  id         String   @id @default(uuid())
+  listingId  String
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  dateDebut  DateTime
+  dateFin    DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([listingId])
+}
+
+// ---------------------------------------------------------------------------
+// Réservation / location
+// ---------------------------------------------------------------------------
+
+model Booking {
+  id                    String   @id @default(uuid())
+  listingId             String
+  listing               Listing  @relation(fields: [listingId], references: [id])
+  locataireId           String
+  locataire             User     @relation("LocataireBookings", fields: [locataireId], references: [id])
+  proprietaireId        String
+  proprietaire          User     @relation("ProprietaireBookings", fields: [proprietaireId], references: [id])
+
+  dateDebut             DateTime
+  dateFin               DateTime
+  palierApplique        String   // "demi_journee" | "journee" | "semaine" | "mois" | "combinaison"
+  montantLocation       Decimal  @db.Decimal(10, 2)
+  fraisServiceLocataire Decimal  @db.Decimal(10, 2) // 5%
+  commissionProprietaire Decimal @db.Decimal(10, 2) // 10%
+  fraisPointRelais      Decimal? @db.Decimal(10, 2) // à la charge du locataire si mode = POINT_RELAIS
+  montantCaution        Decimal  @db.Decimal(10, 2)
+  modeRemise            DeliveryMode
+
+  statut                BookingStatus @default(RESERVEE)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  transaction           Transaction?
+  conditionReports      ConditionReport[]
+  conversation          Conversation?
+  reviews               Review[]
+  dispute               Dispute?
+  relayStock            RelayStock?
+
+  @@index([listingId])
+  @@index([locataireId])
+  @@index([proprietaireId])
+  @@index([statut])
+}
+
+// ---------------------------------------------------------------------------
+// Transaction (Stripe)
+// ---------------------------------------------------------------------------
+
+model Transaction {
+  id                     String   @id @default(uuid())
+  bookingId               String   @unique
+  booking                 Booking  @relation(fields: [bookingId], references: [id])
+
+  stripePaymentIntentId   String?
+  stripeSetupIntentId     String?  // caution : carte enregistrée, débit off-session si dommage
+  stripeApplicationFee    Decimal? @db.Decimal(10, 2)
+  stripeTransferId        String?  // reversement au propriétaire
+
+  statut                  String   // libre, à préciser en Phase 3 (ex: "en_attente"/"paye"/"rembourse"/...)
+  montantTotal            Decimal  @db.Decimal(10, 2)
+
+  createdAt               DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// État des lieux
+// ---------------------------------------------------------------------------
+
+model ConditionReport {
+  id         String   @id @default(uuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  type       ConditionReportType
+  auteurType ConditionReportAuthor
+  auteurId   String?
+  auteur     User?    @relation(fields: [auteurId], references: [id])
+  photos     String[]
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+// ---------------------------------------------------------------------------
+// Messagerie
+// ---------------------------------------------------------------------------
+
+model Conversation {
+  id           String   @id @default(uuid())
+  bookingId    String?  @unique
+  booking      Booking? @relation(fields: [bookingId], references: [id])
+  createdAt    DateTime @default(now())
+
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  expediteurId   String
+  expediteur     User         @relation(fields: [expediteurId], references: [id])
+  contenu        String
+  lu             Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+// ---------------------------------------------------------------------------
+// Avis
+// ---------------------------------------------------------------------------
+
+model Review {
+  id         String   @id @default(uuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  auteurId   String
+  auteur     User     @relation("ReviewAuteur", fields: [auteurId], references: [id])
+  cibleId    String
+  cible      User     @relation("ReviewCible", fields: [cibleId], references: [id])
+  note       Int      // 1 à 5
+  commentaire String?
+  createdAt  DateTime @default(now())
+
+  @@index([bookingId])
+  @@index([cibleId])
+}
+
+// ---------------------------------------------------------------------------
+// Point relais (1 site en Haute-Marne pour la V1)
+// ---------------------------------------------------------------------------
+
+model RelayPoint {
+  id         String   @id @default(uuid())
+  nom        String
+  adresse    String
+  ville      String
+  codePostal String
+  latitude   Float?
+  longitude  Float?
+  horaires   String?
+  createdAt  DateTime @default(now())
+
+  stocks     RelayStock[]
+}
+
+model RelayStock {
+  id           String   @id @default(uuid())
+  relayPointId String
+  relayPoint   RelayPoint @relation(fields: [relayPointId], references: [id])
+  bookingId    String   @unique
+  booking      Booking  @relation(fields: [bookingId], references: [id])
+  statut       RelayStockStatus @default(DEPOSE)
+  dateDepot    DateTime?
+  dateRetrait  DateTime?
+  dateRetour   DateTime?
+
+  @@index([relayPointId])
+}
+
+// ---------------------------------------------------------------------------
+// Litige (V1 = email)
+// ---------------------------------------------------------------------------
+
+model Dispute {
+  id                    String   @id @default(uuid())
+  bookingId             String   @unique
+  booking               Booking  @relation(fields: [bookingId], references: [id])
+  ouvertParId           String
+  ouvertPar             User     @relation("DisputeOuvrePar", fields: [ouvertParId], references: [id])
+  motif                 String
+  statut                DisputeStatus @default(OUVERT)
+  decision              String?
+  montantCautionRetenu  Decimal? @db.Decimal(10, 2)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
