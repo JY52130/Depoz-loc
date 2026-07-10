@@ -1,5 +1,8 @@
 # DepozLoc — V1 complète (Phase 1 à 6)
 
+> **Déploiement** : voir [`DEPLOIEMENT.md`](./DEPLOIEMENT.md) pour le guide
+> pas à pas (Supabase, GitHub, Vercel, Stripe, checklist de test).
+
 Marketplace de location d'objets entre particuliers et professionnels, en
 France métropolitaine. Voir `DEPOT-MALIN_Base-de-connaissance.md` (fourni
 séparément) pour le cahier des charges complet (nom de marque devenu
