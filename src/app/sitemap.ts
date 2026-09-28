@@ -5,6 +5,8 @@ import { slugify } from "@/lib/slugify";
 // Sitemap dynamique (section 12.2) : pages statiques + catégories +
 // catégorie×ville + fiches annonce en ligne.
 
+export const revalidate = 3600;
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
 
 const pagesStatiques = [
@@ -30,13 +32,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "" ? 1 : 0.6,
   }));
 
+  // Base injoignable : on renvoie au moins les pages statiques.
   const [categories, listings] = await Promise.all([
     prisma.category.findMany({ select: { slug: true } }),
     prisma.listing.findMany({
       where: { statut: "EN_LIGNE" },
       select: { slug: true, ville: true, updatedAt: true, category: { select: { slug: true } } },
     }),
-  ]);
+  ]).catch(() => [[], []] as const);
 
   const entreesCategories: MetadataRoute.Sitemap = categories.map((c) => ({
     url: `${siteUrl}/location/${c.slug}`,

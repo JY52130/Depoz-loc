@@ -3,8 +3,11 @@ import { JsonLd } from "@/components/JsonLd";
 
 export const metadata = { title: "Nos points relais" };
 
+export const revalidate = 3600;
+
 export default async function PointsRelaisPage() {
-  const points = await prisma.relayPoint.findMany();
+  // Base injoignable au build : liste vide, rafraîchie ensuite par l'ISR.
+  const points = await prisma.relayPoint.findMany().catch(() => []);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
 
   return (

@@ -11,9 +11,15 @@ export const revalidate = 3600;
 
 type Props = { params: Promise<{ categorie: string }> };
 
+// Base injoignable au build (ex. premier déploiement) : on ne pré-génère
+// rien, les pages seront rendues à la première visite (ISR).
 export async function generateStaticParams() {
-  const categories = await prisma.category.findMany({ select: { slug: true } });
-  return categories.map((c) => ({ categorie: c.slug }));
+  try {
+    const categories = await prisma.category.findMany({ select: { slug: true } });
+    return categories.map((c) => ({ categorie: c.slug }));
+  } catch {
+    return [];
+  }
 }
 
 async function getCategorie(slug: string) {

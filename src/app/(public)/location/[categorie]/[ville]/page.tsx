@@ -12,12 +12,15 @@ export const revalidate = 3600;
 
 type Props = { params: Promise<{ categorie: string; ville: string }> };
 
+// Base injoignable au build : aucune page pré-générée, rendu à la première visite (ISR).
 export async function generateStaticParams() {
-  const listings = await prisma.listing.findMany({
-    where: { statut: "EN_LIGNE", ville: { not: null } },
-    select: { ville: true, category: { select: { slug: true } } },
-    distinct: ["ville", "categoryId"],
-  });
+  const listings = await prisma.listing
+    .findMany({
+      where: { statut: "EN_LIGNE", ville: { not: null } },
+      select: { ville: true, category: { select: { slug: true } } },
+      distinct: ["ville", "categoryId"],
+    })
+    .catch(() => []);
 
   return listings
     .filter((l) => l.ville)
