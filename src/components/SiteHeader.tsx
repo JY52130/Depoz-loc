@@ -12,7 +12,7 @@ export function SiteHeader() {
     <header className="border-b">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="text-lg font-semibold">
-          DepozLoc
+          Dépôt Malin
         </Link>
         <nav className="hidden gap-6 text-sm md:flex">
           {liens.map((lien) => (

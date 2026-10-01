@@ -50,7 +50,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
     notFound();
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
   const prixAffiche = listing.prixJournee ?? listing.prixDemiJournee ?? listing.prixSemaine ?? listing.prixMois;
 
   const breadcrumbJsonLd = {
@@ -147,7 +147,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
           <div className="mt-4 rounded border p-4">
             <h2 className="font-medium">Propriétaire</h2>
             <p className="mt-2 text-sm text-gray-700">
-              {listing.proprietaire.nom ?? "Membre DepozLoc"}
+              {listing.proprietaire.nom ?? "Membre Dépôt Malin"}
               {listing.proprietaire.statut === "PRO" && " · Professionnel"}
               {listing.proprietaire.noteMoyenne != null && ` · Note ${listing.proprietaire.noteMoyenne}/5`}
             </p>

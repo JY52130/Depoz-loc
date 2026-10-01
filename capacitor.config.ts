@@ -5,13 +5,13 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // statique séparé, tout le contenu (SSG/ISR, auth, paiements) reste servi
 // par le déploiement Next.js/Vercel.
 const config: CapacitorConfig = {
-  appId: "fr.depozloc.app",
-  appName: "DepozLoc",
+  appId: "fr.depotmalin.app",
+  appName: "Dépôt Malin",
   // À remplacer par l'URL de production une fois déployée. En développement,
   // pointez vers votre instance `npm run dev` exposée (ex: via ngrok) pour
   // tester sur un appareil physique.
   server: {
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr",
     cleartext: false,
   },
   ios: {

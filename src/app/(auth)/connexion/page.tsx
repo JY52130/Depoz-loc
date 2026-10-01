@@ -1,7 +1,7 @@
 import { connexion } from "../actions";
 
 export const metadata = {
-  title: "Connexion — DepozLoc",
+  title: "Connexion — Dépôt Malin",
 };
 
 export default async function ConnexionPage({

@@ -1,4 +1,4 @@
-// DepozLoc — schéma de données (Phase 1)
+// Dépôt Malin — schéma de données (Phase 1)
 // Modélise la section 10 de la base de connaissance.
 // Base : PostgreSQL + PostGIS (hébergée sur Supabase).
 

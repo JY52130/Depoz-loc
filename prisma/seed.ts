@@ -28,7 +28,7 @@ async function main() {
   if (!relaisExistant) {
     await prisma.relayPoint.create({
       data: {
-        nom: "DepozLoc — Point relais Chaumont",
+        nom: "Dépôt Malin — Point relais Chaumont",
         adresse: "À compléter",
         ville: "Chaumont",
         codePostal: "52000",

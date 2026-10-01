@@ -11,9 +11,9 @@ export default function Page() {
       <div className="flex flex-col gap-4 text-gray-700">
         <h2 className="text-lg font-semibold text-black">1. Objet</h2>
         <p>
-          DepozLoc est une plateforme de mise en relation entre particuliers
+          Dépôt Malin est une plateforme de mise en relation entre particuliers
           et professionnels en vue de la location d&apos;objets, en France
-          métropolitaine. DepozLoc agit en tant qu&apos;intermédiaire
+          métropolitaine. Dépôt Malin agit en tant qu&apos;intermédiaire
           technique et n&apos;est ni propriétaire ni locataire des objets mis
           en location.
         </p>
@@ -29,7 +29,7 @@ export default function Page() {
 
         <h2 className="text-lg font-semibold text-black">3. Rôle d&apos;intermédiaire</h2>
         <p>
-          DepozLoc met à disposition les outils de réservation, de paiement
+          Dépôt Malin met à disposition les outils de réservation, de paiement
           (via Stripe Connect) et de communication entre membres, mais
           n&apos;intervient pas dans la remise physique des objets (hors
           circuit point relais) ni dans leur bon usage. La responsabilité de
@@ -48,7 +48,7 @@ export default function Page() {
 
         <h2 className="text-lg font-semibold text-black">5. Modération</h2>
         <p>
-          Toute annonce est soumise à modération avant publication. DepozLoc
+          Toute annonce est soumise à modération avant publication. Dépôt Malin
           se réserve le droit de refuser, suspendre ou retirer une annonce ou
           un compte en cas de non-respect des présentes conditions.
         </p>

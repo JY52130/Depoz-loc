@@ -9,19 +9,19 @@ export const metadata = {
 };
 
 export default function AccueilPage() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
 
   const organisationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "DepozLoc",
+    name: "Dépôt Malin",
     url: siteUrl,
   };
 
   const siteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "DepozLoc",
+    name: "Dépôt Malin",
     url: siteUrl,
     potentialAction: {
       "@type": "SearchAction",
@@ -39,7 +39,7 @@ export default function AccueilPage() {
           Louer plutôt qu&apos;acheter, près de chez soi
         </h1>
         <p className="mt-4 text-lg text-gray-600">
-          DepozLoc, la marketplace de location d&apos;objets entre
+          Dépôt Malin, la marketplace de location d&apos;objets entre
           particuliers et professionnels en France métropolitaine.
         </p>
 

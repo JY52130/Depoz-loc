@@ -31,7 +31,7 @@ export default function Page() {
         <h2 className="text-lg font-semibold text-black">3. Paiement et séquestre</h2>
         <p>
           Les paiements sont traités par Stripe Connect. Les fonds sont
-          encaissés par DepozLoc et reversés au propriétaire (net de
+          encaissés par Dépôt Malin et reversés au propriétaire (net de
           commission) après validation du retour de l&apos;objet
           (« clôture »), selon une cadence hebdomadaire.
         </p>

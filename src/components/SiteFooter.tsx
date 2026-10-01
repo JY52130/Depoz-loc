@@ -12,7 +12,7 @@ export function SiteFooter() {
           <Link href="/cookies" className="hover:underline">Cookies</Link>
           <Link href="/contact" className="hover:underline">Contact</Link>
         </div>
-        <p className="mt-4">© {new Date().getFullYear()} DepozLoc — France métropolitaine.</p>
+        <p className="mt-4">© {new Date().getFullYear()} Dépôt Malin — France métropolitaine.</p>
       </div>
     </footer>
   );

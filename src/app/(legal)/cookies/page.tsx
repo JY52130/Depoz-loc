@@ -34,7 +34,7 @@ export default function Page() {
         <h2 className="text-lg font-semibold text-black">Gestion de votre choix</h2>
         <p>
           Votre choix (accepté / refusé) est mémorisé dans un cookie nommé{" "}
-          <code>depozloc_consentement</code>, valable 6 mois. Pour revenir sur
+          <code>depotmalin_consentement</code>, valable 6 mois. Pour revenir sur
           votre choix, supprimez ce cookie via les paramètres de votre
           navigateur — le bandeau réapparaîtra à votre prochaine visite.
         </p>

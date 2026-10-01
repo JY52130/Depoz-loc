@@ -1,7 +1,7 @@
 import { inscription } from "../actions";
 
 export const metadata = {
-  title: "Créer un compte — DepozLoc",
+  title: "Créer un compte — Dépôt Malin",
 };
 
 export default async function InscriptionPage({
