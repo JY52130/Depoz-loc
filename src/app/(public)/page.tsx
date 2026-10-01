@@ -1,19 +1,4 @@
-import {
-  Baby,
-  Bike,
-  Camera,
-  CarFront,
-  Drill,
-  Guitar,
-  Laptop,
-  type LucideIcon,
-  Package,
-  PartyPopper,
-  Shovel,
-  Sofa,
-  Tent,
-  WashingMachine,
-} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd } from "@/components/JsonLd";
@@ -25,19 +10,20 @@ export const metadata = {
     "Trouvez et louez des objets près de chez vous en France métropolitaine : outillage, jardinage, électroménager, high-tech, sport et bien plus.",
 };
 
-const ICONES_CATEGORIES: Record<string, LucideIcon> = {
-  "outillage-bricolage": Drill,
-  "jardinage-exterieur": Shovel,
-  electromenager: WashingMachine,
-  "informatique-high-tech": Laptop,
-  "image-son": Camera,
-  "sport-loisirs": Bike,
-  "camping-plein-air": Tent,
-  "bebe-enfant": Baby,
-  "evenementiel-reception": PartyPopper,
-  "mobilier-deco": Sofa,
-  "auto-moto-velo": CarFront,
-  "instruments-musique": Guitar,
+// Photos libres de droits (licence Unsplash), une par catégorie.
+const PHOTOS_CATEGORIES: Record<string, string> = {
+  "outillage-bricolage": "photo-1572981779307-38b8cabb2407",
+  "jardinage-exterieur": "photo-1458245201577-fc8a130b8829",
+  electromenager: "photo-1693875161689-7787889a4c21",
+  "informatique-high-tech": "photo-1589113050289-1c654e7e305d",
+  "image-son": "photo-1495707902641-75cac588d2e9",
+  "sport-loisirs": "photo-1505705694340-019e1e335916",
+  "camping-plein-air": "photo-1504280390367-361c6d9f38f4",
+  "bebe-enfant": "photo-1528121108018-743eef2e4a7a",
+  "evenementiel-reception": "photo-1780682569879-f271082ae2cd",
+  "mobilier-deco": "photo-1555041469-a586c61ea9bc",
+  "auto-moto-velo": "photo-1780311996880-0a85318ee890",
+  "instruments-musique": "photo-1608660890512-cfd02ae3ae3d",
 };
 
 const ETAPES = [
@@ -145,17 +131,16 @@ export default function AccueilPage() {
                 href={`/location/${categorie.slug}`}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
               >
-                <span className="flex h-28 items-center justify-center bg-brand-50 text-brand transition-colors group-hover:bg-brand-100 sm:h-36">
-                  {(() => {
-                    const Icone = ICONES_CATEGORIES[categorie.slug] ?? Package;
-                    return (
-                      <Icone
-                        aria-hidden
-                        strokeWidth={1.4}
-                        className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"
-                      />
-                    );
-                  })()}
+                <span className="relative block h-32 overflow-hidden bg-brand-50 sm:h-40">
+                  {PHOTOS_CATEGORIES[categorie.slug] && (
+                    <Image
+                      src={`https://images.unsplash.com/${PHOTOS_CATEGORIES[categorie.slug]}?w=800&q=75&auto=format&fit=crop`}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  )}
                 </span>
                 <span className="px-5 pt-4 font-semibold text-ink">{categorie.nom}</span>
                 <span className="px-5 pt-1 pb-5 text-sm text-gray-500">{categorie.description}</span>
