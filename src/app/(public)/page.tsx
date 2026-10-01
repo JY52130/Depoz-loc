@@ -127,13 +127,15 @@ export default function AccueilPage() {
             <li key={categorie.slug}>
               <Link
                 href={`/location/${categorie.slug}`}
-                className="group flex h-full flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-2xl transition-colors group-hover:bg-brand-100">
-                  {ICONES_CATEGORIES[categorie.slug] ?? "📦"}
+                <span className="flex h-28 items-center justify-center bg-gradient-to-br from-brand-50 to-accent-light text-6xl transition-colors sm:h-36 sm:text-7xl">
+                  <span className="transition-transform group-hover:scale-110">
+                    {ICONES_CATEGORIES[categorie.slug] ?? "📦"}
+                  </span>
                 </span>
-                <span className="mt-4 font-semibold text-ink">{categorie.nom}</span>
-                <span className="mt-1 text-sm text-gray-500">{categorie.description}</span>
+                <span className="px-5 pt-4 font-semibold text-ink">{categorie.nom}</span>
+                <span className="px-5 pt-1 pb-5 text-sm text-gray-500">{categorie.description}</span>
               </Link>
             </li>
           ))}
