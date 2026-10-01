@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { exigerAdmin } from "@/lib/exigerAdmin";
 import { prisma } from "@/lib/prisma";
 import { reverserProprietaire } from "@/lib/stripe/reverserProprietaire";
 import { notifierClotureLocation } from "@/lib/email/notifications";
@@ -12,6 +13,7 @@ async function getRelayPointUnique() {
 }
 
 export async function enregistrerDepot(formData: FormData) {
+  await exigerAdmin();
   const bookingId = String(formData.get("bookingId") ?? "");
   const relais = await getRelayPointUnique();
 
@@ -28,6 +30,7 @@ export async function enregistrerDepot(formData: FormData) {
 }
 
 export async function enregistrerRetrait(formData: FormData) {
+  await exigerAdmin();
   const bookingId = String(formData.get("bookingId") ?? "");
 
   await prisma.relayStock.update({
@@ -43,6 +46,7 @@ export async function enregistrerRetrait(formData: FormData) {
 }
 
 export async function enregistrerRetour(formData: FormData) {
+  await exigerAdmin();
   const bookingId = String(formData.get("bookingId") ?? "");
 
   await prisma.relayStock.update({
@@ -65,6 +69,7 @@ export async function enregistrerRetour(formData: FormData) {
 // Clôture pour le circuit point relais : c'est le personnel (pas le
 // propriétaire) qui a physiquement inspecté le retour — voir section 5.2.
 export async function validerRetourPointRelais(formData: FormData) {
+  await exigerAdmin();
   const bookingId = String(formData.get("bookingId") ?? "");
 
   await reverserProprietaire(bookingId);

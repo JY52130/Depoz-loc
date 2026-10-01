@@ -6,6 +6,13 @@ export const metadata = { title: "Mes annonces" };
 
 type Props = { searchParams: Promise<{ creee?: string }> };
 
+const LIBELLES_STATUT: Record<string, string> = {
+  BROUILLON: "Brouillon",
+  EN_ATTENTE_MODERATION: "En attente de validation",
+  EN_LIGNE: "En ligne",
+  SUSPENDU: "Refusée ou suspendue",
+};
+
 export default async function MesAnnoncesPage({ searchParams }: Props) {
   const params = await searchParams;
   const user = await getOrCreateUser();
@@ -48,7 +55,7 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
                   <p className="font-medium">{annonce.titre}</p>
                   <p className="text-sm text-gray-500">
                     {annonce.category.nom} · {annonce.ville ?? "Ville non renseignée"} ·{" "}
-                    {annonce.statut}
+                    {LIBELLES_STATUT[annonce.statut]}
                   </p>
                 </div>
                 <p className="text-sm text-gray-600">
