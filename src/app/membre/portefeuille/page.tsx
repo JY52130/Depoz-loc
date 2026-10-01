@@ -75,7 +75,7 @@ export default async function PortefeuillePage({ searchParams }: Props) {
         <h2 className="font-medium">Revenus & reversements</h2>
         <p className="mt-1 text-sm text-gray-500">
           Versement hebdomadaire du solde disponible, une fois la location
-          clôturée (état des lieux de retour validé — Phase 4).
+          clôturée (état des lieux de retour validé).
         </p>
 
         {bookings.length === 0 ? (
