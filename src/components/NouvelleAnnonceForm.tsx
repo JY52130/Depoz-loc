@@ -126,7 +126,7 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
         <div className="mt-3 flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm">
             Catégorie
-            <select name="categoryId" required className="rounded border px-3 py-2">
+            <select name="categoryId" required className="rounded-lg border px-3 py-2">
               <option value="">Choisir une catégorie</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -142,13 +142,13 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
               required
               value={titre}
               onChange={(e) => setTitre(e.target.value)}
-              className="rounded border px-3 py-2"
+              className="rounded-lg border px-3 py-2"
               placeholder="Ex : Perceuse visseuse Bosch 18V"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Description
-            <textarea name="description" required rows={4} className="rounded border px-3 py-2" />
+            <textarea name="description" required rows={4} className="rounded-lg border px-3 py-2" />
           </label>
         </div>
       </section>
@@ -162,15 +162,15 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
         <div className="mt-3 grid grid-cols-2 gap-4">
           <label className="col-span-2 flex flex-col gap-1 text-sm">
             Adresse (rue)
-            <input name="adresse" className="rounded border px-3 py-2" placeholder="Ex : 12 rue de la Gare" />
+            <input name="adresse" className="rounded-lg border px-3 py-2" placeholder="Ex : 12 rue de la Gare" />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Code postal
-            <input name="codePostal" required className="rounded border px-3 py-2" placeholder="52000" />
+            <input name="codePostal" required className="rounded-lg border px-3 py-2" placeholder="52000" />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Ville
-            <input name="ville" required className="rounded border px-3 py-2" placeholder="Chaumont" />
+            <input name="ville" required className="rounded-lg border px-3 py-2" placeholder="Chaumont" />
           </label>
         </div>
       </section>
@@ -205,19 +205,19 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
         <div className="mt-3 grid grid-cols-2 gap-4">
           <label className="flex flex-col gap-1 text-sm">
             Demi-journée (€)
-            <input name="prixDemiJournee" type="number" min="0" step="0.01" className="rounded border px-3 py-2" />
+            <input name="prixDemiJournee" type="number" min="0" step="0.01" className="rounded-lg border px-3 py-2" />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Journée (€)
-            <input name="prixJournee" type="number" min="0" step="0.01" className="rounded border px-3 py-2" />
+            <input name="prixJournee" type="number" min="0" step="0.01" className="rounded-lg border px-3 py-2" />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Semaine (€)
-            <input name="prixSemaine" type="number" min="0" step="0.01" className="rounded border px-3 py-2" />
+            <input name="prixSemaine" type="number" min="0" step="0.01" className="rounded-lg border px-3 py-2" />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Mois (€)
-            <input name="prixMois" type="number" min="0" step="0.01" className="rounded border px-3 py-2" />
+            <input name="prixMois" type="number" min="0" step="0.01" className="rounded-lg border px-3 py-2" />
           </label>
         </div>
       </section>
@@ -231,14 +231,14 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
                 type="date"
                 value={d.debut}
                 onChange={(e) => majDisponibilite(i, "debut", e.target.value)}
-                className="rounded border px-3 py-2 text-sm"
+                className="rounded-lg border px-3 py-2 text-sm"
               />
               <span className="text-sm text-gray-500">au</span>
               <input
                 type="date"
                 value={d.fin}
                 onChange={(e) => majDisponibilite(i, "fin", e.target.value)}
-                className="rounded border px-3 py-2 text-sm"
+                className="rounded-lg border px-3 py-2 text-sm"
               />
               {disponibilites.length > 1 && (
                 <button
@@ -278,14 +278,14 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
                   setPrixNeufEstime(e.target.value);
                   setEstimeParIA(false);
                 }}
-                className="rounded border px-3 py-2"
+                className="rounded-lg border px-3 py-2"
               />
             </label>
             <button
               type="button"
               onClick={estimerViaIA}
               disabled={estimationEnCours}
-              className="h-fit rounded border px-3 py-2 text-sm"
+              className="h-fit rounded-lg border px-3 py-2 text-sm"
             >
               {estimationEnCours ? "Estimation…" : "Estimer via IA"}
             </button>
@@ -298,7 +298,7 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
               name="ageMateriel"
               value={ageMateriel}
               onChange={(e) => setAgeMateriel(e.target.value as AgeMateriel)}
-              className="rounded border px-3 py-2"
+              className="rounded-lg border px-3 py-2"
             >
               {AGES_MATERIEL.map((age) => (
                 <option key={age} value={age}>
@@ -309,7 +309,7 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
           </label>
 
           {cautionCalculee != null && (
-            <p className="rounded bg-gray-50 px-3 py-2 text-sm">
+            <p className="rounded-lg bg-gray-50 px-3 py-2 text-sm">
               Caution qui sera demandée au locataire : <strong>{cautionCalculee} €</strong>
             </p>
           )}
@@ -336,7 +336,7 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
         </div>
       </section>
 
-      <BoutonEnvoi texteEnCours="Publication en cours…" className="w-fit rounded bg-black px-6 py-3 text-white">
+      <BoutonEnvoi texteEnCours="Publication en cours…" className="w-fit rounded-lg bg-brand px-6 py-3 font-medium text-white transition-colors hover:bg-brand-dark">
         Publier l&apos;annonce
       </BoutonEnvoi>
     </form>

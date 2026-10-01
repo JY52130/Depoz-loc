@@ -122,7 +122,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
           <h1 className="text-2xl font-semibold">{listing.titre}</h1>
           <p className="mt-2 text-gray-600">{listing.description}</p>
 
-          <div className="mt-6 rounded border p-4">
+          <div className="mt-6 rounded-xl border bg-white p-4 shadow-sm">
             <h2 className="font-medium">Tarifs</h2>
             <ul className="mt-2 space-y-1 text-sm text-gray-700">
               {listing.prixDemiJournee != null && <li>Demi-journée : {listing.prixDemiJournee.toString()} €</li>}
@@ -135,7 +135,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
             </p>
           </div>
 
-          <div className="mt-4 rounded border p-4">
+          <div className="mt-4 rounded-xl border bg-white p-4 shadow-sm">
             <h2 className="font-medium">Mode(s) de remise</h2>
             <ul className="mt-2 text-sm text-gray-700">
               {listing.modesRemise.map((mode) => (
@@ -144,7 +144,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
             </ul>
           </div>
 
-          <div className="mt-4 rounded border p-4">
+          <div className="mt-4 rounded-xl border bg-white p-4 shadow-sm">
             <h2 className="font-medium">Propriétaire</h2>
             <p className="mt-2 text-sm text-gray-700">
               {listing.proprietaire.nom ?? "Membre Dépôt Malin"}
@@ -154,7 +154,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
           </div>
 
           {erreur && (
-            <p className="mt-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
+            <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
           )}
 
           <ReserverForm

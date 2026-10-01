@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import { deconnexion } from "../(auth)/actions";
 
 const liens = [
@@ -18,12 +19,10 @@ export default function MembreLayout({ children }: { children: React.ReactNode }
   return (
     <div className="mx-auto flex max-w-6xl gap-8 px-4 py-8">
       <aside className="w-56 shrink-0">
-        <Link href="/" className="text-lg font-semibold">
-          Dépôt Malin
-        </Link>
+        <Logo />
         <nav className="mt-6 flex flex-col gap-1 text-sm">
           {liens.map((lien) => (
-            <Link key={lien.href} href={lien.href} className="rounded px-2 py-1.5 hover:bg-gray-100">
+            <Link key={lien.href} href={lien.href} className="rounded-lg px-3 py-2 text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand-dark">
               {lien.label}
             </Link>
           ))}

@@ -25,7 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <p className="text-lg font-semibold">Back-office</p>
         <nav className="mt-6 flex flex-col gap-1 text-sm">
           {liens.map((lien) => (
-            <Link key={lien.href} href={lien.href} className="rounded px-2 py-1.5 hover:bg-gray-100">
+            <Link key={lien.href} href={lien.href} className="rounded-lg px-3 py-2 text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand-dark">
               {lien.label}
             </Link>
           ))}

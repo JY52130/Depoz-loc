@@ -44,13 +44,13 @@ export default async function PortefeuillePage({ searchParams }: Props) {
       <h1 className="text-2xl font-semibold">Portefeuille</h1>
 
       {params.onboarding === "retour" && !user.stripeOnboardingDone && (
-        <p className="mt-4 rounded bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
+        <p className="mt-4 rounded-lg bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
           Votre inscription Stripe semble incomplète. Vous pouvez la reprendre
           ci-dessous.
         </p>
       )}
 
-      <div className="mt-6 rounded border p-4">
+      <div className="mt-6 rounded-xl border bg-white p-4 shadow-sm">
         <h2 className="font-medium">Paiements (Stripe Connect)</h2>
         {user.stripeOnboardingDone ? (
           <p className="mt-2 text-sm text-green-700">
@@ -63,7 +63,7 @@ export default async function PortefeuillePage({ searchParams }: Props) {
               les paiements de vos locations.
             </p>
             <form action={demarrerOnboardingStripe} className="mt-3">
-              <button type="submit" className="rounded bg-black px-4 py-2 text-sm text-white">
+              <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
                 {user.stripeAccountId ? "Reprendre mon inscription Stripe" : "Démarrer mon inscription Stripe"}
               </button>
             </form>
@@ -71,7 +71,7 @@ export default async function PortefeuillePage({ searchParams }: Props) {
         )}
       </div>
 
-      <div className="mt-6 rounded border p-4">
+      <div className="mt-6 rounded-xl border bg-white p-4 shadow-sm">
         <h2 className="font-medium">Revenus & reversements</h2>
         <p className="mt-1 text-sm text-gray-500">
           Versement hebdomadaire du solde disponible, une fois la location
@@ -85,7 +85,7 @@ export default async function PortefeuillePage({ searchParams }: Props) {
             {bookings.map((booking) => {
               const net = Number(booking.montantLocation) - Number(booking.commissionProprietaire);
               return (
-                <li key={booking.id} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+                <li key={booking.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
                   <div>
                     <p>{booking.listing.titre}</p>
                     <p className="text-gray-500">

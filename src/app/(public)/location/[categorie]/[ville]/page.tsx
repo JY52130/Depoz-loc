@@ -96,7 +96,7 @@ export default async function CategorieVillePage({ params }: Props) {
       {listingsVille.length > 0 && (
         <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {listingsVille.map((listing) => (
-            <li key={listing.id} className="rounded border p-4">
+            <li key={listing.id} className="rounded-xl border bg-white p-4 shadow-sm">
               <Link href={`/annonce/${listing.slug}`} className="font-medium hover:underline">
                 {listing.titre}
               </Link>

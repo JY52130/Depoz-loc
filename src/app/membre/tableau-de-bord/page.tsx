@@ -16,7 +16,7 @@ export default function Page() {
       <ul className="mt-6 grid gap-3 md:grid-cols-2">
         {raccourcis.map((r) => (
           <li key={r.href}>
-            <Link href={r.href} className="block h-full rounded border p-4 hover:border-black">
+            <Link href={r.href} className="block h-full rounded-xl border bg-white p-4 shadow-sm transition hover:border-brand hover:shadow-md">
               <span className="font-medium">{r.titre}</span>
               <span className="mt-1 block text-sm text-gray-600">{r.texte}</span>
             </Link>

@@ -36,7 +36,7 @@ export default async function AdminUtilisateursAnnoncesPage() {
         ) : (
           <ul className="mt-4 flex flex-col gap-3">
             {enAttente.map((annonce) => (
-              <li key={annonce.id} className="rounded border p-4 text-sm">
+              <li key={annonce.id} className="rounded-xl border bg-white p-4 shadow-sm text-sm">
                 <p className="font-medium">{annonce.titre}</p>
                 <p className="mt-1 text-gray-500">
                   {annonce.category.nom} · {annonce.proprietaire.nom ?? annonce.proprietaire.email} ·{" "}
@@ -46,7 +46,7 @@ export default async function AdminUtilisateursAnnoncesPage() {
                 <div className="mt-3 flex gap-2">
                   <form action={approuverAnnonce}>
                     <input type="hidden" name="listingId" value={annonce.id} />
-                    <button type="submit" className="rounded bg-black px-3 py-1.5 text-white">
+                    <button type="submit" className="rounded-lg bg-brand px-3 py-1.5 font-medium text-white transition-colors hover:bg-brand-dark">
                       Approuver
                     </button>
                   </form>
@@ -67,7 +67,7 @@ export default async function AdminUtilisateursAnnoncesPage() {
         <h2 className="text-lg font-semibold">Annonces en ligne ({enLigne.length})</h2>
         <ul className="mt-3 flex flex-col gap-2">
           {enLigne.map((annonce) => (
-            <li key={annonce.id} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+            <li key={annonce.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
               <span>
                 {annonce.titre} · {annonce.category.nom}
               </span>
@@ -86,7 +86,7 @@ export default async function AdminUtilisateursAnnoncesPage() {
         <h2 className="text-lg font-semibold">Utilisateurs récents</h2>
         <ul className="mt-3 flex flex-col gap-1 text-sm">
           {utilisateurs.map((u) => (
-            <li key={u.id} className="flex items-center justify-between rounded border px-3 py-2">
+            <li key={u.id} className="flex items-center justify-between rounded-lg border px-3 py-2">
               <span>
                 {u.nom ?? u.email} · {u.statut}
                 {u.estAdmin && " · admin"}

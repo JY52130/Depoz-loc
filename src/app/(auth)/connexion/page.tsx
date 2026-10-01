@@ -1,3 +1,4 @@
+import { Logo } from "@/components/Logo";
 import { connexion } from "../actions";
 
 export const metadata = {
@@ -12,11 +13,13 @@ export default async function ConnexionPage({
   const params = await searchParams;
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="text-2xl font-semibold mb-6">Connexion</h1>
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-brand-50 to-white px-4 py-12">
+      <Logo />
+      <div className="mt-8 w-full max-w-sm rounded-2xl border bg-white p-8 shadow-lg shadow-brand/5">
+      <h1 className="mb-6 text-2xl font-bold">Connexion</h1>
 
       {params.erreur && (
-        <p className="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {params.erreur}
         </p>
       )}
@@ -29,7 +32,7 @@ export default async function ConnexionPage({
             type="email"
             name="email"
             required
-            className="rounded border px-3 py-2"
+            className="rounded-lg border px-3 py-2"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -39,12 +42,12 @@ export default async function ConnexionPage({
             name="password"
             required
             minLength={8}
-            className="rounded border px-3 py-2"
+            className="rounded-lg border px-3 py-2"
           />
         </label>
         <button
           type="submit"
-          className="rounded bg-black px-4 py-2 text-white"
+          className="rounded-lg bg-brand px-4 py-2 font-medium text-white transition-colors hover:bg-brand-dark"
         >
           Se connecter
         </button>
@@ -56,6 +59,7 @@ export default async function ConnexionPage({
           Créer un compte
         </a>
       </p>
+      </div>
     </main>
   );
 }

@@ -24,7 +24,7 @@ export default async function NouvelleAnnoncePage({ searchParams }: Props) {
       </p>
 
       {params.erreur && (
-        <p className="mt-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {params.erreur}
         </p>
       )}

@@ -47,28 +47,28 @@ export default async function RecherchePage({ searchParams }: Props) {
           name="q"
           defaultValue={params.q}
           placeholder="Rechercher un objet…"
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border px-3 py-2 text-sm"
         />
         <input
           type="text"
           name="ville"
           defaultValue={params.ville}
           placeholder="Ville"
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border px-3 py-2 text-sm"
         />
         <input
           type="number"
           name="prixMax"
           defaultValue={params.prixMax}
           placeholder="Prix max /jour"
-          className="w-36 rounded border px-3 py-2 text-sm"
+          className="w-36 rounded-lg border px-3 py-2 text-sm"
         />
-        <select name="mode" defaultValue={params.mode ?? ""} className="rounded border px-3 py-2 text-sm">
+        <select name="mode" defaultValue={params.mode ?? ""} className="rounded-lg border px-3 py-2 text-sm">
           <option value="">Tous modes de remise</option>
           <option value="P2P">Main à main</option>
           <option value="POINT_RELAIS">Point relais</option>
         </select>
-        <button type="submit" className="rounded bg-black px-4 py-2 text-sm text-white">
+        <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
           Filtrer
         </button>
       </form>
@@ -84,7 +84,7 @@ export default async function RecherchePage({ searchParams }: Props) {
       ) : (
         <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {resultats.map((annonce) => (
-            <li key={annonce.id} className="rounded border p-4">
+            <li key={annonce.id} className="rounded-xl border bg-white p-4 shadow-sm">
               <Link href={`/annonce/${annonce.slug}`} className="font-medium hover:underline">
                 {annonce.titre}
               </Link>

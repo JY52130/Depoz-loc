@@ -42,7 +42,7 @@ export default async function PointsRelaisPage() {
             };
 
             return (
-              <li key={point.id} className="rounded border p-4">
+              <li key={point.id} className="rounded-xl border bg-white p-4 shadow-sm">
                 <JsonLd data={localBusinessJsonLd} />
                 <h2 className="font-medium">{point.nom}</h2>
                 <p className="mt-1 text-sm text-gray-600">

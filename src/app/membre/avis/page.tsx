@@ -35,7 +35,7 @@ export default async function AvisPage() {
         ) : (
           <ul className="mt-2 flex flex-col gap-2">
             {recus.map((r) => (
-              <li key={r.id} className="rounded border p-3 text-sm">
+              <li key={r.id} className="rounded-xl border bg-white p-3 shadow-sm text-sm">
                 {r.auteur.nom ?? "Membre"} · {r.note}/5{r.commentaire ? ` — « ${r.commentaire} »` : ""}
               </li>
             ))}
@@ -50,7 +50,7 @@ export default async function AvisPage() {
         ) : (
           <ul className="mt-2 flex flex-col gap-2">
             {donnes.map((r) => (
-              <li key={r.id} className="rounded border p-3 text-sm">
+              <li key={r.id} className="rounded-xl border bg-white p-3 shadow-sm text-sm">
                 {r.cible.nom ?? "Membre"} · {r.note}/5{r.commentaire ? ` — « ${r.commentaire} »` : ""}
               </li>
             ))}

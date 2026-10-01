@@ -78,10 +78,10 @@ function FormulaireEtatDesLieux({ bookingId, type }: { bookingId: string; type: 
         name="notes"
         placeholder="Notes (état du matériel, remarques…)"
         rows={2}
-        className="rounded border px-3 py-2 text-sm"
+        className="rounded-lg border px-3 py-2 text-sm"
       />
 
-      <button type="submit" className="w-fit rounded bg-black px-4 py-2 text-sm text-white">
+      <button type="submit" className="w-fit rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
         Déposer mon état des lieux {type === "ENTREE" ? "d'entrée" : "de sortie"}
       </button>
     </form>
@@ -98,7 +98,7 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
     !circuitPointRelais && (booking.statut === "EN_COURS" || booking.statut === "RETOURNEE");
 
   return (
-    <section className="rounded border p-4">
+    <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">États des lieux</h2>
       {circuitPointRelais && (
         <p className="mt-1 text-sm text-gray-500">

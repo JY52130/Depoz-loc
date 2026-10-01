@@ -27,7 +27,7 @@ export default async function MessageriePage() {
       ) : (
         <ul className="mt-6 flex flex-col gap-3">
           {conversations.map((conversation) => (
-            <li key={conversation.id} className="rounded border p-4">
+            <li key={conversation.id} className="rounded-xl border bg-white p-4 shadow-sm">
               <Link
                 href={`/membre/reservations/${conversation.bookingId}`}
                 className="font-medium hover:underline"

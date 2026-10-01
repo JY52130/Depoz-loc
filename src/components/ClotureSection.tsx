@@ -17,7 +17,7 @@ export function ClotureSection({ booking, role }: { booking: BookingLite; role: 
 
   if (booking.modeRemise === "POINT_RELAIS") {
     return (
-      <section className="rounded border p-4">
+      <section className="rounded-xl border bg-white p-4 shadow-sm">
         <h2 className="font-medium">Clôture de la location</h2>
         <p className="mt-1 text-sm text-gray-600">
           L&apos;objet est passé par le point relais : c&apos;est le personnel du
@@ -29,7 +29,7 @@ export function ClotureSection({ booking, role }: { booking: BookingLite; role: 
   }
 
   return (
-    <section className="rounded border p-4">
+    <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">Clôture de la location</h2>
       {role === "proprietaire" ? (
         <>
@@ -39,7 +39,7 @@ export function ClotureSection({ booking, role }: { booking: BookingLite; role: 
           </p>
           <form action={validerRetourSansDommage} className="mt-3">
             <input type="hidden" name="bookingId" value={booking.id} />
-            <button type="submit" className="rounded bg-black px-4 py-2 text-sm text-white">
+            <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
               Confirmer qu&apos;il n&apos;y a pas de dommage
             </button>
           </form>

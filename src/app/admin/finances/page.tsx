@@ -35,19 +35,19 @@ export default async function AdminFinancesPage() {
       <h1 className="text-2xl font-semibold">Finances</h1>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded border p-4">
+        <div className="rounded-xl border bg-white p-4 shadow-sm">
           <p className="text-xs text-gray-500">Total encaissé</p>
           <p className="mt-1 text-lg font-semibold">{totalEncaisse.toFixed(2)} €</p>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-xl border bg-white p-4 shadow-sm">
           <p className="text-xs text-gray-500">Commissions plateforme</p>
           <p className="mt-1 text-lg font-semibold">{totalCommissions.toFixed(2)} €</p>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-xl border bg-white p-4 shadow-sm">
           <p className="text-xs text-gray-500">Reversé aux propriétaires</p>
           <p className="mt-1 text-lg font-semibold">{totalReverse.toFixed(2)} €</p>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-xl border bg-white p-4 shadow-sm">
           <p className="text-xs text-gray-500">Cautions retenues (litiges)</p>
           <p className="mt-1 text-lg font-semibold">{totalCautionsRetenues.toFixed(2)} €</p>
         </div>
