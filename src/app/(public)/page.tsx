@@ -1,3 +1,19 @@
+import {
+  Baby,
+  Bike,
+  Camera,
+  CarFront,
+  Drill,
+  Guitar,
+  Laptop,
+  type LucideIcon,
+  Package,
+  PartyPopper,
+  Shovel,
+  Sofa,
+  Tent,
+  WashingMachine,
+} from "lucide-react";
 import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd } from "@/components/JsonLd";
@@ -9,19 +25,19 @@ export const metadata = {
     "Trouvez et louez des objets près de chez vous en France métropolitaine : outillage, jardinage, électroménager, high-tech, sport et bien plus.",
 };
 
-const ICONES_CATEGORIES: Record<string, string> = {
-  "outillage-bricolage": "🛠️",
-  "jardinage-exterieur": "🌿",
-  electromenager: "🧺",
-  "informatique-high-tech": "💻",
-  "image-son": "📷",
-  "sport-loisirs": "🚲",
-  "camping-plein-air": "⛺",
-  "bebe-enfant": "🧸",
-  "evenementiel-reception": "🎉",
-  "mobilier-deco": "🛋️",
-  "auto-moto-velo": "🚗",
-  "instruments-musique": "🎸",
+const ICONES_CATEGORIES: Record<string, LucideIcon> = {
+  "outillage-bricolage": Drill,
+  "jardinage-exterieur": Shovel,
+  electromenager: WashingMachine,
+  "informatique-high-tech": Laptop,
+  "image-son": Camera,
+  "sport-loisirs": Bike,
+  "camping-plein-air": Tent,
+  "bebe-enfant": Baby,
+  "evenementiel-reception": PartyPopper,
+  "mobilier-deco": Sofa,
+  "auto-moto-velo": CarFront,
+  "instruments-musique": Guitar,
 };
 
 const ETAPES = [
@@ -129,10 +145,17 @@ export default function AccueilPage() {
                 href={`/location/${categorie.slug}`}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
               >
-                <span className="flex h-28 items-center justify-center bg-gradient-to-br from-brand-50 to-accent-light text-6xl transition-colors sm:h-36 sm:text-7xl">
-                  <span className="transition-transform group-hover:scale-110">
-                    {ICONES_CATEGORIES[categorie.slug] ?? "📦"}
-                  </span>
+                <span className="flex h-28 items-center justify-center bg-brand-50 text-brand transition-colors group-hover:bg-brand-100 sm:h-36">
+                  {(() => {
+                    const Icone = ICONES_CATEGORIES[categorie.slug] ?? Package;
+                    return (
+                      <Icone
+                        aria-hidden
+                        strokeWidth={1.4}
+                        className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"
+                      />
+                    );
+                  })()}
                 </span>
                 <span className="px-5 pt-4 font-semibold text-ink">{categorie.nom}</span>
                 <span className="px-5 pt-1 pb-5 text-sm text-gray-500">{categorie.description}</span>
