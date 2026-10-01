@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "DepozLoc — Louer plutôt qu'acheter, près de chez soi",
-    template: "%s — DepozLoc",
+    default: "Dépôt Malin — Louer plutôt qu'acheter, près de chez soi",
+    template: "%s — Dépôt Malin",
   },
   description:
-    "DepozLoc est la marketplace de location d'objets entre particuliers et professionnels en France métropolitaine.",
+    "Dépôt Malin est la marketplace de location d'objets entre particuliers et professionnels en France métropolitaine.",
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    siteName: "DepozLoc",
+    siteName: "Dépôt Malin",
   },
 };
 

@@ -1,4 +1,4 @@
-# Guide de déploiement — DepozLoc
+# Guide de déploiement — Dépôt Malin
 
 Ce guide part du principe que vous n'avez encore aucun compte créé
 (Supabase, GitHub, Vercel, Stripe). Sautez les étapes déjà faites si vous
@@ -33,7 +33,7 @@ qu'à le pousser vers un dépôt distant.
 
 ```bash
 # Depuis le dossier du projet (déjà initialisé en Git)
-git remote add origin https://github.com/<votre-compte>/depozloc.git
+git remote add origin https://github.com/<votre-compte>/depoz-loc.git
 git branch -M main
 git push -u origin main
 ```
@@ -67,7 +67,7 @@ ci-dessus.
 
 1. Créez un compte sur https://vercel.com et connectez votre compte
    GitHub.
-2. **Add New → Project** → importez le dépôt `depozloc`. Vercel détecte
+2. **Add New → Project** → importez le dépôt `depoz-loc`. Vercel détecte
    automatiquement Next.js (build command `next build`, aucune
    configuration à changer).
 3. Avant de cliquer sur Deploy, ouvrez **Environment Variables** et
@@ -78,7 +78,7 @@ ci-dessus.
    - `STRIPE_WEBHOOK_SECRET` : laissez vide pour l'instant, on le
      complètera juste après.
    - `ANTHROPIC_API_KEY`, `RESEND_API_KEY` si vous les avez (étape 4)
-   - `NEXT_PUBLIC_SITE_URL` : laissez `https://depozloc.fr` pour l'instant,
+   - `NEXT_PUBLIC_SITE_URL` : laissez `https://depotmalin.fr` pour l'instant,
      à corriger juste après le premier déploiement (voir étape 6).
    - `ADMIN_EMAIL`, `RESEND_FROM_EMAIL` : valeurs de votre choix.
 4. Cliquez sur **Deploy**. Le premier build peut échouer ou réussir avec
@@ -88,7 +88,7 @@ ci-dessus.
 ## 6. Après le premier déploiement
 
 1. Récupérez l'URL attribuée par Vercel (ex.
-   `https://depozloc-xxxx.vercel.app`).
+   `https://depot-malin-xxxx.vercel.app`).
 2. Mettez à jour la variable d'environnement `NEXT_PUBLIC_SITE_URL` sur
    Vercel avec cette URL exacte, puis **redéployez**
    (Deployments → ⋯ → Redeploy).

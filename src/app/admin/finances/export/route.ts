@@ -46,7 +46,7 @@ export async function GET() {
   return new NextResponse(csv, {
     headers: {
       "content-type": "text/csv; charset=utf-8",
-      "content-disposition": `attachment; filename="depozloc-transactions-${Date.now()}.csv"`,
+      "content-disposition": `attachment; filename="depotmalin-transactions-${Date.now()}.csv"`,
     },
   });
 }

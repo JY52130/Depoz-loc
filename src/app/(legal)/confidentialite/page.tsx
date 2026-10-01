@@ -10,7 +10,7 @@ export default function Page() {
 
       <div className="flex flex-col gap-4 text-gray-700">
         <p>
-          DepozLoc (« nous ») accorde une grande importance à la protection
+          Dépôt Malin (« nous ») accorde une grande importance à la protection
           de vos données personnelles. Cette politique décrit les données
           collectées, leurs finalités, leur durée de conservation et vos
           droits, conformément au Règlement Général sur la Protection des

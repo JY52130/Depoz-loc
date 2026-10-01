@@ -1,12 +1,11 @@
-# DepozLoc — V1 complète (Phase 1 à 6)
+# Dépôt Malin — V1 complète (Phase 1 à 6)
 
 > **Déploiement** : voir [`DEPLOIEMENT.md`](./DEPLOIEMENT.md) pour le guide
 > pas à pas (Supabase, GitHub, Vercel, Stripe, checklist de test).
 
 Marketplace de location d'objets entre particuliers et professionnels, en
-France métropolitaine. Voir `DEPOT-MALIN_Base-de-connaissance.md` (fourni
-séparément) pour le cahier des charges complet (nom de marque devenu
-« DepozLoc » depuis la Phase 1, cf. renommage).
+France métropolitaine. Voir `DEPOT-MALIN_Base-de-connaissance.md` pour le cahier des charges
+complet. Le site s'appelle « Dépôt Malin » (anciennement « DepozLoc »).
 
 ## Stack
 
@@ -188,7 +187,7 @@ UPDATE "User" SET "estAdmin" = true WHERE email = 'vous@exemple.fr';
 ## Livré en Phase 6 (SEO avancé, RGPD, AdSense, mobile)
 
 - **Bandeau de consentement (CMP)** : `ConsentementBanner` (client),
-  cookie `depozloc_consentement` (6 mois). Le consentement est vérifié
+  cookie `depotmalin_consentement` (6 mois). Le consentement est vérifié
   **côté client** (`document.cookie`), volontairement, pour ne pas forcer
   le rendu dynamique des pages publiques — un premier essai avec une
   lecture côté serveur (`next/headers`) avait fait perdre le rendu statique

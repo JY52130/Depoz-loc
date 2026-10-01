@@ -66,7 +66,7 @@ export default async function CategorieVillePage({ params }: Props) {
   if (!donnees) notFound();
 
   const { categorie: cat, listingsVille, nomVille } = donnees;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
 
   const breadcrumb = {
     "@context": "https://schema.org",

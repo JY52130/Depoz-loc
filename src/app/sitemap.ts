@@ -7,7 +7,7 @@ import { slugify } from "@/lib/slugify";
 
 export const revalidate = 3600;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depozloc.fr";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
 
 const pagesStatiques = [
   "",

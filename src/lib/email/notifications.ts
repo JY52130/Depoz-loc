@@ -2,7 +2,7 @@
 // réservation confirmée (paiement reçu), retour/clôture, litige ouvert.
 import { envoyerEmail } from "@/lib/email/envoyerEmail";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "litiges@depozloc.fr";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "litiges@depotmalin.fr";
 
 export async function notifierPaiementRecu(params: {
   emailLocataire: string;
@@ -12,12 +12,12 @@ export async function notifierPaiementRecu(params: {
   await Promise.all([
     envoyerEmail({
       to: params.emailLocataire,
-      subject: "Votre réservation DepozLoc est confirmée",
+      subject: "Votre réservation Dépôt Malin est confirmée",
       html: `<p>Votre paiement pour « ${params.titreAnnonce} » a bien été reçu. Votre réservation est confirmée.</p>`,
     }),
     envoyerEmail({
       to: params.emailProprietaire,
-      subject: "Nouvelle réservation payée sur DepozLoc",
+      subject: "Nouvelle réservation payée sur Dépôt Malin",
       html: `<p>Vous avez une nouvelle réservation payée pour « ${params.titreAnnonce} ». Consultez votre espace membre pour organiser la remise.</p>`,
     }),
   ]);

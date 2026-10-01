@@ -19,7 +19,7 @@ export default function MembreLayout({ children }: { children: React.ReactNode }
     <div className="mx-auto flex max-w-6xl gap-8 px-4 py-8">
       <aside className="w-56 shrink-0">
         <Link href="/" className="text-lg font-semibold">
-          DepozLoc
+          Dépôt Malin
         </Link>
         <nav className="mt-6 flex flex-col gap-1 text-sm">
           {liens.map((lien) => (
