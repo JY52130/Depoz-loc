@@ -5,6 +5,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { calculerCaution, AGES_MATERIEL, type AgeMateriel } from "@/lib/caution";
 import { creerAnnonce } from "@/app/membre/mes-annonces/nouvelle/actions";
+import { BoutonEnvoi } from "@/components/BoutonEnvoi";
 
 type Categorie = { id: string; nom: string };
 
@@ -335,9 +336,9 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
         </div>
       </section>
 
-      <button type="submit" className="w-fit rounded bg-black px-6 py-3 text-white">
+      <BoutonEnvoi texteEnCours="Publication en cours…" className="w-fit rounded bg-black px-6 py-3 text-white">
         Publier l&apos;annonce
-      </button>
+      </BoutonEnvoi>
     </form>
   );
 }

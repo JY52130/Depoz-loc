@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { exigerAdmin } from "@/lib/exigerAdmin";
 import { redirect } from "next/navigation";
 import { resoudreLitige } from "@/lib/stripe/resoudreLitige";
 
-// Le contrôle de rôle admin est appliqué dans src/app/admin/layout.tsx.
 export async function resoudreLitigeAction(formData: FormData) {
+  await exigerAdmin();
   const bookingId = String(formData.get("bookingId") ?? "");
   const montantCautionRetenu = Number(formData.get("montantCautionRetenu") ?? 0);
   const decision = String(formData.get("decision") ?? "").trim();
