@@ -25,10 +25,10 @@ export default async function AdminLitigesPage({ searchParams }: Props) {
       </p>
 
       {params.erreur && (
-        <p className="mt-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{params.erreur}</p>
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{params.erreur}</p>
       )}
       {params.resolu && (
-        <p className="mt-4 rounded bg-green-50 px-3 py-2 text-sm text-green-700">Litige résolu.</p>
+        <p className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">Litige résolu.</p>
       )}
 
       {litiges.length === 0 ? (
@@ -36,7 +36,7 @@ export default async function AdminLitigesPage({ searchParams }: Props) {
       ) : (
         <ul className="mt-6 flex flex-col gap-4">
           {litiges.map((litige) => (
-            <li key={litige.id} className="rounded border p-4">
+            <li key={litige.id} className="rounded-xl border bg-white p-4 shadow-sm">
               <p className="font-medium">{litige.booking.listing.titre}</p>
               <p className="mt-1 text-sm text-gray-600">
                 Ouvert par {litige.ouvertPar.nom ?? litige.ouvertPar.email} · Statut : {litige.statut}
@@ -61,14 +61,14 @@ export default async function AdminLitigesPage({ searchParams }: Props) {
                       step="0.01"
                       defaultValue="0"
                       max={Number(litige.booking.montantCaution)}
-                      className="rounded border px-3 py-2"
+                      className="rounded-lg border px-3 py-2"
                     />
                   </label>
                   <label className="flex flex-1 flex-col gap-1 text-sm">
                     Décision
-                    <input name="decision" required className="rounded border px-3 py-2" />
+                    <input name="decision" required className="rounded-lg border px-3 py-2" />
                   </label>
-                  <button type="submit" className="rounded bg-black px-4 py-2 text-sm text-white">
+                  <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
                     Résoudre
                   </button>
                 </form>

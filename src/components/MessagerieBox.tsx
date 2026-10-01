@@ -19,7 +19,7 @@ export function MessagerieBox({
   currentUserId: string;
 }) {
   return (
-    <section className="rounded border p-4">
+    <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">Messagerie</h2>
       <p className="mt-1 text-sm text-gray-500">
         Utilisez cet espace pour convenir des modalités de remise (main à main).
@@ -34,7 +34,7 @@ export function MessagerieBox({
               key={message.id}
               className={`max-w-[75%] rounded px-3 py-2 text-sm ${
                 message.expediteurId === currentUserId
-                  ? "self-end bg-black text-white"
+                  ? "self-end bg-brand text-white"
                   : "self-start bg-gray-100"
               }`}
             >
@@ -52,9 +52,9 @@ export function MessagerieBox({
           name="contenu"
           required
           placeholder="Votre message…"
-          className="flex-1 rounded border px-3 py-2 text-sm"
+          className="flex-1 rounded-lg border px-3 py-2 text-sm"
         />
-        <button type="submit" className="rounded bg-black px-4 py-2 text-sm text-white">
+        <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
           Envoyer
         </button>
       </form>

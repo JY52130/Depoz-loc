@@ -19,7 +19,7 @@ export function AvisSection({
   const autrePartie = role === "locataire" ? "propriétaire" : "locataire";
 
   return (
-    <section className="rounded border p-4">
+    <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">Avis</h2>
 
       {avisRecu && (
@@ -38,7 +38,7 @@ export function AvisSection({
           <input type="hidden" name="bookingId" value={booking.id} />
           <label className="flex flex-col gap-1 text-sm">
             Note pour {autrePartie === "locataire" ? "le locataire" : "le propriétaire"}
-            <select name="note" required defaultValue="" className="rounded border px-3 py-2">
+            <select name="note" required defaultValue="" className="rounded-lg border px-3 py-2">
               <option value="" disabled>
                 Choisir une note
               </option>
@@ -53,9 +53,9 @@ export function AvisSection({
             name="commentaire"
             placeholder="Commentaire (optionnel)"
             rows={2}
-            className="rounded border px-3 py-2 text-sm"
+            className="rounded-lg border px-3 py-2 text-sm"
           />
-          <button type="submit" className="w-fit rounded bg-black px-4 py-2 text-sm text-white">
+          <button type="submit" className="w-fit rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
             Envoyer mon avis
           </button>
         </form>

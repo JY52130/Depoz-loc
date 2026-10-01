@@ -24,7 +24,7 @@ export default async function MesBiensLouesPage() {
       ) : (
         <ul className="mt-6 flex flex-col gap-3">
           {bookings.map((booking) => (
-            <li key={booking.id} className="rounded border p-4 text-sm">
+            <li key={booking.id} className="rounded-xl border bg-white p-4 shadow-sm text-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <Link href={`/membre/reservations/${booking.id}`} className="font-medium hover:underline">

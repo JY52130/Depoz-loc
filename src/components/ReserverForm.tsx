@@ -45,7 +45,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
   }, [dateDebut, dateFin, modeRemise, tarifs]);
 
   return (
-    <form action={creerReservation} className="mt-6 flex flex-col gap-3 rounded border p-4">
+    <form action={creerReservation} className="mt-6 flex flex-col gap-3 rounded-xl border bg-white p-4 shadow-sm">
       <input type="hidden" name="listingId" value={listingId} />
       <input type="hidden" name="slug" value={slug} />
 
@@ -58,7 +58,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
             required
             value={dateDebut}
             onChange={(e) => setDateDebut(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-lg border px-3 py-2"
           />
         </label>
         <label className="flex flex-1 flex-col gap-1 text-sm">
@@ -69,7 +69,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
             required
             value={dateFin}
             onChange={(e) => setDateFin(e.target.value)}
-            className="rounded border px-3 py-2"
+            className="rounded-lg border px-3 py-2"
           />
         </label>
       </div>
@@ -81,7 +81,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
             name="modeRemise"
             value={modeRemise}
             onChange={(e) => setModeRemise(e.target.value as DeliveryMode)}
-            className="rounded border px-3 py-2"
+            className="rounded-lg border px-3 py-2"
           >
             {modesRemise.map((mode) => (
               <option key={mode} value={mode}>
@@ -95,7 +95,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
       )}
 
       {apercu && (
-        <div className="rounded bg-gray-50 px-3 py-2 text-sm">
+        <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm">
           <p>Location : {apercu.montant} €</p>
           <p>Frais de service (5 %) : {apercu.frais} €</p>
           {apercu.fraisRelais > 0 && <p>Frais point relais : {apercu.fraisRelais} €</p>}
@@ -103,7 +103,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
         </div>
       )}
 
-      <button type="submit" className="rounded bg-black px-6 py-3 text-white">
+      <button type="submit" className="rounded-lg bg-brand px-6 py-3 font-medium text-white transition-colors hover:bg-brand-dark">
         Réserver
       </button>
     </form>

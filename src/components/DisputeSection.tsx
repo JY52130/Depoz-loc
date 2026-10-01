@@ -29,7 +29,7 @@ export function DisputeSection({ booking }: { booking: BookingLite }) {
   }
 
   return (
-    <section className="rounded border p-4">
+    <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">Signaler un problème</h2>
       <p className="mt-1 text-sm text-gray-500">
         En cas de dommage ou de désaccord, ouvrez un litige — il sera traité
@@ -42,7 +42,7 @@ export function DisputeSection({ booking }: { booking: BookingLite }) {
           required
           rows={3}
           placeholder="Décrivez le problème rencontré…"
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border px-3 py-2 text-sm"
         />
         <button type="submit" className="w-fit rounded border border-red-300 px-4 py-2 text-sm text-red-700">
           Ouvrir un litige

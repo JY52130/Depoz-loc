@@ -24,7 +24,7 @@ export default async function MesLocationsPage() {
       ) : (
         <ul className="mt-6 flex flex-col gap-3">
           {bookings.map((booking) => (
-            <li key={booking.id} className="rounded border p-4 text-sm">
+            <li key={booking.id} className="rounded-xl border bg-white p-4 shadow-sm text-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <Link href={`/membre/reservations/${booking.id}`} className="font-medium hover:underline">
@@ -38,7 +38,7 @@ export default async function MesLocationsPage() {
                 {booking.statut === "RESERVEE" ? (
                   <Link
                     href={`/reservation/${booking.id}/paiement`}
-                    className="rounded bg-black px-3 py-1.5 text-white"
+                    className="rounded-lg bg-brand px-3 py-1.5 font-medium text-white transition-colors hover:bg-brand-dark"
                   >
                     Finaliser le paiement
                   </Link>

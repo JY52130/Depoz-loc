@@ -71,7 +71,7 @@ export default async function CategoriePage({ params }: Props) {
                   <Link
                     key={v.ville}
                     href={`/location/${cat.slug}/${v.ville.toLowerCase().replace(/\s+/g, "-")}`}
-                    className="rounded border px-3 py-1 text-sm hover:bg-gray-50"
+                    className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50"
                   >
                     {v.ville}
                   </Link>
@@ -89,7 +89,7 @@ export default async function CategoriePage({ params }: Props) {
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {listings.map((listing) => (
-              <li key={listing.id} className="rounded border p-4">
+              <li key={listing.id} className="rounded-xl border bg-white p-4 shadow-sm">
                 <Link href={`/annonce/${listing.slug}`} className="font-medium hover:underline">
                   {listing.titre}
                 </Link>

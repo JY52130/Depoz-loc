@@ -50,14 +50,14 @@ export function ConsentementBanner() {
           <button
             type="button"
             onClick={() => repondre("refuse")}
-            className="rounded border px-4 py-2 text-sm"
+            className="rounded-lg border px-4 py-2 text-sm"
           >
             Refuser
           </button>
           <button
             type="button"
             onClick={() => repondre("accepte")}
-            className="rounded bg-black px-4 py-2 text-sm text-white"
+            className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
           >
             Accepter
           </button>

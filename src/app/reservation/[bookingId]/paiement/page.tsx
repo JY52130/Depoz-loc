@@ -40,7 +40,7 @@ export default async function PaiementPage({ params }: Props) {
   return (
     <main className="mx-auto max-w-lg px-4 py-12">
       <h1 className="text-2xl font-semibold">Paiement de votre réservation</h1>
-      <div className="mt-4 rounded bg-gray-50 p-4 text-sm">
+      <div className="mt-4 rounded-lg bg-gray-50 p-4 text-sm">
         <p>{booking.listing.titre}</p>
         <p className="mt-1 text-gray-600">
           Total à payer : {booking.transaction.montantTotal.toString()} €

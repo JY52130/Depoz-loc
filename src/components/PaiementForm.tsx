@@ -45,7 +45,7 @@ function FormulairePaiement({ bookingId }: { bookingId: string }) {
       <button
         type="submit"
         disabled={!stripe || enCours}
-        className="rounded bg-black px-6 py-3 text-white disabled:opacity-60"
+        className="rounded-lg bg-brand px-6 py-3 font-medium text-white transition-colors hover:bg-brand-dark disabled:opacity-60"
       >
         {enCours ? "Traitement…" : "Payer"}
       </button>

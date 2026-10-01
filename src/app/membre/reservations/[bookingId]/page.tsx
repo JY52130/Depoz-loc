@@ -59,7 +59,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pr
       </div>
 
       {erreur && (
-        <p className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
       )}
 
       <EtatDesLieuxSection booking={booking} />

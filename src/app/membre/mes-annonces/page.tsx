@@ -31,14 +31,14 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
         <h1 className="text-2xl font-semibold">Mes annonces</h1>
         <Link
           href="/membre/mes-annonces/nouvelle"
-          className="rounded bg-black px-4 py-2 text-sm text-white"
+          className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
         >
           + Nouvelle annonce
         </Link>
       </div>
 
       {params.creee && (
-        <p className="mt-4 rounded bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
           Annonce créée avec succès — elle sera visible publiquement après
           validation par notre équipe (modération).
         </p>
@@ -49,7 +49,7 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
       ) : (
         <ul className="mt-6 flex flex-col gap-3">
           {annonces.map((annonce) => (
-            <li key={annonce.id} className="rounded border p-4">
+            <li key={annonce.id} className="rounded-xl border bg-white p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">{annonce.titre}</p>
