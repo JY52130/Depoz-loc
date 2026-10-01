@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd } from "@/components/JsonLd";
+import { CATEGORIES } from "@/lib/categories";
 
 export const metadata = {
   title: "Louer plutôt qu'acheter, près de chez soi",
@@ -64,22 +65,54 @@ export default function AccueilPage() {
 
       <section className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-semibold">Catégories</h2>
-        <p className="mt-2 text-gray-600">
-          Les pages de catégorie (et catégorie × ville) seront générées ici en
-          SSG/ISR à partir des données de la table Category — Phase 2.
-        </p>
+        <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          {CATEGORIES.map((categorie) => (
+            <li key={categorie.slug}>
+              <Link
+                href={`/location/${categorie.slug}`}
+                className="block h-full rounded border p-4 hover:border-black"
+              >
+                <span className="font-medium">{categorie.nom}</span>
+                <span className="mt-1 block text-sm text-gray-600">
+                  {categorie.description}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <AdSlot slot="1234567890" />
 
       <section className="mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-2xl font-semibold">Comment ça marche</h2>
-        <p className="mt-2 text-gray-600">
-          Réassurance, avis, points relais —{" "}
+        <ol className="mt-6 grid gap-6 md:grid-cols-3">
+          <li>
+            <p className="font-medium">1. Trouvez l&apos;objet</p>
+            <p className="mt-1 text-gray-600">
+              Choisissez une catégorie, puis filtrez par ville et par distance
+              pour trouver ce qu&apos;il vous faut près de chez vous.
+            </p>
+          </li>
+          <li>
+            <p className="font-medium">2. Réservez vos dates</p>
+            <p className="mt-1 text-gray-600">
+              Sélectionnez la période sur le calendrier. Le prix et la caution
+              sont affichés à l&apos;avance, sans surprise.
+            </p>
+          </li>
+          <li>
+            <p className="font-medium">3. Récupérez-le</p>
+            <p className="mt-1 text-gray-600">
+              En main propre auprès du propriétaire, ou dans notre point relais
+              de Chaumont. Rendez-le à la date prévue, c&apos;est tout.
+            </p>
+          </li>
+        </ol>
+        <p className="mt-6">
           <Link href="/comment-ca-marche" className="underline">
-            voir le détail
+            En savoir plus
           </Link>
-          .
         </p>
       </section>
     </main>

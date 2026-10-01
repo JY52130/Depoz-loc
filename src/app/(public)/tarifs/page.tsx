@@ -1,3 +1,5 @@
+import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
+
 export const metadata = { title: "Tarifs & commissions" };
 
 export default function TarifsPage() {
@@ -7,9 +9,10 @@ export default function TarifsPage() {
       <ul className="mt-6 space-y-2 text-gray-700">
         <li>Frais de service locataire : 5 % du montant de la location.</li>
         <li>Commission propriétaire : 10 % du montant de la location.</li>
+        <li>Inscription et publication d&apos;annonces : gratuites.</li>
         <li>
-          Frais point relais (optionnel) : à la charge du locataire, montant
-          précisé en Phase 3.
+          Frais point relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,
+          à la charge du locataire.
         </li>
       </ul>
     </main>
