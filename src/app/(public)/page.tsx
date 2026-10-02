@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd } from "@/components/JsonLd";
@@ -9,19 +10,20 @@ export const metadata = {
     "Trouvez et louez des objets près de chez vous en France métropolitaine : outillage, jardinage, électroménager, high-tech, sport et bien plus.",
 };
 
-const ICONES_CATEGORIES: Record<string, string> = {
-  "outillage-bricolage": "🛠️",
-  "jardinage-exterieur": "🌿",
-  electromenager: "🧺",
-  "informatique-high-tech": "💻",
-  "image-son": "📷",
-  "sport-loisirs": "🚲",
-  "camping-plein-air": "⛺",
-  "bebe-enfant": "🧸",
-  "evenementiel-reception": "🎉",
-  "mobilier-deco": "🛋️",
-  "auto-moto-velo": "🚗",
-  "instruments-musique": "🎸",
+// Photos libres de droits (licence Unsplash), une par catégorie.
+const PHOTOS_CATEGORIES: Record<string, string> = {
+  "outillage-bricolage": "photo-1572981779307-38b8cabb2407",
+  "jardinage-exterieur": "photo-1590820292118-e256c3ac2676",
+  electromenager: "photo-1693875161689-7787889a4c21",
+  "informatique-high-tech": "photo-1589113050289-1c654e7e305d",
+  "image-son": "photo-1495707902641-75cac588d2e9",
+  "sport-loisirs": "photo-1505705694340-019e1e335916",
+  "camping-plein-air": "photo-1504280390367-361c6d9f38f4",
+  "bebe-enfant": "photo-1714392512700-4cab9e51710b",
+  "evenementiel-reception": "photo-1780682569879-f271082ae2cd",
+  "mobilier-deco": "photo-1555041469-a586c61ea9bc",
+  "auto-moto-velo": "photo-1780311996880-0a85318ee890",
+  "instruments-musique": "photo-1608660890512-cfd02ae3ae3d",
 };
 
 const ETAPES = [
@@ -127,13 +129,21 @@ export default function AccueilPage() {
             <li key={categorie.slug}>
               <Link
                 href={`/location/${categorie.slug}`}
-                className="group flex h-full flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-2xl transition-colors group-hover:bg-brand-100">
-                  {ICONES_CATEGORIES[categorie.slug] ?? "📦"}
+                <span className="relative block h-32 overflow-hidden bg-brand-50 sm:h-40">
+                  {PHOTOS_CATEGORIES[categorie.slug] && (
+                    <Image
+                      src={`https://images.unsplash.com/${PHOTOS_CATEGORIES[categorie.slug]}?w=800&q=75&auto=format&fit=crop`}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  )}
                 </span>
-                <span className="mt-4 font-semibold text-ink">{categorie.nom}</span>
-                <span className="mt-1 text-sm text-gray-500">{categorie.description}</span>
+                <span className="px-5 pt-4 font-semibold text-ink">{categorie.nom}</span>
+                <span className="px-5 pt-1 pb-5 text-sm text-gray-500">{categorie.description}</span>
               </Link>
             </li>
           ))}
