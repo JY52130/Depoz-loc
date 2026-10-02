@@ -19,7 +19,7 @@ const PHOTOS_CATEGORIES: Record<string, string> = {
   "image-son": "photo-1495707902641-75cac588d2e9",
   "sport-loisirs": "photo-1505705694340-019e1e335916",
   "camping-plein-air": "photo-1504280390367-361c6d9f38f4",
-  "bebe-enfant": "photo-1617627289698-82e682407ecb",
+  "bebe-enfant": "photo-1714392512700-4cab9e51710b",
   "evenementiel-reception": "photo-1780682569879-f271082ae2cd",
   "mobilier-deco": "photo-1555041469-a586c61ea9bc",
   "auto-moto-velo": "photo-1780311996880-0a85318ee890",
