@@ -5,7 +5,12 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe/client";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { estDisponible } from "@/lib/reservations";
-import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
+import {
+  FRAIS_POINT_RELAIS,
+  TAUX_COMMISSION_PROPRIETAIRE,
+  arrondiCentimes,
+  calculerFraisLocataire,
+} from "@/lib/constantesReservation";
 import { calculerPrixLocation } from "@/lib/tarifs";
 import type { DeliveryMode } from "@prisma/client";
 
@@ -54,8 +59,8 @@ export async function creerReservation(formData: FormData) {
     mois: listing.prixMois ? Number(listing.prixMois) : undefined,
   });
 
-  const fraisServiceLocataire = Math.round(montantLocation * 0.05 * 100) / 100; // 5% (section 9.4)
-  const commissionProprietaire = Math.round(montantLocation * 0.1 * 100) / 100; // 10%
+  const fraisServiceLocataire = calculerFraisLocataire(montantLocation);
+  const commissionProprietaire = arrondiCentimes(montantLocation * TAUX_COMMISSION_PROPRIETAIRE);
   const fraisPointRelais = modeRemise === "POINT_RELAIS" ? FRAIS_POINT_RELAIS : null;
   const montantCaution = listing.montantCaution ? Number(listing.montantCaution) : 0;
 

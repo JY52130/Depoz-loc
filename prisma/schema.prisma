@@ -200,8 +200,8 @@ model Booking {
   dateFin               DateTime
   palierApplique        String   // "demi_journee" | "journee" | "semaine" | "mois" | "combinaison"
   montantLocation       Decimal  @db.Decimal(10, 2)
-  fraisServiceLocataire Decimal  @db.Decimal(10, 2) // 5%
-  commissionProprietaire Decimal @db.Decimal(10, 2) // 10%
+  fraisServiceLocataire Decimal  @db.Decimal(10, 2) // TAUX_FRAIS_LOCATAIRE
+  commissionProprietaire Decimal @db.Decimal(10, 2) // TAUX_COMMISSION_PROPRIETAIRE
   fraisPointRelais      Decimal? @db.Decimal(10, 2) // à la charge du locataire si mode = POINT_RELAIS
   montantCaution        Decimal  @db.Decimal(10, 2)
   modeRemise            DeliveryMode

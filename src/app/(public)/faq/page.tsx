@@ -16,7 +16,7 @@ const QUESTIONS = [
   {
     question: "Quels sont les frais ?",
     reponse:
-      "5 % du montant de la location sont ajoutés au paiement du locataire, et 10 % sont prélevés sur le reversement au propriétaire. Le circuit point relais ajoute un forfait supplémentaire à la charge du locataire.",
+      "10 % du montant de la location (1 € minimum) sont ajoutés au paiement du locataire, et 15 % sont prélevés sur le reversement au propriétaire. Le circuit point relais ajoute un forfait supplémentaire à la charge du locataire.",
   },
   {
     question: "Que se passe-t-il en cas de litige ou de dommage ?",
