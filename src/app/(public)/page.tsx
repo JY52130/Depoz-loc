@@ -179,7 +179,7 @@ export default function AccueilPage() {
           <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
             <Image
               src="/mascotte-malin.svg"
-              alt="Malin, la mascotte renard de Dépôt Malin"
+              alt=""
               width={128}
               height={128}
               unoptimized
