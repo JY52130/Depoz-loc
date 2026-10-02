@@ -3,7 +3,11 @@
 import { useMemo, useState } from "react";
 import { creerReservation } from "@/app/reservation/actions";
 import { calculerPrixLocation } from "@/lib/tarifs";
-import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
+import {
+  FRAIS_POINT_RELAIS,
+  TAUX_FRAIS_LOCATAIRE,
+  calculerFraisLocataire,
+} from "@/lib/constantesReservation";
 import type { DeliveryMode } from "@prisma/client";
 
 type Props = {
@@ -36,7 +40,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
 
     try {
       const { montant } = calculerPrixLocation(debut, fin, tarifs);
-      const frais = Math.round(montant * 0.05 * 100) / 100;
+      const frais = calculerFraisLocataire(montant);
       const fraisRelais = modeRemise === "POINT_RELAIS" ? FRAIS_POINT_RELAIS : 0;
       return { montant, frais, fraisRelais, total: Math.round((montant + frais + fraisRelais) * 100) / 100 };
     } catch {
@@ -97,7 +101,7 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
       {apercu && (
         <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm">
           <p>Location : {apercu.montant} €</p>
-          <p>Frais de service (5 %) : {apercu.frais} €</p>
+          <p>Frais de service ({TAUX_FRAIS_LOCATAIRE * 100} %) : {apercu.frais} €</p>
           {apercu.fraisRelais > 0 && <p>Frais point relais : {apercu.fraisRelais} €</p>}
           <p className="font-medium">Total à payer : {apercu.total} €</p>
         </div>

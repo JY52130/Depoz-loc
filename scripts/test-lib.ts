@@ -3,6 +3,11 @@
 // Lancer avec : npx tsx scripts/test-lib.ts
 import { calculerCaution } from "../src/lib/caution";
 import { calculerPrixLocation } from "../src/lib/tarifs";
+import {
+  TAUX_COMMISSION_PROPRIETAIRE,
+  arrondiCentimes,
+  calculerFraisLocataire,
+} from "../src/lib/constantesReservation";
 
 function assertEqual(actual: unknown, expected: unknown, label: string) {
   const ok = JSON.stringify(actual) === JSON.stringify(expected);
@@ -43,5 +48,11 @@ assertEqual(
   10,
   "1 jour (meme date)"
 );
+
+// --- Commissions (10 % locataire, 1 € minimum ; 15 % propriétaire) ---
+assertEqual(calculerFraisLocataire(25), 2.5, "frais locataire cafetière 25 €");
+assertEqual(arrondiCentimes(25 * TAUX_COMMISSION_PROPRIETAIRE), 3.75, "commission propriétaire 25 €");
+assertEqual(calculerFraisLocataire(5), 1, "frais locataire minimum 1 €");
+assertEqual(calculerFraisLocataire(0), 0, "pas de frais sur 0 €");
 
 console.log("Terminé.");

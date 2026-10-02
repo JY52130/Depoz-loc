@@ -12,9 +12,9 @@ export default function Page() {
         <h2 className="text-lg font-semibold text-black">1. Prix et commissions</h2>
         <p>
           Le locataire paie le montant de la location choisie (tarif par
-          palier le plus avantageux pour la durée demandée) majoré de 5 % de
-          frais de service. Le propriétaire perçoit ce montant diminué
-          d&apos;une commission de 10 %, une fois la location clôturée. Un
+          palier le plus avantageux pour la durée demandée) majoré de 10 % de
+          frais de service (1 € minimum). Le propriétaire perçoit ce montant diminué
+          d&apos;une commission de 15 %, une fois la location clôturée. Un
           forfait supplémentaire s&apos;applique lorsque la remise transite
           par un point relais, à la charge du locataire.
         </p>
