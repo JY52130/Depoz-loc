@@ -13,13 +13,13 @@ export const metadata = {
 // Photos libres de droits (licence Unsplash), une par catégorie.
 const PHOTOS_CATEGORIES: Record<string, string> = {
   "outillage-bricolage": "photo-1572981779307-38b8cabb2407",
-  "jardinage-exterieur": "photo-1458245201577-fc8a130b8829",
+  "jardinage-exterieur": "photo-1590820292118-e256c3ac2676",
   electromenager: "photo-1693875161689-7787889a4c21",
   "informatique-high-tech": "photo-1589113050289-1c654e7e305d",
   "image-son": "photo-1495707902641-75cac588d2e9",
   "sport-loisirs": "photo-1505705694340-019e1e335916",
   "camping-plein-air": "photo-1504280390367-361c6d9f38f4",
-  "bebe-enfant": "photo-1528121108018-743eef2e4a7a",
+  "bebe-enfant": "photo-1559135141-2bea6465fccf",
   "evenementiel-reception": "photo-1780682569879-f271082ae2cd",
   "mobilier-deco": "photo-1555041469-a586c61ea9bc",
   "auto-moto-velo": "photo-1780311996880-0a85318ee890",
