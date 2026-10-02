@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { MessagerieBox } from "@/components/MessagerieBox";
 import { EtatDesLieuxSection } from "@/components/EtatDesLieuxSection";
+import { ContratSection } from "@/components/ContratSection";
 import { ClotureSection } from "@/components/ClotureSection";
 import { AvisSection } from "@/components/AvisSection";
 import { DisputeSection } from "@/components/DisputeSection";
@@ -61,6 +62,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pr
       {erreur && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
       )}
+
+      <ContratSection booking={booking} role={role} />
 
       <EtatDesLieuxSection booking={booking} />
 

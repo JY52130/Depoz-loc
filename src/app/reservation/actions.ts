@@ -35,6 +35,10 @@ export async function creerReservation(formData: FormData) {
     redirect(`/annonce/${listing.slug}?erreur=Vous+ne+pouvez+pas+r%C3%A9server+votre+propre+annonce.`);
   }
 
+  if (formData.get("accepteContrat") !== "on") {
+    redirect(`/annonce/${listing.slug}?erreur=Vous+devez+accepter+le+contrat+de+location.`);
+  }
+
   if (!listing.modesRemise.includes(modeRemise)) {
     redirect(`/annonce/${listing.slug}?erreur=Mode+de+remise+invalide.`);
   }
@@ -84,6 +88,7 @@ export async function creerReservation(formData: FormData) {
       montantCaution,
       modeRemise,
       statut: "RESERVEE",
+      contratAccepteLocataireLe: new Date(),
     },
   });
 

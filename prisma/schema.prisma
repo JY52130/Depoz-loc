@@ -208,6 +208,11 @@ model Booking {
 
   statut                BookingStatus @default(RESERVEE)
 
+  // Contrat de location (voir src/components/ContratLocation.tsx) : date et
+  // heure d'acceptation en ligne par chaque partie, valant signature.
+  contratAccepteLocataireLe    DateTime?
+  contratAccepteProprietaireLe DateTime?
+
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 

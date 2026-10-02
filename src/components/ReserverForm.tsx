@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { creerReservation } from "@/app/reservation/actions";
 import { calculerPrixLocation } from "@/lib/tarifs";
@@ -106,6 +107,17 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
           <p className="font-medium">Total à payer : {apercu.total} €</p>
         </div>
       )}
+
+      <label className="flex items-start gap-2 text-sm">
+        <input type="checkbox" name="accepteContrat" required className="mt-1 h-4 w-4 shrink-0" />
+        <span>
+          J&apos;ai lu et j&apos;accepte le{" "}
+          <Link href="/contrat-de-location" target="_blank" className="text-brand underline">
+            contrat de location<span className="sr-only"> (s&apos;ouvre dans un nouvel onglet)</span>
+          </Link>
+          , qui sera rempli avec les informations de cette réservation.
+        </span>
+      </label>
 
       <button type="submit" className="rounded-lg bg-brand px-6 py-3 font-medium text-white transition-colors hover:bg-brand-dark">
         Réserver
