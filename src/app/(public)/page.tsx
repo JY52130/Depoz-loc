@@ -176,12 +176,24 @@ export default function AccueilPage() {
 
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-brand px-8 py-10 text-white md:flex-row md:items-center">
-          <div>
-            <h2 className="text-2xl font-bold md:text-3xl">Des objets qui dorment chez vous ?</h2>
-            <p className="mt-2 max-w-xl text-brand-100">
-              Mettez-les en location en quelques minutes et arrondissez vos fins
-              de mois. L&apos;inscription et la publication sont gratuites.
-            </p>
+          <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+            <Image
+              src="/mascotte-malin.svg"
+              alt=""
+              width={128}
+              height={128}
+              unoptimized
+              className="h-28 w-28 shrink-0 drop-shadow-lg md:h-32 md:w-32"
+            />
+            <div>
+              <p className="relative inline-block rounded-2xl rounded-bl-sm bg-white px-5 py-3 text-xl font-bold text-ink shadow-sm md:text-2xl">
+                Vos objets dorment ? Louez-les et arrondissez vos fins de mois !
+              </p>
+              <p className="mt-3 max-w-xl text-brand-100">
+                Mettez-les en location en quelques minutes. L&apos;inscription et la
+                publication sont gratuites.
+              </p>
+            </div>
           </div>
           <Link
             href="/membre/mes-annonces/nouvelle"

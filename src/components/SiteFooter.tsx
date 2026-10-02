@@ -55,7 +55,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto max-w-6xl px-4 py-5 text-xs text-gray-500">
+        <p className="mx-auto max-w-6xl px-4 py-5 text-xs text-gray-400">
           © {new Date().getFullYear()} Dépôt Malin. Tous droits réservés.
         </p>
       </div>
