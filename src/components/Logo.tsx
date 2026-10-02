@@ -1,17 +1,18 @@
 import Link from "next/link";
 
-// Logo Dépôt Malin : un repère de localisation qui contient un colis.
+// Logo Dépôt Malin : deux flèches qui tournent autour d'un colis (l'objet circule).
 export function LogoIcone({ taille = 36 }: { taille?: number }) {
   return (
-    <svg width={taille} height={taille} viewBox="0 0 40 40" aria-hidden="true">
-      <rect width="40" height="40" rx="11" fill="#0F766E" />
-      <path
-        d="M20 7.5c-6.1 0-10.8 4.6-10.8 10.5 0 7.4 8.7 13.7 9.9 14.5.5.4 1.3.4 1.8 0 1.2-.8 9.9-7.1 9.9-14.5 0-5.9-4.7-10.5-10.8-10.5z"
-        fill="#fff"
-      />
-      <path d="M20 12.6l5.2 2.6-5.2 2.6-5.2-2.6z" fill="#FCD34D" />
-      <path d="M14.8 15.2l5.2 2.6v5.8l-5.2-2.6z" fill="#F59E0B" />
-      <path d="M25.2 15.2L20 17.8v5.8l5.2-2.6z" fill="#D97706" />
+    <svg width={taille} height={taille} viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="32" fill="#0F766E" />
+      <g fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 30a18 18 0 0 1 32-10" />
+        <path d="M47 13v8h-8" />
+        <path d="M50 34a18 18 0 0 1-32 10" />
+        <path d="M17 51v-8h8" />
+      </g>
+      <rect x="25" y="25" width="14" height="14" rx="2.5" fill="#F59E0B" />
+      <path d="M25 30h14" stroke="#B45309" strokeWidth="1.5" />
     </svg>
   );
 }
