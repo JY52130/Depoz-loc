@@ -12,6 +12,7 @@ const liensAide = [
 const liensLegaux = [
   { href: "/cgu", label: "CGU" },
   { href: "/cgv", label: "CGV" },
+  { href: "/contrat-de-location", label: "Contrat de location" },
   { href: "/mentions-legales", label: "Mentions légales" },
   { href: "/confidentialite", label: "Confidentialité" },
   { href: "/cookies", label: "Cookies" },

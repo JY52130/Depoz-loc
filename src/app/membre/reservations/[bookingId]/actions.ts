@@ -34,6 +34,15 @@ export async function creerEtatDesLieux(formData: FormData) {
   const { user, booking } = await verifierParticipant(bookingId);
   const auteurType = booking.locataireId === user.id ? "LOCATAIRE" : "PROPRIETAIRE";
 
+  // La remise de l'objet suppose un contrat accepté par les deux parties.
+  if (type === "ENTREE" && (!booking.contratAccepteLocataireLe || !booking.contratAccepteProprietaireLe)) {
+    redirect(
+      `/membre/reservations/${bookingId}?erreur=${encodeURIComponent(
+        "Le contrat de location doit être accepté par les deux parties avant la remise de l'objet."
+      )}`
+    );
+  }
+
   await prisma.conditionReport.create({
     data: {
       bookingId,
@@ -50,6 +59,32 @@ export async function creerEtatDesLieux(formData: FormData) {
   // distincte, déclenchée par validerRetourSansDommage ou par un litige.
   if (type === "SORTIE" && booking.statut === "EN_COURS") {
     await prisma.booking.update({ where: { id: bookingId }, data: { statut: "RETOURNEE" } });
+  }
+
+  revalidatePath(`/membre/reservations/${bookingId}`);
+  redirect(`/membre/reservations/${bookingId}`);
+}
+
+export async function accepterContrat(formData: FormData) {
+  const bookingId = String(formData.get("bookingId") ?? "");
+  const { user, booking } = await verifierParticipant(bookingId);
+
+  if (booking.statut === "ANNULEE") {
+    throw new Error("Cette réservation est annulée.");
+  }
+
+  const estProprietaire = booking.proprietaireId === user.id;
+  const dejaAccepte = estProprietaire
+    ? booking.contratAccepteProprietaireLe
+    : booking.contratAccepteLocataireLe;
+
+  if (!dejaAccepte) {
+    await prisma.booking.update({
+      where: { id: bookingId },
+      data: estProprietaire
+        ? { contratAccepteProprietaireLe: new Date() }
+        : { contratAccepteLocataireLe: new Date() },
+    });
   }
 
   revalidatePath(`/membre/reservations/${bookingId}`);

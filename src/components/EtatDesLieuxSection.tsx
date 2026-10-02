@@ -19,6 +19,8 @@ type BookingLite = {
   statut: string;
   modeRemise: string;
   conditionReports: ConditionReport[];
+  contratAccepteLocataireLe: Date | null;
+  contratAccepteProprietaireLe: Date | null;
 };
 
 const LABELS_AUTEUR: Record<string, string> = {
@@ -93,7 +95,8 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
   const rapportsSortie = booking.conditionReports.filter((r) => r.type === "SORTIE");
 
   const circuitPointRelais = booking.modeRemise === "POINT_RELAIS";
-  const peutDeposerEntree = !circuitPointRelais && booking.statut === "EN_COURS";
+  const contratAccepte = Boolean(booking.contratAccepteLocataireLe && booking.contratAccepteProprietaireLe);
+  const peutDeposerEntree = !circuitPointRelais && booking.statut === "EN_COURS" && contratAccepte;
   const peutDeposerSortie =
     !circuitPointRelais && (booking.statut === "EN_COURS" || booking.statut === "RETOURNEE");
 
@@ -110,7 +113,7 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
       <div className="mt-3">
         <h3 className="text-sm font-medium text-gray-600">Entrée (remise)</h3>
         {rapportsEntree.length === 0 ? (
-          <p className="mt-1 text-sm text-gray-400">Aucun état des lieux d&apos;entrée déposé.</p>
+          <p className="mt-1 text-sm text-gray-500">Aucun état des lieux d&apos;entrée déposé.</p>
         ) : (
           <ul className="mt-1 flex flex-col gap-1 text-sm">
             {rapportsEntree.map((r) => (
@@ -121,12 +124,17 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
           </ul>
         )}
         {peutDeposerEntree && <FormulaireEtatDesLieux bookingId={booking.id} type="ENTREE" />}
+        {!circuitPointRelais && booking.statut === "EN_COURS" && !contratAccepte && (
+          <p className="mt-1 text-sm text-gray-600">
+            L&apos;état des lieux d&apos;entrée sera possible une fois le contrat accepté par les deux parties.
+          </p>
+        )}
       </div>
 
       <div className="mt-4">
         <h3 className="text-sm font-medium text-gray-600">Sortie (retour)</h3>
         {rapportsSortie.length === 0 ? (
-          <p className="mt-1 text-sm text-gray-400">Aucun état des lieux de sortie déposé.</p>
+          <p className="mt-1 text-sm text-gray-500">Aucun état des lieux de sortie déposé.</p>
         ) : (
           <ul className="mt-1 flex flex-col gap-1 text-sm">
             {rapportsSortie.map((r) => (
