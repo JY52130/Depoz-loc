@@ -1,4 +1,5 @@
 import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
+import { JOURS_GRATUITS, JOURS_PROLONGATION, PRIX_PROLONGATION } from "@/lib/dureeAnnonce";
 
 export const metadata = { title: "Tarifs & commissions" };
 
@@ -9,7 +10,14 @@ export default function TarifsPage() {
       <ul className="mt-6 space-y-2 text-gray-700">
         <li>Frais de service locataire : 10 % du montant de la location (1 € minimum).</li>
         <li>Commission propriétaire : 15 % du montant de la location.</li>
-        <li>Inscription et publication d&apos;annonces : gratuites.</li>
+        <li>
+          Inscription et publication d&apos;annonces : gratuites. Chaque annonce
+          est en ligne gratuitement {JOURS_GRATUITS} jours.
+        </li>
+        <li>
+          Prolongation d&apos;une annonce : {PRIX_PROLONGATION} € pour {JOURS_PROLONGATION} jours,
+          gratuite si l&apos;objet a déjà été loué.
+        </li>
         <li>
           Frais point relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,
           à la charge du locataire.

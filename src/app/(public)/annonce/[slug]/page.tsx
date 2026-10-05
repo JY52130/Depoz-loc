@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { prisma } from "@/lib/prisma";
 import { ReserverForm } from "@/components/ReserverForm";
 import { AdSlot } from "@/components/AdSlot";
+import { estExpiree } from "@/lib/dureeAnnonce";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -46,7 +47,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
   const { erreur } = await searchParams;
   const listing = await getListing(slug);
 
-  if (!listing || listing.statut !== "EN_LIGNE") {
+  if (!listing || listing.statut !== "EN_LIGNE" || estExpiree(listing.enLigneJusquau)) {
     notFound();
   }
 

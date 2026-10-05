@@ -51,7 +51,24 @@ export default function Page() {
           reversée au propriétaire en compensation.
         </p>
 
-        <h2 className="text-lg font-semibold text-black">6. Facturation</h2>
+        <h2 className="text-lg font-semibold text-black">6. Durée de mise en ligne des annonces</h2>
+        <p>
+          Publier une annonce est gratuit. Après validation par notre équipe,
+          l&apos;annonce reste visible gratuitement pendant 15 jours. Le
+          propriétaire est prévenu par e-mail 3 jours avant la fin.
+        </p>
+        <p>
+          Il peut ensuite la prolonger de 30 jours pour 2 € TTC, payés par carte
+          bancaire, autant de fois qu&apos;il le souhaite. La prolongation est
+          gratuite si l&apos;objet a déjà été loué par le site. Sans
+          prolongation, l&apos;annonce est simplement masquée : elle n&apos;est
+          pas supprimée et peut être prolongée plus tard. Les membres Pro ne
+          sont pas concernés par cette limite. La somme payée pour une
+          prolongation n&apos;est pas remboursable, sauf si l&apos;annonce est
+          retirée par Dépôt Malin sans faute du propriétaire.
+        </p>
+
+        <h2 className="text-lg font-semibold text-black">7. Facturation</h2>
         <p>
           Un reçu simple est fourni aux particuliers ; les professionnels
           reçoivent une facture conforme incluant leur SIRET.

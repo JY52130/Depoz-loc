@@ -9,6 +9,11 @@ import {
   nombreDemiJournees,
 } from "../src/lib/periodeLocation";
 import {
+  dateApresProlongation,
+  estExpiree,
+  finPeriodeGratuite,
+} from "../src/lib/dureeAnnonce";
+import {
   TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
   calculerFraisLocataire,
@@ -129,5 +134,23 @@ assertEqual(
   { erreur: "Choisissez le matin ou l'après-midi." },
   "demi-journée sans créneau refusée"
 );
+
+// --- Durée de mise en ligne des annonces (15 jours gratuits, +30 jours) ---
+const t0 = new Date("2026-10-05T10:00:00Z");
+assertEqual(finPeriodeGratuite(t0, false)?.toISOString(), "2026-10-20T10:00:00.000Z", "15 jours gratuits");
+assertEqual(finPeriodeGratuite(t0, true), null, "pas de limite pour un Pro");
+assertEqual(
+  dateApresProlongation(new Date("2026-10-08T10:00:00Z"), t0).toISOString(),
+  "2026-11-07T10:00:00.000Z",
+  "prolongation avant expiration : +30 jours après la fin prévue"
+);
+assertEqual(
+  dateApresProlongation(new Date("2026-09-01T10:00:00Z"), t0).toISOString(),
+  "2026-11-04T10:00:00.000Z",
+  "prolongation après expiration : +30 jours à partir d'aujourd'hui"
+);
+assertEqual(estExpiree(new Date("2026-10-05T09:00:00Z"), t0), true, "annonce expirée");
+assertEqual(estExpiree(new Date("2026-10-06T09:00:00Z"), t0), false, "annonce encore en ligne");
+assertEqual(estExpiree(null, t0), false, "sans limite : jamais expirée");
 
 console.log("Terminé.");

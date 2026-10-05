@@ -61,3 +61,25 @@ export async function notifierLitigeOuvert(params: {
     }),
   ]);
 }
+
+export async function notifierAnnonceBientotExpiree(params: {
+  emailProprietaire: string;
+  titreAnnonce: string;
+  enLigneJusquau: Date;
+  prolongationGratuite: boolean;
+  lien: string;
+}) {
+  const date = params.enLigneJusquau.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    timeZone: "Europe/Paris",
+  });
+  const prix = params.prolongationGratuite
+    ? "gratuitement, car votre objet a déjà été loué"
+    : "pour 2 €";
+  await envoyerEmail({
+    to: params.emailProprietaire,
+    subject: "Votre annonce Dépôt Malin expire bientôt",
+    html: `<p>Votre annonce « ${params.titreAnnonce} » ne sera plus visible après le ${date}.</p><p>Vous pouvez la prolonger de 30 jours ${prix} depuis <a href="${params.lien}">Mes annonces</a>.</p>`,
+  });
+}

@@ -157,6 +157,13 @@ model Listing {
 
   statut            ListingStatus @default(BROUILLON)
 
+  // Durée de mise en ligne (voir src/lib/dureeAnnonce.ts) : visible jusqu'à
+  // cette date ; null = sans limite (membres Pro, annonces non validées).
+  enLigneJusquau    DateTime?
+  // Dernier paiement de prolongation traité (évite de prolonger deux fois
+  // si Stripe renvoie le même événement).
+  derniereProlongationPaiement String?
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

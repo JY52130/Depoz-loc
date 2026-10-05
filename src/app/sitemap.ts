@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
+import { annonceVisible } from "@/lib/dureeAnnonce";
 
 // Sitemap dynamique (section 12.2) : pages statiques + catégories +
 // catégorie×ville + fiches annonce en ligne.
@@ -36,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [categories, listings] = await Promise.all([
     prisma.category.findMany({ select: { slug: true } }),
     prisma.listing.findMany({
-      where: { statut: "EN_LIGNE" },
+      where: annonceVisible(),
       select: { slug: true, ville: true, updatedAt: true, category: { select: { slug: true } } },
     }),
   ]).catch(() => [[], []] as const);
