@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AdSlot } from "@/components/AdSlot";
 import { annonceVisible } from "@/lib/dureeAnnonce";
+import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
+import { estMiseEnAvant, trierMisesEnAvant } from "@/lib/miseEnAvant";
 
 // Page de destination SEO — une par catégorie de 1er niveau (section 12.1).
 // Générée en SSG et revalidée périodiquement (ISR).
@@ -43,7 +45,7 @@ export default async function CategoriePage({ params }: Props) {
   const cat = await getCategorie(categorie);
   if (!cat) notFound();
 
-  const [listings, villes] = await Promise.all([
+  const [listingsBruts, villes] = await Promise.all([
     prisma.listing.findMany({
       where: { categoryId: cat.id, ...annonceVisible() },
       orderBy: { createdAt: "desc" },
@@ -56,6 +58,7 @@ export default async function CategoriePage({ params }: Props) {
       take: 30,
     }),
   ]);
+  const listings = trierMisesEnAvant(listingsBruts);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-12">
@@ -90,8 +93,9 @@ export default async function CategoriePage({ params }: Props) {
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {listings.map((listing) => (
-              <li key={listing.id} className="rounded-xl border bg-white p-4 shadow-sm">
-                <Link href={`/annonce/${listing.slug}`} className="font-medium hover:underline">
+              <li key={listing.id} className={classeCarte(estMiseEnAvant(listing.misEnAvantJusquau))}>
+                {estMiseEnAvant(listing.misEnAvantJusquau) && <BadgeALaUne />}
+                <Link href={`/annonce/${listing.slug}`} className="block font-medium hover:underline">
                   {listing.titre}
                 </Link>
                 <p className="mt-1 text-sm text-gray-500">{listing.ville}</p>

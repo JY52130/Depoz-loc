@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { rechercherAnnonces, rechercherAnnoncesProximite } from "@/lib/recherche";
 import type { DeliveryMode } from "@prisma/client";
+import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
+import { estMiseEnAvant } from "@/lib/miseEnAvant";
 
 export const metadata = { title: "Résultats de recherche" };
 
@@ -84,8 +86,9 @@ export default async function RecherchePage({ searchParams }: Props) {
       ) : (
         <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {resultats.map((annonce) => (
-            <li key={annonce.id} className="rounded-xl border bg-white p-4 shadow-sm">
-              <Link href={`/annonce/${annonce.slug}`} className="font-medium hover:underline">
+            <li key={annonce.id} className={classeCarte(estMiseEnAvant(annonce.misEnAvantJusquau))}>
+              {estMiseEnAvant(annonce.misEnAvantJusquau) && <BadgeALaUne />}
+              <Link href={`/annonce/${annonce.slug}`} className="block font-medium hover:underline">
                 {annonce.titre}
               </Link>
               <p className="mt-1 text-sm text-gray-500">{annonce.ville}</p>

@@ -11,6 +11,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { DeliveryMode } from "@prisma/client";
 import { annonceVisible } from "@/lib/dureeAnnonce";
+import { trierMisesEnAvant } from "@/lib/miseEnAvant";
 
 export type FiltresRecherche = {
   texte?: string;
@@ -51,7 +52,7 @@ export async function rechercherAnnonces(filtres: FiltresRecherche) {
     ];
   }
 
-  return prisma.listing.findMany({
+  const annonces = await prisma.listing.findMany({
     where,
     include: { category: true },
     orderBy:
@@ -60,6 +61,7 @@ export async function rechercherAnnonces(filtres: FiltresRecherche) {
         : [{ createdAt: "desc" }],
     take: 50,
   });
+  return trierMisesEnAvant(annonces);
 }
 
 export type ResultatProximite = {
@@ -67,6 +69,7 @@ export type ResultatProximite = {
   slug: string;
   titre: string;
   ville: string | null;
+  misEnAvantJusquau: Date | null;
   distanceMetres: number;
 };
 
@@ -87,12 +90,13 @@ export async function rechercherAnnoncesProximite(
     ? Prisma.sql`AND c.slug = ${categorieSlug}`
     : Prisma.empty;
 
-  return prisma.$queryRaw<ResultatProximite[]>`
+  const resultats = await prisma.$queryRaw<ResultatProximite[]>`
     SELECT
       l.id,
       l.slug,
       l.titre,
       l.ville,
+      l."misEnAvantJusquau",
       ST_Distance(
         ST_MakePoint(l.longitude, l.latitude)::geography,
         ST_MakePoint(${longitude}, ${latitude})::geography
@@ -112,4 +116,5 @@ export async function rechercherAnnoncesProximite(
     ORDER BY "distanceMetres" ASC
     LIMIT 50;
   `;
+  return trierMisesEnAvant(resultats);
 }

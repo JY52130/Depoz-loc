@@ -3,6 +3,8 @@ import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd } from "@/components/JsonLd";
 import { CATEGORIES } from "@/lib/categories";
+import { annoncesALaUne } from "@/lib/annoncesALaUne";
+import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
 
 export const metadata = {
   title: "Louer plutôt qu'acheter, près de chez soi",
@@ -41,7 +43,12 @@ const ETAPES = [
   },
 ];
 
-export default function AccueilPage() {
+// La section « À la une » (annonces mises en avant) est rafraîchie toutes les 10 minutes.
+export const revalidate = 600;
+
+export default async function AccueilPage() {
+  const aLaUne = await annoncesALaUne();
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
 
   const organisationJsonLd = {
@@ -116,6 +123,28 @@ export default function AccueilPage() {
           </ul>
         </div>
       </section>
+
+      {aLaUne.length > 0 && (
+        <section aria-labelledby="titre-a-la-une" className="mx-auto max-w-6xl px-4 pt-16">
+          <h2 id="titre-a-la-une" className="text-3xl font-bold tracking-tight">
+            À la une
+          </h2>
+          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {aLaUne.map((annonce) => (
+              <li key={annonce.id} className={classeCarte(true)}>
+                <BadgeALaUne />
+                <Link href={`/annonce/${annonce.slug}`} className="block font-medium hover:underline">
+                  {annonce.titre}
+                </Link>
+                <p className="mt-1 text-sm text-gray-500">
+                  {annonce.category.nom}
+                  {annonce.ville ? ` · ${annonce.ville}` : ""}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex items-end justify-between gap-4">

@@ -5,6 +5,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
 import { annonceVisible } from "@/lib/dureeAnnonce";
+import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
+import { estMiseEnAvant, trierMisesEnAvant } from "@/lib/miseEnAvant";
 
 // Page de destination SEO — catégorie × ville (section 12.1), cœur du trafic organique.
 // Exemple d'URL cible : /location/petit-outillage/chaumont
@@ -44,7 +46,7 @@ async function getDonnees(categorieSlug: string, villeSlug: string) {
 
   // Le slug de ville est dérivé du nom réel (section 12.1) — on filtre côté
   // app plutôt qu'en base tant que la ville n'est pas normalisée en colonne dédiée.
-  const listingsVille = listings.filter((l) => l.ville && slugify(l.ville) === villeSlug);
+  const listingsVille = trierMisesEnAvant(listings.filter((l) => l.ville && slugify(l.ville) === villeSlug));
   const nomVille = listingsVille[0]?.ville ?? villeSlug.replace(/-/g, " ");
 
   return { categorie, listingsVille, nomVille };
@@ -97,8 +99,9 @@ export default async function CategorieVillePage({ params }: Props) {
       {listingsVille.length > 0 && (
         <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {listingsVille.map((listing) => (
-            <li key={listing.id} className="rounded-xl border bg-white p-4 shadow-sm">
-              <Link href={`/annonce/${listing.slug}`} className="font-medium hover:underline">
+            <li key={listing.id} className={classeCarte(estMiseEnAvant(listing.misEnAvantJusquau))}>
+              {estMiseEnAvant(listing.misEnAvantJusquau) && <BadgeALaUne />}
+              <Link href={`/annonce/${listing.slug}`} className="block font-medium hover:underline">
                 {listing.titre}
               </Link>
             </li>
