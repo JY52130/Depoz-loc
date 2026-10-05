@@ -2,6 +2,8 @@
 // publique /contrat-de-location (modèle consultable avant de réserver) et
 // rempli avec les informations de la réservation dans l'espace membre.
 
+import { libellePeriode } from "@/lib/periodeLocation";
+
 export type DonneesContrat = {
   proprietaire: { nom: string | null; email: string };
   locataire: { nom: string | null; email: string };
@@ -25,10 +27,6 @@ const LABELS_REMISE: Record<string, string> = {
 
 function euros(montant: number): string {
   return montant.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
-}
-
-function date(d: Date): string {
-  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
 function dateHeure(d: Date): string {
@@ -90,8 +88,8 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
 
       <h2 className="text-lg font-semibold text-black">3. Durée et remise</h2>
       <p>
-        La location commence le <Champ valeur={d ? date(d.dateDebut) : undefined} modele="date de début" />{" "}
-        et se termine le <Champ valeur={d ? date(d.dateFin) : undefined} modele="date de fin" />. Mode de
+        La location a lieu{" "}
+        <Champ valeur={d ? libellePeriode(d.dateDebut, d.dateFin) : undefined} modele="du … au …, à la demi-journée, à la journée ou à la semaine" />. Mode de
         remise : <Champ valeur={d ? LABELS_REMISE[d.modeRemise] ?? d.modeRemise : undefined} modele="main à main ou point relais" />.
         Le lieu et l&apos;heure de remise et de retour sont convenus entre les parties
         par la messagerie du site.
