@@ -11,6 +11,7 @@ import {
   STATUTS_LOCATION_PAYEE,
   dateApresProlongation,
 } from "@/lib/dureeAnnonce";
+import { JOURS_MISE_EN_AVANT, prixMiseEnAvant } from "@/lib/miseEnAvant";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -62,6 +63,49 @@ export async function prolongerAnnonce(formData: FormData) {
       metadata: { type: "prolongation_annonce", listingId: annonce.id },
     },
     success_url: `${siteUrl}/membre/mes-annonces?prolongee=payee`,
+    cancel_url: `${siteUrl}/membre/mes-annonces`,
+  });
+
+  if (!session.url) {
+    redirect("/membre/mes-annonces?erreur=Le+paiement+n%27a+pas+pu+d%C3%A9marrer.");
+  }
+  redirect(session.url);
+}
+
+// Service payant « annonce mise en avant » (voir src/lib/miseEnAvant.ts) :
+// paiement par Stripe Checkout ; la mise en avant est appliquée par le
+// webhook Stripe une fois le paiement reçu.
+export async function mettreEnAvant(formData: FormData) {
+  const user = await getOrCreateUser();
+  if (!user) redirect("/connexion?redirect=/membre/mes-annonces");
+
+  const listingId = String(formData.get("listingId") ?? "");
+  const annonce = await prisma.listing.findUnique({ where: { id: listingId } });
+  if (!annonce || annonce.proprietaireId !== user.id || annonce.statut !== "EN_LIGNE") {
+    redirect("/membre/mes-annonces?erreur=Seule+une+annonce+en+ligne+peut+%C3%AAtre+mise+en+avant.");
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer_email: user.email,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(prixMiseEnAvant(annonce) * 100),
+          product_data: {
+            name: `Annonce mise en avant ${JOURS_MISE_EN_AVANT} jours`,
+            description: `Annonce « ${annonce.titre} »`,
+          },
+        },
+      },
+    ],
+    // Repris par le webhook (payment_intent.succeeded).
+    payment_intent_data: {
+      metadata: { type: "mise_en_avant", listingId: annonce.id },
+    },
+    success_url: `${siteUrl}/membre/mes-annonces?enavant=1`,
     cancel_url: `${siteUrl}/membre/mes-annonces`,
   });
 

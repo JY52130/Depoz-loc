@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe/client";
 import { prisma } from "@/lib/prisma";
 import { notifierPaiementRecu } from "@/lib/email/notifications";
 import { dateApresProlongation } from "@/lib/dureeAnnonce";
+import { dateApresMiseEnAvant } from "@/lib/miseEnAvant";
 
 // Webhook Stripe (section 11.1). À configurer dans le dashboard Stripe sur
 // `${SITE_URL}/api/webhooks/stripe` avec les événements :
@@ -20,6 +21,26 @@ async function prolongerAnnoncePayee(listingId: string | undefined, paymentInten
     data: {
       enLigneJusquau: dateApresProlongation(annonce.enLigneJusquau, new Date()),
       derniereProlongationPaiement: paymentIntentId,
+    },
+  });
+  revalidatePath("/", "layout");
+}
+
+async function appliquerMiseEnAvant(listingId: string | undefined, paymentIntentId: string) {
+  if (!listingId) return;
+  const annonce = await prisma.listing.findUnique({ where: { id: listingId } });
+  // Stripe peut renvoyer le même événement : on n'applique qu'une fois.
+  if (!annonce || annonce.dernierPaiementMiseEnAvant === paymentIntentId) return;
+  const misEnAvantJusquau = dateApresMiseEnAvant(annonce.misEnAvantJusquau, new Date());
+  await prisma.listing.update({
+    where: { id: listingId },
+    data: {
+      misEnAvantJusquau,
+      // Une annonce payée pour être à la une reste en ligne au moins jusque-là.
+      ...(annonce.enLigneJusquau && annonce.enLigneJusquau < misEnAvantJusquau
+        ? { enLigneJusquau: misEnAvantJusquau }
+        : {}),
+      dernierPaiementMiseEnAvant: paymentIntentId,
     },
   });
   revalidatePath("/", "layout");
@@ -50,6 +71,12 @@ export async function POST(request: Request) {
         // Prolongation payante d'une annonce (2 € pour 30 jours).
         if (paymentIntent.metadata?.type === "prolongation_annonce") {
           await prolongerAnnoncePayee(paymentIntent.metadata.listingId, paymentIntent.id);
+          break;
+        }
+
+        // Annonce mise en avant (service payant).
+        if (paymentIntent.metadata?.type === "mise_en_avant") {
+          await appliquerMiseEnAvant(paymentIntent.metadata.listingId, paymentIntent.id);
           break;
         }
 

@@ -68,7 +68,21 @@ export default function Page() {
           retirée par Dépôt Malin sans faute du propriétaire.
         </p>
 
-        <h2 className="text-lg font-semibold text-black">7. Facturation</h2>
+        <h2 className="text-lg font-semibold text-black">7. Annonce mise en avant</h2>
+        <p>
+          Le propriétaire peut payer pour mettre son annonce « À la une »
+          pendant 7 jours : elle apparaît alors en tête des résultats de
+          recherche et de sa catégorie, avec un badge, et sur la page
+          d&apos;accueil. Le prix dépend du prix de location à la journée de
+          l&apos;objet : 2 € TTC jusqu&apos;à 10 € par jour, 4 € TTC de 10 à
+          30 € par jour, 6 € TTC au-delà. Une annonce à la une reste en ligne
+          au moins jusqu&apos;à la fin de cette période. La mise en avant ne
+          garantit pas de location et n&apos;est pas remboursable, sauf si
+          l&apos;annonce est retirée par Dépôt Malin sans faute du
+          propriétaire.
+        </p>
+
+        <h2 className="text-lg font-semibold text-black">8. Facturation</h2>
         <p>
           Un reçu simple est fourni aux particuliers ; les professionnels
           reçoivent une facture conforme incluant leur SIRET.

@@ -1,5 +1,6 @@
 import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
 import { JOURS_GRATUITS, JOURS_PROLONGATION, PRIX_PROLONGATION } from "@/lib/dureeAnnonce";
+import { JOURS_MISE_EN_AVANT } from "@/lib/miseEnAvant";
 
 export const metadata = { title: "Tarifs & commissions" };
 
@@ -17,6 +18,10 @@ export default function TarifsPage() {
         <li>
           Prolongation d&apos;une annonce : {PRIX_PROLONGATION} € pour {JOURS_PROLONGATION} jours,
           gratuite si l&apos;objet a déjà été loué.
+        </li>
+        <li>
+          Annonce « À la une » pendant {JOURS_MISE_EN_AVANT} jours (option) : 2 € si l&apos;objet se loue
+          jusqu&apos;à 10 € par jour, 4 € de 10 à 30 € par jour, 6 € au-delà.
         </li>
         <li>
           Frais point relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,

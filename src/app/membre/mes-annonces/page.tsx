@@ -9,11 +9,14 @@ import {
   estExpiree,
   expireBientot,
 } from "@/lib/dureeAnnonce";
-import { prolongerAnnonce } from "./actions";
+import { JOURS_MISE_EN_AVANT, estMiseEnAvant, prixMiseEnAvant } from "@/lib/miseEnAvant";
+import { mettreEnAvant, prolongerAnnonce } from "./actions";
 
 export const metadata = { title: "Mes annonces" };
 
-type Props = { searchParams: Promise<{ creee?: string; prolongee?: string; erreur?: string }> };
+type Props = {
+  searchParams: Promise<{ creee?: string; prolongee?: string; enavant?: string; erreur?: string }>;
+};
 
 function dateCourte(d: Date): string {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" });
@@ -68,6 +71,13 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
         </p>
       )}
 
+      {params.enavant && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+          Merci ! Votre paiement est reçu : votre annonce est « À la une » pendant {JOURS_MISE_EN_AVANT} jours (cela
+          s&apos;affiche dans quelques instants).
+        </p>
+      )}
+
       {params.erreur && (
         <p role="alert" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {params.erreur}
@@ -104,6 +114,25 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
                   enLigneJusquau={annonce.enLigneJusquau}
                   dejaLouee={annonce._count.bookings > 0}
                 />
+              )}
+              {annonce.statut === "EN_LIGNE" && !estExpiree(annonce.enLigneJusquau) && (
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t pt-3 text-sm">
+                  <p className="text-gray-600">
+                    {estMiseEnAvant(annonce.misEnAvantJusquau)
+                      ? `★ À la une jusqu'au ${dateCourte(annonce.misEnAvantJusquau!)}.`
+                      : "Passez en tête des résultats avec le badge « À la une »."}
+                  </p>
+                  <form action={mettreEnAvant}>
+                    <input type="hidden" name="listingId" value={annonce.id} />
+                    <button
+                      type="submit"
+                      className="rounded-lg bg-accent px-3 py-1.5 font-medium text-ink transition hover:brightness-105"
+                    >
+                      {estMiseEnAvant(annonce.misEnAvantJusquau) ? "Ajouter" : "Mettre à la une"} {JOURS_MISE_EN_AVANT}{" "}
+                      jours ({prixMiseEnAvant(annonce)} €)
+                    </button>
+                  </form>
+                </div>
               )}
             </li>
           ))}

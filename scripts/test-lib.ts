@@ -14,6 +14,11 @@ import {
   finPeriodeGratuite,
 } from "../src/lib/dureeAnnonce";
 import {
+  dateApresMiseEnAvant,
+  prixMiseEnAvant,
+  trierMisesEnAvant,
+} from "../src/lib/miseEnAvant";
+import {
   TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
   calculerFraisLocataire,
@@ -152,5 +157,30 @@ assertEqual(
 assertEqual(estExpiree(new Date("2026-10-05T09:00:00Z"), t0), true, "annonce expirée");
 assertEqual(estExpiree(new Date("2026-10-06T09:00:00Z"), t0), false, "annonce encore en ligne");
 assertEqual(estExpiree(null, t0), false, "sans limite : jamais expirée");
+
+// --- Annonce mise en avant (paliers 2 / 4 / 6 €, 7 jours) ---
+assertEqual(prixMiseEnAvant({ prixJournee: 8 }), 2, "mise en avant : 8 €/jour → 2 €");
+assertEqual(prixMiseEnAvant({ prixJournee: 10 }), 2, "mise en avant : 10 €/jour → 2 €");
+assertEqual(prixMiseEnAvant({ prixJournee: "25.00" }), 4, "mise en avant : 25 €/jour (Decimal) → 4 €");
+assertEqual(prixMiseEnAvant({ prixJournee: 45 }), 6, "mise en avant : 45 €/jour → 6 €");
+assertEqual(prixMiseEnAvant({ prixDemiJournee: 8 }), 4, "mise en avant : demi-journée 8 € = 16 €/jour → 4 €");
+assertEqual(prixMiseEnAvant({ prixSemaine: 280 }), 6, "mise en avant : semaine 280 € = 40 €/jour → 6 €");
+assertEqual(
+  dateApresMiseEnAvant(null, t0).toISOString(),
+  "2026-10-12T10:00:00.000Z",
+  "mise en avant : 7 jours à partir d'aujourd'hui"
+);
+assertEqual(
+  trierMisesEnAvant(
+    [
+      { id: "a", misEnAvantJusquau: null },
+      { id: "b", misEnAvantJusquau: new Date("2026-10-10T00:00:00Z") },
+      { id: "c", misEnAvantJusquau: new Date("2026-10-01T00:00:00Z") },
+    ],
+    t0
+  ).map((a) => a.id),
+  ["b", "a", "c"],
+  "annonces à la une en premier (expirée = normale)"
+);
 
 console.log("Terminé.");

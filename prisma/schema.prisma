@@ -163,6 +163,9 @@ model Listing {
   // Dernier paiement de prolongation traité (évite de prolonger deux fois
   // si Stripe renvoie le même événement).
   derniereProlongationPaiement String?
+  // Service payant « annonce mise en avant » (voir src/lib/miseEnAvant.ts).
+  misEnAvantJusquau            DateTime?
+  dernierPaiementMiseEnAvant   String?
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
