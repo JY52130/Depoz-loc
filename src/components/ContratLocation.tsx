@@ -2,7 +2,7 @@
 // publique /contrat-de-location (modèle consultable avant de réserver) et
 // rempli avec les informations de la réservation dans l'espace membre.
 
-import { libellePeriode } from "@/lib/periodeLocation";
+import { libellePeriode, nombreDemiJournees } from "@/lib/periodeLocation";
 
 export type DonneesContrat = {
   proprietaire: { nom: string | null; email: string };
@@ -48,6 +48,9 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
   const d = donnees;
   const nomProprietaire = d ? d.proprietaire.nom || d.proprietaire.email : undefined;
   const nomLocataire = d ? d.locataire.nom || d.locataire.email : undefined;
+  // Durée en jours (une demi-journée compte pour 0,5 jour).
+  const nbJours = d ? nombreDemiJournees(d.dateDebut, d.dateFin) / 2 : undefined;
+  const prixParJour = d && nbJours ? Math.round((d.montantLocation / nbJours) * 100) / 100 : undefined;
   const totalLocataire = d
     ? d.montantLocation + d.fraisServiceLocataire + (d.fraisPointRelais ?? 0)
     : undefined;
@@ -78,7 +81,8 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
       {d && <p className="whitespace-pre-line">Description de l&apos;annonce : {d.objet.description}</p>}
       <p>
         L&apos;objet est remis avec ses accessoires et sa notice d&apos;utilisation
-        lorsqu&apos;ils existent, tels que décrits dans l&apos;annonce.
+        lorsqu&apos;ils existent, tels que décrits dans l&apos;annonce. Il est loué
+        pour un usage strictement personnel du locataire.
       </p>
 
       <h2 className="text-lg font-semibold text-black">3. Durée et remise</h2>
@@ -109,60 +113,144 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
       <p>
         Montant de la caution : <Champ valeur={d ? euros(d.montantCaution) : undefined} modele="montant" />.
         La carte bancaire du locataire est enregistrée à la réservation mais
-        n&apos;est pas débitée. Elle ne peut l&apos;être qu&apos;en cas de dommage, de
-        perte ou de non-restitution de l&apos;objet, constaté après la procédure de
-        litige de l&apos;article 9, et dans la limite du montant de la caution.
+        n&apos;est pas débitée. Elle ne peut l&apos;être qu&apos;à l&apos;issue de la
+        procédure de litige de l&apos;article 11, dans la limite du montant de la
+        caution, pour couvrir les sommes dues au titre des articles 8 et 9 (dommages,
+        perte, vol, non-restitution, retard, nettoyage).
+      </p>
+      <p>
+        La caution ne couvre pas l&apos;usure normale de l&apos;objet. Si les sommes dues
+        dépassent la caution, le propriétaire peut réclamer la différence directement
+        au locataire.
       </p>
 
       <h2 className="text-lg font-semibold text-black">6. Engagements du propriétaire</h2>
       <ul className="list-disc pl-6">
-        <li>Remettre un objet conforme à l&apos;annonce, propre, en bon état de marche et sans danger.</li>
-        <li>Être le propriétaire de l&apos;objet ou avoir le droit de le louer.</li>
-        <li>Expliquer au locataire comment utiliser l&apos;objet et les précautions à prendre.</li>
+        <li>
+          Déclarer être le propriétaire de l&apos;objet, ou avoir le droit de le louer.
+        </li>
+        <li>
+          Remettre un objet conforme à l&apos;annonce, propre, en bon état de marche,
+          sans danger et conforme aux normes de sécurité qui s&apos;y appliquent
+          (marquage CE pour les appareils et outils concernés).
+        </li>
+        <li>
+          Fournir les accessoires et la notice d&apos;utilisation prévus, expliquer au
+          locataire le fonctionnement de l&apos;objet et les précautions à prendre
+          (gants, lunettes, protections…).
+        </li>
+        <li>
+          Signaler dans l&apos;annonce ou par la messagerie tout défaut connu de
+          l&apos;objet. Si un défaut a été caché, le propriétaire ne peut pas en
+          réclamer la réparation au locataire.
+        </li>
         <li>Être présent ou joignable aux dates de remise et de retour convenues.</li>
       </ul>
+      <p>
+        Lors de la remise, le propriétaire peut demander à voir une pièce
+        d&apos;identité du locataire, afin de vérifier qu&apos;il s&apos;agit bien de la
+        personne qui a réservé.
+      </p>
 
       <h2 className="text-lg font-semibold text-black">7. Engagements du locataire</h2>
       <ul className="list-disc pl-6">
-        <li>Utiliser l&apos;objet avec soin, selon son usage normal et la notice.</li>
-        <li>Ne pas prêter ni sous-louer l&apos;objet, et ne pas le modifier.</li>
+        <li>
+          Être majeur et disposer, si l&apos;objet l&apos;exige, des permis,
+          habilitations ou compétences nécessaires pour l&apos;utiliser. Si un mineur
+          utilise l&apos;objet, le locataire en reste responsable.
+        </li>
+        <li>
+          Vérifier l&apos;objet avec le propriétaire lors de la remise (état,
+          fonctionnement, accessoires). En acceptant l&apos;objet sans réserve, le
+          locataire reconnaît l&apos;avoir reçu en bon état, sauf défaut caché.
+        </li>
+        <li>
+          Utiliser l&apos;objet avec soin, selon son usage normal, la notice et les
+          consignes de sécurité, et le ranger à l&apos;abri pendant la location.
+        </li>
+        <li>Ne pas prêter ni sous-louer l&apos;objet, ne pas le modifier, et ne pas l&apos;utiliser à des fins illégales.</li>
         <li>Prévenir le propriétaire sans attendre en cas de panne, de dommage, de perte ou de vol.</li>
         <li>
-          Rendre l&apos;objet propre, avec ses accessoires, à la date prévue. En cas de
-          retard, prévenir le propriétaire au plus tôt.
-        </li>
-        <li>
-          Répondre des dommages, de la perte ou du vol survenus pendant la location,
-          sauf usure normale ou défaut de l&apos;objet existant avant la remise.
+          Rendre l&apos;objet propre, avec tous ses accessoires, au lieu et à la date
+          convenus. Les consommables (carburant, piles, cartouches…) ne sont pas compris
+          dans le prix, sauf mention contraire dans l&apos;annonce : un objet à moteur
+          est rendu avec le même niveau de carburant qu&apos;à la remise.
         </li>
       </ul>
-
-      <h2 className="text-lg font-semibold text-black">8. États des lieux</h2>
       <p>
-        À la remise et au retour, chaque partie peut déposer sur le site un état des
-        lieux avec photos et remarques. Ces états des lieux servent de preuve de
-        l&apos;état de l&apos;objet en cas de désaccord. Les parties sont invitées à
-        prendre des photos nettes de l&apos;objet sous plusieurs angles.
+        Du moment où il reçoit l&apos;objet jusqu&apos;à sa restitution, le locataire en
+        a la garde. Il est responsable des dommages que l&apos;objet pourrait causer à
+        lui-même ou à d&apos;autres personnes pendant cette période, sauf si ces
+        dommages viennent d&apos;un défaut de l&apos;objet.
       </p>
 
-      <h2 className="text-lg font-semibold text-black">9. Litige</h2>
+      <h2 className="text-lg font-semibold text-black">8. Dommages, perte et vol</h2>
+      <ul className="list-disc pl-6">
+        <li>
+          <strong>Objet abîmé et réparable</strong> : le locataire paie la réparation,
+          sur présentation d&apos;un devis ou d&apos;une facture d&apos;un réparateur.
+        </li>
+        <li>
+          <strong>Objet irréparable, perdu ou non rendu</strong> : le locataire paie la
+          valeur de l&apos;objet au jour du sinistre, compte tenu de son âge et de son
+          usure, sur présentation d&apos;une preuve de cette valeur (facture d&apos;achat,
+          attestation d&apos;un réparateur, annonce d&apos;un objet équivalent).
+        </li>
+        <li>
+          <strong>Vol</strong> : le locataire porte plainte auprès de la police ou de la
+          gendarmerie et transmet une copie de la plainte au propriétaire. Le vol est
+          traité comme une perte.
+        </li>
+        <li>
+          <strong>Objet rendu sale</strong> : si un nettoyage particulier est
+          nécessaire, au-delà de l&apos;usage normal, il est à la charge du locataire.
+        </li>
+      </ul>
+      <p>
+        Les parties cherchent d&apos;abord un accord amiable. À défaut, la procédure de
+        litige de l&apos;article 11 s&apos;applique.
+      </p>
+
+      <h2 className="text-lg font-semibold text-black">9. Retard</h2>
+      <p>
+        En cas de retard de restitution, le locataire prévient le propriétaire au plus
+        tôt. Chaque jour de retard est dû au propriétaire au prix de{" "}
+        <Champ valeur={prixParJour !== undefined ? euros(prixParJour) : undefined} modele="prix moyen d'une journée de cette location" />{" "}
+        par jour, sauf accord entre les parties pour prolonger la location par le site.
+      </p>
+
+      <h2 className="text-lg font-semibold text-black">10. États des lieux</h2>
+      <p>
+        À la remise et au retour, les parties vérifient l&apos;objet ensemble et
+        chacune peut déposer sur le site un état des lieux avec photos et remarques.
+        L&apos;état des lieux d&apos;entrée est possible une fois le contrat accepté par
+        les deux parties. Ces états des lieux servent de preuve de l&apos;état de
+        l&apos;objet en cas de désaccord : prenez des photos nettes, sous plusieurs
+        angles, et testez le fonctionnement de l&apos;objet devant l&apos;autre partie.
+      </p>
+
+      <h2 className="text-lg font-semibold text-black">11. Litige</h2>
       <p>
         En cas de désaccord, chaque partie peut ouvrir un litige depuis la page de la
         réservation, entre la remise et la clôture de la location. Dépôt Malin examine
-        les états des lieux, les photos et les messages échangés, et propose une
-        solution. Si aucun accord amiable n&apos;est trouvé, les parties restent libres
-        de saisir le tribunal compétent. Le présent contrat est soumis au droit
-        français.
+        les états des lieux, les photos, les justificatifs (devis, factures, plainte)
+        et les messages échangés, et propose une solution. Si aucun accord amiable
+        n&apos;est trouvé, les parties restent libres de saisir le tribunal compétent.
       </p>
-
-      <h2 className="text-lg font-semibold text-black">10. Assurance</h2>
       <p>
-        Dépôt Malin n&apos;assure pas les objets loués. Chaque partie est invitée à
-        vérifier auprès de son assureur que son assurance responsabilité civile
-        couvre la location ou l&apos;emprunt d&apos;objets entre particuliers.
+        Le présent contrat est un contrat de location de chose (articles 1709 et
+        suivants du Code civil), soumis au droit français.
       </p>
 
-      <h2 className="text-lg font-semibold text-black">11. Acceptation</h2>
+      <h2 className="text-lg font-semibold text-black">12. Assurance</h2>
+      <p>
+        Dépôt Malin n&apos;assure pas les objets loués. Chaque partie vérifie auprès de
+        son assureur que son assurance habitation (responsabilité civile) couvre la
+        location d&apos;objets entre particuliers. Attention : cette assurance ne
+        couvre pas toujours les dommages causés à un objet loué, ni son vol.
+      </p>
+
+      <h2 className="text-lg font-semibold text-black">13. Acceptation</h2>
       <p>
         Le contrat est accepté en ligne par chaque partie, en cochant la case prévue
         ou en cliquant sur le bouton d&apos;acceptation. La date et l&apos;heure de
