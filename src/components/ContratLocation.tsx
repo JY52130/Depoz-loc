@@ -2,7 +2,7 @@
 // publique /contrat-de-location (modèle consultable avant de réserver) et
 // rempli avec les informations de la réservation dans l'espace membre.
 
-import { libellePeriode } from "@/lib/periodeLocation";
+import { libellePeriode, nombreDemiJournees } from "@/lib/periodeLocation";
 
 export type DonneesContrat = {
   proprietaire: { nom: string | null; email: string };
@@ -48,9 +48,8 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
   const d = donnees;
   const nomProprietaire = d ? d.proprietaire.nom || d.proprietaire.email : undefined;
   const nomLocataire = d ? d.locataire.nom || d.locataire.email : undefined;
-  const nbJours = d
-    ? Math.max(1, Math.round((d.dateFin.getTime() - d.dateDebut.getTime()) / 86_400_000) + 1)
-    : undefined;
+  // Durée en jours (une demi-journée compte pour 0,5 jour).
+  const nbJours = d ? nombreDemiJournees(d.dateDebut, d.dateFin) / 2 : undefined;
   const prixParJour = d && nbJours ? Math.round((d.montantLocation / nbJours) * 100) / 100 : undefined;
   const totalLocataire = d
     ? d.montantLocation + d.fraisServiceLocataire + (d.fraisPointRelais ?? 0)
