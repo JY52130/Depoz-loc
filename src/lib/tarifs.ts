@@ -6,6 +6,8 @@
 //
 // Hypothèse (à confirmer) : 1 semaine = 7 jours, 1 mois = 30 jours.
 
+import { nombreDemiJournees } from "./periodeLocation";
+
 export type TarifsPaliers = {
   demiJournee?: number;
   journee?: number;
@@ -14,13 +16,6 @@ export type TarifsPaliers = {
 };
 
 type Palier = { nom: string; uniteDemiJournees: number; prix: number };
-
-const MS_PAR_JOUR = 24 * 60 * 60 * 1000;
-
-function joursInclusifs(dateDebut: Date, dateFin: Date): number {
-  const diff = Math.round((dateFin.getTime() - dateDebut.getTime()) / MS_PAR_JOUR);
-  return Math.max(1, diff + 1); // ex: même jour = 1 jour ; J à J+2 = 3 jours
-}
 
 function paliersDisponibles(tarifs: TarifsPaliers): Palier[] {
   const paliers: Palier[] = [];
@@ -51,8 +46,8 @@ export function calculerPrixLocation(
     throw new Error("Aucun tarif n'est configuré sur cette annonce.");
   }
 
-  const jours = joursInclusifs(dateDebut, dateFin);
-  const uniteCible = jours * 2; // en demi-journées
+  // Une demi-journée = 1 unité, un jour = 2 unités (voir periodeLocation.ts).
+  const uniteCible = nombreDemiJournees(dateDebut, dateFin);
 
   // dp[u] = coût minimum pour couvrir AU MOINS u demi-journées.
   const dp: number[] = new Array(uniteCible + 1).fill(Infinity);

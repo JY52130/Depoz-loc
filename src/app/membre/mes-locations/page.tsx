@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
+import { libellePeriode } from "@/lib/periodeLocation";
 
 export const metadata = { title: "Mes locations" };
 
@@ -31,8 +32,7 @@ export default async function MesLocationsPage() {
                     {booking.listing.titre}
                   </Link>
                   <p className="text-gray-500">
-                    {new Date(booking.dateDebut).toLocaleDateString("fr-FR")} →{" "}
-                    {new Date(booking.dateFin).toLocaleDateString("fr-FR")} · {booking.statut}
+                    {libellePeriode(booking.dateDebut, booking.dateFin, { day: "numeric", month: "numeric", year: "numeric" })} · {booking.statut}
                   </p>
                 </div>
                 {booking.statut === "RESERVEE" ? (

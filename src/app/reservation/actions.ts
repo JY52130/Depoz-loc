@@ -12,13 +12,12 @@ import {
   calculerFraisLocataire,
 } from "@/lib/constantesReservation";
 import { calculerPrixLocation } from "@/lib/tarifs";
+import { construirePeriode } from "@/lib/periodeLocation";
 import type { DeliveryMode } from "@prisma/client";
 
 export async function creerReservation(formData: FormData) {
   const user = await getOrCreateUser();
   const listingId = String(formData.get("listingId") ?? "");
-  const dateDebutStr = String(formData.get("dateDebut") ?? "");
-  const dateFinStr = String(formData.get("dateFin") ?? "");
   const modeRemise = String(formData.get("modeRemise") ?? "") as DeliveryMode;
 
   if (!user) {
@@ -43,11 +42,27 @@ export async function creerReservation(formData: FormData) {
     redirect(`/annonce/${listing.slug}?erreur=Mode+de+remise+invalide.`);
   }
 
-  const dateDebut = new Date(dateDebutStr);
-  const dateFin = new Date(dateFinStr);
+  // Durée choisie : demi-journée, jours ou semaines (voir periodeLocation.ts).
+  const periode = construirePeriode({
+    formule: String(formData.get("formule") ?? ""),
+    date: String(formData.get("dateDebut") ?? ""),
+    creneau: String(formData.get("creneau") ?? ""),
+    dateFin: String(formData.get("dateFin") ?? ""),
+    nbSemaines: String(formData.get("nbSemaines") ?? ""),
+  });
 
-  if (Number.isNaN(dateDebut.getTime()) || Number.isNaN(dateFin.getTime()) || dateFin < dateDebut) {
-    redirect(`/annonce/${listing.slug}?erreur=Dates+invalides.`);
+  if ("erreur" in periode) {
+    redirect(`/annonce/${listing.slug}?erreur=${encodeURIComponent(periode.erreur)}`);
+  }
+
+  const { dateDebut, dateFin } = periode;
+  const aujourdhui = new Date(new Date().toISOString().slice(0, 10) + "T00:00:00Z");
+  if (dateDebut < aujourdhui) {
+    redirect(`/annonce/${listing.slug}?erreur=${encodeURIComponent("La date de début est déjà passée.")}`);
+  }
+
+  if (formData.get("formule") === "demi_journee" && listing.prixDemiJournee == null) {
+    redirect(`/annonce/${listing.slug}?erreur=${encodeURIComponent("Cet objet ne se loue pas à la demi-journée.")}`);
   }
 
   const disponible = await estDisponible(listing.id, dateDebut, dateFin);
