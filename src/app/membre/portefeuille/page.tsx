@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe/client";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { demarrerOnboardingStripe } from "./actions";
+import { libellePeriode } from "@/lib/periodeLocation";
 
 export const metadata = { title: "Portefeuille" };
 
@@ -89,8 +90,7 @@ export default async function PortefeuillePage({ searchParams }: Props) {
                   <div>
                     <p>{booking.listing.titre}</p>
                     <p className="text-gray-500">
-                      {new Date(booking.dateDebut).toLocaleDateString("fr-FR")} →{" "}
-                      {new Date(booking.dateFin).toLocaleDateString("fr-FR")} · {booking.statut}
+                      {libellePeriode(booking.dateDebut, booking.dateFin, { day: "numeric", month: "numeric", year: "numeric" })} · {booking.statut}
                     </p>
                   </div>
                   <p className="font-medium">

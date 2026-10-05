@@ -154,7 +154,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
           </div>
 
           {erreur && (
-            <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
+            <p role="alert" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
           )}
 
           <ReserverForm

@@ -4,6 +4,11 @@
 import { calculerCaution } from "../src/lib/caution";
 import { calculerPrixLocation } from "../src/lib/tarifs";
 import {
+  construirePeriode,
+  libellePeriode,
+  nombreDemiJournees,
+} from "../src/lib/periodeLocation";
+import {
   TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
   calculerFraisLocataire,
@@ -54,5 +59,75 @@ assertEqual(calculerFraisLocataire(25), 2.5, "frais locataire cafetière 25 €"
 assertEqual(arrondiCentimes(25 * TAUX_COMMISSION_PROPRIETAIRE), 3.75, "commission propriétaire 25 €");
 assertEqual(calculerFraisLocataire(5), 1, "frais locataire minimum 1 €");
 assertEqual(calculerFraisLocataire(0), 0, "pas de frais sur 0 €");
+
+// --- Durées de location (demi-journée / jours / semaines) ---
+const periode = (saisie: Parameters<typeof construirePeriode>[0]) => {
+  const r = construirePeriode(saisie);
+  if ("erreur" in r) throw new Error(r.erreur);
+  return r;
+};
+
+const matin = periode({ formule: "demi_journee", date: "2026-08-01", creneau: "matin" });
+assertEqual(nombreDemiJournees(matin.dateDebut, matin.dateFin), 1, "matin = 1 demi-journée");
+assertEqual(
+  calculerPrixLocation(matin.dateDebut, matin.dateFin, { demiJournee: 6, journee: 10 }).montant,
+  6,
+  "prix d'une demi-journée"
+);
+assertEqual(libellePeriode(matin.dateDebut, matin.dateFin), "le 1 août 2026 (matin)", "libellé matin");
+
+const apresMidi = periode({ formule: "demi_journee", date: "2026-08-01", creneau: "apres_midi" });
+assertEqual(nombreDemiJournees(apresMidi.dateDebut, apresMidi.dateFin), 1, "après-midi = 1 demi-journée");
+assertEqual(
+  libellePeriode(apresMidi.dateDebut, apresMidi.dateFin),
+  "le 1 août 2026 (après-midi)",
+  "libellé après-midi"
+);
+
+const unJour = periode({ formule: "jours", date: "2026-08-01", dateFin: "2026-08-01" });
+assertEqual(nombreDemiJournees(unJour.dateDebut, unJour.dateFin), 2, "un jour = 2 demi-journées");
+assertEqual(
+  calculerPrixLocation(unJour.dateDebut, unJour.dateFin, { demiJournee: 6, journee: 10 }).montant,
+  10,
+  "une journée coûte le tarif journée"
+);
+
+const troisJours = periode({ formule: "jours", date: "2026-08-01", dateFin: "2026-08-03" });
+assertEqual(
+  calculerPrixLocation(troisJours.dateDebut, troisJours.dateFin, { journee: 10 }).montant,
+  30,
+  "3 jours via le formulaire"
+);
+
+const uneSemaine = periode({ formule: "semaines", date: "2026-08-01", nbSemaines: 1 });
+assertEqual(nombreDemiJournees(uneSemaine.dateDebut, uneSemaine.dateFin), 14, "1 semaine = 7 jours");
+assertEqual(
+  calculerPrixLocation(uneSemaine.dateDebut, uneSemaine.dateFin, { journee: 10, semaine: 50 }).montant,
+  50,
+  "prix d'une semaine"
+);
+
+const deuxSemaines = periode({ formule: "semaines", date: "2026-08-01", nbSemaines: 2 });
+assertEqual(
+  calculerPrixLocation(deuxSemaines.dateDebut, deuxSemaines.dateFin, { journee: 10, semaine: 50 }).montant,
+  100,
+  "prix de deux semaines"
+);
+
+assertEqual(
+  construirePeriode({ formule: "jours", date: "2026-08-05", dateFin: "2026-08-01" }),
+  { erreur: "La date de fin doit être après la date de début." },
+  "date de fin avant le début refusée"
+);
+assertEqual(
+  construirePeriode({ formule: "semaines", date: "2026-08-01", nbSemaines: 0 }),
+  { erreur: "Choisissez entre 1 et 8 semaines." },
+  "0 semaine refusée"
+);
+assertEqual(
+  construirePeriode({ formule: "demi_journee", date: "2026-08-01" }),
+  { erreur: "Choisissez le matin ou l'après-midi." },
+  "demi-journée sans créneau refusée"
+);
 
 console.log("Terminé.");

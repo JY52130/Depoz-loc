@@ -7,6 +7,7 @@ import { ContratSection } from "@/components/ContratSection";
 import { ClotureSection } from "@/components/ClotureSection";
 import { AvisSection } from "@/components/AvisSection";
 import { DisputeSection } from "@/components/DisputeSection";
+import { libellePeriode } from "@/lib/periodeLocation";
 
 export const metadata = { title: "Ma réservation" };
 
@@ -51,8 +52,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pr
       <div>
         <h1 className="text-2xl font-semibold">{booking.listing.titre}</h1>
         <p className="mt-1 text-sm text-gray-500">
-          {new Date(booking.dateDebut).toLocaleDateString("fr-FR")} →{" "}
-          {new Date(booking.dateFin).toLocaleDateString("fr-FR")} · Statut : {booking.statut}
+          {libellePeriode(booking.dateDebut, booking.dateFin, { day: "numeric", month: "numeric", year: "numeric" })} · Statut : {booking.statut}
         </p>
         <p className="mt-1 text-sm text-gray-500">
           Vous êtes {role === "locataire" ? "le locataire" : "le propriétaire"} de cette réservation.
