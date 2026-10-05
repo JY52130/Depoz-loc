@@ -1,12 +1,29 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe/client";
 import { prisma } from "@/lib/prisma";
 import { notifierPaiementRecu } from "@/lib/email/notifications";
+import { dateApresProlongation } from "@/lib/dureeAnnonce";
 
 // Webhook Stripe (section 11.1). À configurer dans le dashboard Stripe sur
 // `${SITE_URL}/api/webhooks/stripe` avec les événements :
 // payment_intent.succeeded, payment_intent.payment_failed, account.updated.
+
+async function prolongerAnnoncePayee(listingId: string | undefined, paymentIntentId: string) {
+  if (!listingId) return;
+  const annonce = await prisma.listing.findUnique({ where: { id: listingId } });
+  // Stripe peut renvoyer le même événement : on ne prolonge qu'une fois.
+  if (!annonce || annonce.derniereProlongationPaiement === paymentIntentId) return;
+  await prisma.listing.update({
+    where: { id: listingId },
+    data: {
+      enLigneJusquau: dateApresProlongation(annonce.enLigneJusquau, new Date()),
+      derniereProlongationPaiement: paymentIntentId,
+    },
+  });
+  revalidatePath("/", "layout");
+}
 
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
@@ -29,6 +46,13 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "payment_intent.succeeded": {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+        // Prolongation payante d'une annonce (2 € pour 30 jours).
+        if (paymentIntent.metadata?.type === "prolongation_annonce") {
+          await prolongerAnnoncePayee(paymentIntent.metadata.listingId, paymentIntent.id);
+          break;
+        }
+
         const bookingId = paymentIntent.metadata?.bookingId;
         if (!bookingId) break;
 

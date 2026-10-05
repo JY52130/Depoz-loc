@@ -10,6 +10,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { DeliveryMode } from "@prisma/client";
+import { annonceVisible } from "@/lib/dureeAnnonce";
 
 export type FiltresRecherche = {
   texte?: string;
@@ -21,9 +22,7 @@ export type FiltresRecherche = {
 };
 
 export async function rechercherAnnonces(filtres: FiltresRecherche) {
-  const where: Prisma.ListingWhereInput = {
-    statut: "EN_LIGNE",
-  };
+  const where: Prisma.ListingWhereInput = annonceVisible();
 
   if (filtres.categorieSlug) {
     where.category = { slug: filtres.categorieSlug };
@@ -101,6 +100,7 @@ export async function rechercherAnnoncesProximite(
     FROM "Listing" l
     JOIN "Category" c ON c.id = l."categoryId"
     WHERE l.statut = 'EN_LIGNE'
+      AND (l."enLigneJusquau" IS NULL OR l."enLigneJusquau" > NOW())
       AND l.latitude IS NOT NULL
       AND l.longitude IS NOT NULL
       AND ST_DWithin(

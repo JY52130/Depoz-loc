@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
+import { annonceVisible } from "@/lib/dureeAnnonce";
 
 // Page de destination SEO — catégorie × ville (section 12.1), cœur du trafic organique.
 // Exemple d'URL cible : /location/petit-outillage/chaumont
@@ -16,7 +17,7 @@ type Props = { params: Promise<{ categorie: string; ville: string }> };
 export async function generateStaticParams() {
   const listings = await prisma.listing
     .findMany({
-      where: { statut: "EN_LIGNE", ville: { not: null } },
+      where: { ...annonceVisible(), ville: { not: null } },
       select: { ville: true, category: { select: { slug: true } } },
       distinct: ["ville", "categoryId"],
     })
@@ -37,7 +38,7 @@ async function getDonnees(categorieSlug: string, villeSlug: string) {
   const listings = await prisma.listing.findMany({
     where: {
       categoryId: categorie.id,
-      statut: "EN_LIGNE",
+      ...annonceVisible(),
     },
   });
 

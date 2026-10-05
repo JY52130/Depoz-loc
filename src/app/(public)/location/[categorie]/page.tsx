@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AdSlot } from "@/components/AdSlot";
+import { annonceVisible } from "@/lib/dureeAnnonce";
 
 // Page de destination SEO — une par catégorie de 1er niveau (section 12.1).
 // Générée en SSG et revalidée périodiquement (ISR).
@@ -44,12 +45,12 @@ export default async function CategoriePage({ params }: Props) {
 
   const [listings, villes] = await Promise.all([
     prisma.listing.findMany({
-      where: { categoryId: cat.id, statut: "EN_LIGNE" },
+      where: { categoryId: cat.id, ...annonceVisible() },
       orderBy: { createdAt: "desc" },
       take: 24,
     }),
     prisma.listing.findMany({
-      where: { categoryId: cat.id, statut: "EN_LIGNE", ville: { not: null } },
+      where: { categoryId: cat.id, ...annonceVisible(), ville: { not: null } },
       select: { ville: true },
       distinct: ["ville"],
       take: 30,

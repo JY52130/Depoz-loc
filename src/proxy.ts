@@ -7,8 +7,9 @@ import { updateSession } from "@/lib/supabase/middleware";
 // pour ouvrir le site au public.
 const motDePasseSite = process.env.SITE_MOT_DE_PASSE;
 
-// Appels automatiques de Stripe : ils ne peuvent pas saisir de mot de passe.
-const cheminsSansMotDePasse = ["/api/webhooks/stripe"];
+// Appels automatiques (Stripe, tâches planifiées Vercel) : ils ne peuvent pas
+// saisir de mot de passe. Chaque route vérifie sa propre clé secrète.
+const cheminsSansMotDePasse = ["/api/webhooks/stripe", "/api/cron/"];
 
 function motDePasseCorrect(request: NextRequest): boolean {
   const entete = request.headers.get("authorization");

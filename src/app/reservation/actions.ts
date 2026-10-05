@@ -14,6 +14,7 @@ import {
 import { calculerPrixLocation } from "@/lib/tarifs";
 import { construirePeriode } from "@/lib/periodeLocation";
 import type { DeliveryMode } from "@prisma/client";
+import { estExpiree } from "@/lib/dureeAnnonce";
 
 export async function creerReservation(formData: FormData) {
   const user = await getOrCreateUser();
@@ -26,7 +27,7 @@ export async function creerReservation(formData: FormData) {
 
   const listing = await prisma.listing.findUnique({ where: { id: listingId } });
 
-  if (!listing || listing.statut !== "EN_LIGNE") {
+  if (!listing || listing.statut !== "EN_LIGNE" || estExpiree(listing.enLigneJusquau)) {
     redirect(`/annonce/${formData.get("slug")}?erreur=Cette+annonce+n%27est+plus+disponible.`);
   }
 
