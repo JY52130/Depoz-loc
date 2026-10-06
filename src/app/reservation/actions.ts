@@ -7,7 +7,6 @@ import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { estDisponible } from "@/lib/reservations";
 import {
   FRAIS_POINT_RELAIS,
-  TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
   calculerFraisLocataire,
 } from "@/lib/constantesReservation";
@@ -15,6 +14,7 @@ import { calculerPrixLocation } from "@/lib/tarifs";
 import { construirePeriode } from "@/lib/periodeLocation";
 import type { DeliveryMode } from "@prisma/client";
 import { estExpiree } from "@/lib/dureeAnnonce";
+import { estProActif, tauxCommissionProprietaire } from "@/lib/abonnementPro";
 
 export async function creerReservation(formData: FormData) {
   const user = await getOrCreateUser();
@@ -25,7 +25,10 @@ export async function creerReservation(formData: FormData) {
     redirect(`/connexion?redirect=/annonce/${formData.get("slug") ?? ""}`);
   }
 
-  const listing = await prisma.listing.findUnique({ where: { id: listingId } });
+  const listing = await prisma.listing.findUnique({
+    where: { id: listingId },
+    include: { proprietaire: { select: { statut: true, proActifJusquau: true } } },
+  });
 
   if (!listing || listing.statut !== "EN_LIGNE" || estExpiree(listing.enLigneJusquau)) {
     redirect(`/annonce/${formData.get("slug")}?erreur=Cette+annonce+n%27est+plus+disponible.`);
@@ -80,7 +83,10 @@ export async function creerReservation(formData: FormData) {
   });
 
   const fraisServiceLocataire = calculerFraisLocataire(montantLocation);
-  const commissionProprietaire = arrondiCentimes(montantLocation * TAUX_COMMISSION_PROPRIETAIRE);
+  // Commission réduite si le propriétaire a un abonnement Pro en cours.
+  const commissionProprietaire = arrondiCentimes(
+    montantLocation * tauxCommissionProprietaire(estProActif(listing.proprietaire))
+  );
   const fraisPointRelais = modeRemise === "POINT_RELAIS" ? FRAIS_POINT_RELAIS : null;
   const montantCaution = listing.montantCaution ? Number(listing.montantCaution) : 0;
 

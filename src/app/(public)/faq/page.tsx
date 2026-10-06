@@ -16,7 +16,7 @@ const QUESTIONS = [
   {
     question: "Quels sont les frais ?",
     reponse:
-      "10 % du montant de la location (1 € minimum) sont ajoutés au paiement du locataire, et 15 % sont prélevés sur le reversement au propriétaire. Le circuit point relais ajoute un forfait supplémentaire à la charge du locataire.",
+      "10 % du montant de la location (1 € minimum) sont ajoutés au paiement du locataire, et 15 % sont prélevés sur le reversement au propriétaire (10 % avec l'abonnement Pro). Le circuit point relais ajoute un forfait supplémentaire à la charge du locataire.",
   },
   {
     question: "Que se passe-t-il en cas de litige ou de dommage ?",
@@ -26,7 +26,7 @@ const QUESTIONS = [
   {
     question: "Puis-je louer et mettre en location en tant que professionnel ?",
     reponse:
-      "Oui, un compte unique suffit : le statut particulier ou professionnel se choisit lors de votre première mise en location (SIRET requis pour les professionnels).",
+      "Oui, un compte unique suffit : le statut particulier ou professionnel se choisit lors de votre première mise en location (SIRET requis pour les professionnels). Les professionnels peuvent aussi prendre l'abonnement Pro, depuis leur espace membre, pour des annonces sans limite de durée et une commission réduite.",
   },
 ];
 
