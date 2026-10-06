@@ -12,6 +12,7 @@ const liens = [
   { href: "/membre/portefeuille", label: "Portefeuille" },
   { href: "/membre/avis", label: "Avis" },
   { href: "/membre/etats-des-lieux", label: "États des lieux" },
+  { href: "/membre/abonnement-pro", label: "Abonnement Pro" },
   { href: "/membre/parametres", label: "Paramètres" },
 ];
 

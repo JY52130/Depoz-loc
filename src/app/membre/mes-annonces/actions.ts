@@ -11,7 +11,8 @@ import {
   STATUTS_LOCATION_PAYEE,
   dateApresProlongation,
 } from "@/lib/dureeAnnonce";
-import { JOURS_MISE_EN_AVANT, prixMiseEnAvant } from "@/lib/miseEnAvant";
+import { JOURS_MISE_EN_AVANT, dateApresMiseEnAvant, prixMiseEnAvant } from "@/lib/miseEnAvant";
+import { JOURS_ENTRE_MISES_EN_AVANT_OFFERTES, estProActif } from "@/lib/abonnementPro";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -113,4 +114,42 @@ export async function mettreEnAvant(formData: FormData) {
     redirect("/membre/mes-annonces?erreur=Le+paiement+n%27a+pas+pu+d%C3%A9marrer.");
   }
   redirect(session.url);
+}
+
+// Avantage de l'abonnement Pro : une mise « À la une » offerte tous les
+// 30 jours (voir src/lib/abonnementPro.ts), sans passer par Stripe.
+export async function mettreEnAvantOffert(formData: FormData) {
+  const user = await getOrCreateUser();
+  if (!user) redirect("/connexion?redirect=/membre/mes-annonces");
+  if (!estProActif(user)) {
+    redirect("/membre/mes-annonces?erreur=Cette+mise+%C3%A0+la+une+est+r%C3%A9serv%C3%A9e+aux+membres+Pro.");
+  }
+
+  const listingId = String(formData.get("listingId") ?? "");
+  const annonce = await prisma.listing.findUnique({ where: { id: listingId } });
+  if (!annonce || annonce.proprietaireId !== user.id || annonce.statut !== "EN_LIGNE") {
+    redirect("/membre/mes-annonces?erreur=Seule+une+annonce+en+ligne+peut+%C3%AAtre+mise+en+avant.");
+  }
+
+  const maintenant = new Date();
+  const limite = new Date(maintenant.getTime() - JOURS_ENTRE_MISES_EN_AVANT_OFFERTES * 24 * 60 * 60 * 1000);
+  // Mise à jour conditionnelle : un double clic ne consomme pas deux fois l'offre.
+  const { count } = await prisma.user.updateMany({
+    where: {
+      id: user.id,
+      OR: [{ derniereMiseEnAvantOfferte: null }, { derniereMiseEnAvantOfferte: { lte: limite } }],
+    },
+    data: { derniereMiseEnAvantOfferte: maintenant },
+  });
+  if (count === 0) {
+    redirect("/membre/mes-annonces?erreur=Votre+mise+%C3%A0+la+une+offerte+a+d%C3%A9j%C3%A0+%C3%A9t%C3%A9+utilis%C3%A9e+ce+mois-ci.");
+  }
+
+  await prisma.listing.update({
+    where: { id: annonce.id },
+    data: { misEnAvantJusquau: dateApresMiseEnAvant(annonce.misEnAvantJusquau, maintenant) },
+  });
+  revalidatePath("/membre/mes-annonces");
+  revalidatePath("/", "layout");
+  redirect("/membre/mes-annonces?enavant=offert");
 }

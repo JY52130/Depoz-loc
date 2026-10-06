@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ReserverForm } from "@/components/ReserverForm";
 import { AdSlot } from "@/components/AdSlot";
 import { estExpiree } from "@/lib/dureeAnnonce";
+import { estProActif } from "@/lib/abonnementPro";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -17,7 +18,7 @@ async function getListing(slug: string) {
     where: { slug },
     include: {
       category: true,
-      proprietaire: { select: { nom: true, noteMoyenne: true, statut: true } },
+      proprietaire: { select: { nom: true, noteMoyenne: true, statut: true, nomEntreprise: true, proActifJusquau: true } },
       availabilities: true,
     },
   });
@@ -148,7 +149,14 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
           <div className="mt-4 rounded-xl border bg-white p-4 shadow-sm">
             <h2 className="font-medium">Propriétaire</h2>
             <p className="mt-2 text-sm text-gray-700">
-              {listing.proprietaire.nom ?? "Membre Dépôt Malin"}
+              {estProActif(listing.proprietaire) && (
+                <span className="mr-2 inline-block rounded bg-brand px-1.5 py-0.5 text-xs font-semibold text-white">
+                  Pro
+                </span>
+              )}
+              {(estProActif(listing.proprietaire) && listing.proprietaire.nomEntreprise) ||
+                listing.proprietaire.nom ||
+                "Membre Dépôt Malin"}
               {listing.proprietaire.statut === "PRO" && " · Professionnel"}
               {listing.proprietaire.noteMoyenne != null && ` · Note ${listing.proprietaire.noteMoyenne}/5`}
             </p>

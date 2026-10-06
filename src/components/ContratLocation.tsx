@@ -105,7 +105,7 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
       </p>
       <p>
         Le propriétaire reçoit le prix de la location diminué de la commission de
-        Dépôt Malin (<Champ valeur={d ? euros(d.commissionProprietaire) : undefined} modele="15 %" />),
+        Dépôt Malin (<Champ valeur={d ? euros(d.commissionProprietaire) : undefined} modele="15 %, ou 10 % pour un membre Pro" />),
         après la fin de la location et la confirmation du retour de l&apos;objet.
       </p>
 

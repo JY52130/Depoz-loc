@@ -19,6 +19,14 @@ import {
   trierMisesEnAvant,
 } from "../src/lib/miseEnAvant";
 import {
+  estProActif,
+  finAvantagesPro,
+  miseEnAvantOfferteDisponible,
+  normaliserSiret,
+  siretValide,
+  tauxCommissionProprietaire,
+} from "../src/lib/abonnementPro";
+import {
   TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
   calculerFraisLocataire,
@@ -181,6 +189,41 @@ assertEqual(
   ).map((a) => a.id),
   ["b", "a", "c"],
   "annonces à la une en premier (expirée = normale)"
+);
+
+// --- Abonnement Pro ---
+const pro = { statut: "PRO", proActifJusquau: new Date("2026-11-05T10:00:00Z") };
+assertEqual(estProActif(pro, t0), true, "Pro : abonnement en cours");
+assertEqual(estProActif({ ...pro, proActifJusquau: new Date("2026-10-01T00:00:00Z") }, t0), false, "Pro : abonnement terminé");
+assertEqual(estProActif({ statut: "PARTICULIER", proActifJusquau: null }, t0), false, "Pro : particulier");
+assertEqual(tauxCommissionProprietaire(true), 0.1, "Pro : commission 10 %");
+assertEqual(tauxCommissionProprietaire(false), TAUX_COMMISSION_PROPRIETAIRE, "non Pro : commission 15 %");
+assertEqual(normaliserSiret("732 829 320 00074"), "73282932000074", "SIRET : espaces retirés");
+assertEqual(siretValide("73282932000074"), true, "SIRET valide (clé de Luhn)");
+assertEqual(siretValide("73282932000075"), false, "SIRET : mauvaise clé refusée");
+assertEqual(siretValide("1234"), false, "SIRET : trop court refusé");
+assertEqual(siretValide("35600000000001"), true, "SIRET La Poste (règle spéciale)");
+assertEqual(miseEnAvantOfferteDisponible(null, t0), true, "À la une offerte : jamais utilisée");
+assertEqual(
+  miseEnAvantOfferteDisponible(new Date("2026-09-20T10:00:00Z"), t0),
+  false,
+  "À la une offerte : déjà utilisée il y a 15 jours"
+);
+assertEqual(
+  miseEnAvantOfferteDisponible(new Date("2026-09-05T10:00:00Z"), t0),
+  true,
+  "À la une offerte : de nouveau disponible après 30 jours"
+);
+const fin = Math.floor(new Date("2026-11-05T10:00:00Z").getTime() / 1000);
+assertEqual(
+  finAvantagesPro({ status: "active", items: { data: [{ current_period_end: fin }] } })?.toISOString(),
+  "2026-11-05T10:00:00.000Z",
+  "Pro : avantages jusqu'à la fin du mois payé"
+);
+assertEqual(
+  finAvantagesPro({ status: "canceled", items: { data: [{ current_period_end: fin }] } }),
+  null,
+  "Pro : abonnement annulé = plus d'avantages"
 );
 
 console.log("Terminé.");

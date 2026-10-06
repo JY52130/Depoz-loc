@@ -80,6 +80,13 @@ model User {
   statut              UserStatus @default(PARTICULIER)
   siret               String?  // obligatoire si statut = PRO
   numeroTva           String?
+  nomEntreprise       String?
+  // Abonnement Pro (voir src/lib/abonnementPro.ts), tenu à jour par le webhook Stripe.
+  stripeCustomerId    String?  @unique
+  stripeSubscriptionId String?
+  proActifJusquau     DateTime? // fin de la période payée ; avantages Pro jusqu'à cette date
+  proResiliationPrevue Boolean @default(false)
+  derniereMiseEnAvantOfferte DateTime?
   noteMoyenne         Float?
   stripeAccountId     String?  // compte Stripe Connect (Express)
   stripeOnboardingDone Boolean @default(false)

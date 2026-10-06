@@ -6,10 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { notifierPaiementRecu } from "@/lib/email/notifications";
 import { dateApresProlongation } from "@/lib/dureeAnnonce";
 import { dateApresMiseEnAvant } from "@/lib/miseEnAvant";
+import { estProActif, finAvantagesPro } from "@/lib/abonnementPro";
+import { finPeriodeGratuite } from "@/lib/dureeAnnonce";
 
 // Webhook Stripe (section 11.1). À configurer dans le dashboard Stripe sur
 // `${SITE_URL}/api/webhooks/stripe` avec les événements :
-// payment_intent.succeeded, payment_intent.payment_failed, account.updated.
+// payment_intent.succeeded, payment_intent.payment_failed, account.updated,
+// customer.subscription.created, customer.subscription.updated,
+// customer.subscription.deleted (abonnement Pro).
 
 async function prolongerAnnoncePayee(listingId: string | undefined, paymentIntentId: string) {
   if (!listingId) return;
@@ -43,6 +47,54 @@ async function appliquerMiseEnAvant(listingId: string | undefined, paymentIntent
       dernierPaiementMiseEnAvant: paymentIntentId,
     },
   });
+  revalidatePath("/", "layout");
+}
+
+// Abonnement Pro : Stripe prévient à chaque création, renouvellement,
+// résiliation ou fin d'abonnement ; on recopie l'état chez le membre.
+async function mettreAJourAbonnementPro(abonnement: Stripe.Subscription) {
+  const customerId = typeof abonnement.customer === "string" ? abonnement.customer : abonnement.customer.id;
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        ...(abonnement.metadata?.userId ? [{ id: abonnement.metadata.userId }] : []),
+        { stripeCustomerId: customerId },
+      ],
+    },
+  });
+  if (!user) return;
+  // Un ancien abonnement qui se termine ne doit pas écraser le nouveau.
+  if (user.stripeSubscriptionId && user.stripeSubscriptionId !== abonnement.id && abonnement.status !== "active") return;
+
+  const maintenant = new Date();
+  const etaitActif = estProActif(user, maintenant);
+  const proActifJusquau = finAvantagesPro(abonnement);
+  const estActif = proActifJusquau != null && proActifJusquau > maintenant;
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      stripeCustomerId: customerId,
+      stripeSubscriptionId: abonnement.id,
+      proActifJusquau: estActif ? proActifJusquau : maintenant,
+      proResiliationPrevue: estActif && (abonnement.cancel_at_period_end || abonnement.cancel_at != null),
+      ...(estActif ? { statut: "PRO" as const } : {}),
+    },
+  });
+
+  if (estActif && !etaitActif) {
+    // Devient Pro : ses annonces validées restent en ligne sans limite.
+    await prisma.listing.updateMany({
+      where: { proprietaireId: user.id, statut: "EN_LIGNE" },
+      data: { enLigneJusquau: null },
+    });
+  } else if (!estActif && etaitActif) {
+    // Fin de l'abonnement : ses annonces repartent pour 15 jours gratuits.
+    await prisma.listing.updateMany({
+      where: { proprietaireId: user.id, statut: "EN_LIGNE", enLigneJusquau: null },
+      data: { enLigneJusquau: finPeriodeGratuite(maintenant, false) },
+    });
+  }
   revalidatePath("/", "layout");
 }
 
@@ -141,6 +193,13 @@ export async function POST(request: Request) {
           where: { stripeAccountId: account.id },
           data: { stripeOnboardingDone: onboardingComplet },
         });
+        break;
+      }
+
+      case "customer.subscription.created":
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted": {
+        await mettreAJourAbonnementPro(event.data.object as Stripe.Subscription);
         break;
       }
 

@@ -10,7 +10,12 @@ import {
   expireBientot,
 } from "@/lib/dureeAnnonce";
 import { JOURS_MISE_EN_AVANT, estMiseEnAvant, prixMiseEnAvant } from "@/lib/miseEnAvant";
-import { mettreEnAvant, prolongerAnnonce } from "./actions";
+import {
+  estProActif,
+  miseEnAvantOfferteDisponible,
+  prochaineMiseEnAvantOfferte,
+} from "@/lib/abonnementPro";
+import { mettreEnAvant, mettreEnAvantOffert, prolongerAnnonce } from "./actions";
 
 export const metadata = { title: "Mes annonces" };
 
@@ -43,6 +48,8 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
         orderBy: { createdAt: "desc" },
       })
     : [];
+  const proActif = estProActif(user);
+  const offerteDisponible = proActif && miseEnAvantOfferteDisponible(user?.derniereMiseEnAvantOfferte);
 
   return (
     <div>
@@ -73,8 +80,9 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
 
       {params.enavant && (
         <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          Merci ! Votre paiement est reçu : votre annonce est « À la une » pendant {JOURS_MISE_EN_AVANT} jours (cela
-          s&apos;affiche dans quelques instants).
+          {params.enavant === "offert"
+            ? `C'est fait : votre annonce est « À la une » pendant ${JOURS_MISE_EN_AVANT} jours, offert avec votre abonnement Pro.`
+            : `Merci ! Votre paiement est reçu : votre annonce est « À la une » pendant ${JOURS_MISE_EN_AVANT} jours (cela s'affiche dans quelques instants).`}
         </p>
       )}
 
@@ -84,11 +92,24 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
         </p>
       )}
 
-      <p className="mt-4 text-sm text-gray-600">
-        Chaque annonce est en ligne gratuitement {JOURS_GRATUITS} jours après sa validation. Ensuite, vous pouvez la
-        prolonger de {JOURS_PROLONGATION} jours pour {PRIX_PROLONGATION} €, ou gratuitement si votre objet a déjà été
-        loué.
-      </p>
+      {proActif ? (
+        <p className="mt-4 text-sm text-gray-600">
+          Membre Pro : vos annonces restent en ligne sans limite de durée.{" "}
+          {offerteDisponible
+            ? "Vous avez une mise « À la une » offerte à utiliser."
+            : user?.derniereMiseEnAvantOfferte &&
+              `Prochaine mise « À la une » offerte à partir du ${dateCourte(prochaineMiseEnAvantOfferte(user.derniereMiseEnAvantOfferte))}.`}
+        </p>
+      ) : (
+        <p className="mt-4 text-sm text-gray-600">
+          Chaque annonce est en ligne gratuitement {JOURS_GRATUITS} jours après sa validation. Ensuite, vous pouvez la
+          prolonger de {JOURS_PROLONGATION} jours pour {PRIX_PROLONGATION} €, ou gratuitement si votre objet a déjà été
+          loué.{" "}
+          <Link href="/membre/abonnement-pro" className="text-brand-dark underline">
+            Professionnel ? Découvrez l&apos;abonnement Pro.
+          </Link>
+        </p>
+      )}
 
       {annonces.length === 0 ? (
         <p className="mt-6 text-gray-600">Vous n&apos;avez pas encore d&apos;annonce.</p>
@@ -122,16 +143,29 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
                       ? `★ À la une jusqu'au ${dateCourte(annonce.misEnAvantJusquau!)}.`
                       : "Passez en tête des résultats avec le badge « À la une »."}
                   </p>
-                  <form action={mettreEnAvant}>
-                    <input type="hidden" name="listingId" value={annonce.id} />
-                    <button
-                      type="submit"
-                      className="rounded-lg bg-accent px-3 py-1.5 font-medium text-ink transition hover:brightness-105"
-                    >
-                      {estMiseEnAvant(annonce.misEnAvantJusquau) ? "Ajouter" : "Mettre à la une"} {JOURS_MISE_EN_AVANT}{" "}
-                      jours ({prixMiseEnAvant(annonce)} €)
-                    </button>
-                  </form>
+                  <div className="flex flex-wrap gap-2">
+                    {offerteDisponible && (
+                      <form action={mettreEnAvantOffert}>
+                        <input type="hidden" name="listingId" value={annonce.id} />
+                        <button
+                          type="submit"
+                          className="rounded-lg bg-brand px-3 py-1.5 font-medium text-white transition-colors hover:bg-brand-dark"
+                        >
+                          À la une {JOURS_MISE_EN_AVANT} jours (offert Pro)
+                        </button>
+                      </form>
+                    )}
+                    <form action={mettreEnAvant}>
+                      <input type="hidden" name="listingId" value={annonce.id} />
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-accent px-3 py-1.5 font-medium text-ink transition hover:brightness-105"
+                      >
+                        {estMiseEnAvant(annonce.misEnAvantJusquau) ? "Ajouter" : "Mettre à la une"} {JOURS_MISE_EN_AVANT}{" "}
+                        jours ({prixMiseEnAvant(annonce)} €)
+                      </button>
+                    </form>
+                  </div>
                 </div>
               )}
             </li>

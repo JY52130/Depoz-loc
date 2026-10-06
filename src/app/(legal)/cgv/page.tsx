@@ -14,7 +14,8 @@ export default function Page() {
           Le locataire paie le montant de la location choisie (tarif par
           palier le plus avantageux pour la durée demandée) majoré de 10 % de
           frais de service (1 € minimum). Le propriétaire perçoit ce montant diminué
-          d&apos;une commission de 15 %, une fois la location clôturée. Un
+          d&apos;une commission de 15 % (10 % pour les membres ayant un
+          abonnement Pro en cours), une fois la location clôturée. Un
           forfait supplémentaire s&apos;applique lorsque la remise transite
           par un point relais, à la charge du locataire.
         </p>
@@ -82,7 +83,23 @@ export default function Page() {
           propriétaire.
         </p>
 
-        <h2 className="text-lg font-semibold text-black">8. Facturation</h2>
+        <h2 className="text-lg font-semibold text-black">8. Abonnement Pro</h2>
+        <p>
+          Les professionnels (numéro SIRET valide) peuvent souscrire un
+          abonnement Pro à 14,90 € TTC par mois, payé par carte bancaire et
+          renouvelé automatiquement chaque mois. Tant qu&apos;il est en cours,
+          il donne droit à : des annonces en ligne sans limite de durée, une
+          commission propriétaire de 10 % au lieu de 15 % sur les réservations
+          faites pendant l&apos;abonnement, un badge « Pro » avec le nom de
+          l&apos;entreprise, et une mise « À la une » de 7 jours offerte tous
+          les 30 jours. L&apos;abonnement est sans engagement : il peut être
+          résilié à tout moment depuis l&apos;espace membre et s&apos;arrête à
+          la fin du mois déjà payé, sans remboursement du mois en cours. À la
+          fin de l&apos;abonnement, les annonces repartent pour 15 jours
+          gratuits.
+        </p>
+
+        <h2 className="text-lg font-semibold text-black">9. Facturation</h2>
         <p>
           Un reçu simple est fourni aux particuliers ; les professionnels
           reçoivent une facture conforme incluant leur SIRET.
