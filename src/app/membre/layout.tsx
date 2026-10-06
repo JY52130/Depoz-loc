@@ -13,6 +13,7 @@ const liens = [
   { href: "/membre/avis", label: "Avis" },
   { href: "/membre/etats-des-lieux", label: "États des lieux" },
   { href: "/membre/abonnement-pro", label: "Abonnement Pro" },
+  { href: "/membre/verification-identite", label: "Identité vérifiée" },
   { href: "/membre/parametres", label: "Paramètres" },
 ];
 

@@ -62,6 +62,7 @@ export default async function AbonnementProPage({ searchParams }: Props) {
           </li>
           <li>Badge « Pro » avec le nom de votre entreprise sur vos annonces.</li>
           <li>Une mise « À la une » offerte tous les {JOURS_ENTRE_MISES_EN_AVANT_OFFERTES} jours.</li>
+          <li>Le badge « Identité vérifiée » offert.</li>
         </ul>
         <p className="mt-3 text-sm text-gray-600">Sans engagement : vous pouvez résilier à tout moment.</p>
       </section>

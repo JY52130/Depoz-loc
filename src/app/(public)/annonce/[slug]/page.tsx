@@ -7,6 +7,7 @@ import { ReserverForm } from "@/components/ReserverForm";
 import { AdSlot } from "@/components/AdSlot";
 import { estExpiree } from "@/lib/dureeAnnonce";
 import { estProActif } from "@/lib/abonnementPro";
+import { estIdentiteVerifiee } from "@/lib/verificationIdentite";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -18,7 +19,7 @@ async function getListing(slug: string) {
     where: { slug },
     include: {
       category: true,
-      proprietaire: { select: { nom: true, noteMoyenne: true, statut: true, nomEntreprise: true, proActifJusquau: true } },
+      proprietaire: { select: { nom: true, noteMoyenne: true, statut: true, nomEntreprise: true, proActifJusquau: true, identiteVerifieeLe: true } },
       availabilities: true,
     },
   });
@@ -158,6 +159,9 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
                 listing.proprietaire.nom ||
                 "Membre Dépôt Malin"}
               {listing.proprietaire.statut === "PRO" && " · Professionnel"}
+              {estIdentiteVerifiee(listing.proprietaire) && (
+                <span className="ml-2 font-medium text-green-700">✓ Identité vérifiée</span>
+              )}
               {listing.proprietaire.noteMoyenne != null && ` · Note ${listing.proprietaire.noteMoyenne}/5`}
             </p>
           </div>

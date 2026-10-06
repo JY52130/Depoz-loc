@@ -87,6 +87,13 @@ model User {
   proActifJusquau     DateTime? // fin de la période payée ; avantages Pro jusqu'à cette date
   proResiliationPrevue Boolean @default(false)
   derniereMiseEnAvantOfferte DateTime?
+  // Badge « Identité vérifiée » (voir src/lib/verificationIdentite.ts). On ne
+  // stocke aucune donnée de la pièce d'identité, seulement l'état.
+  identiteVerifieeLe  DateTime?
+  verificationIdentitePayee Boolean @default(false)
+  dernierPaiementVerification String?
+  stripeVerificationSessionId String?
+  statutVerificationIdentite String?  // statut Stripe : processing, requires_input…
   noteMoyenne         Float?
   stripeAccountId     String?  // compte Stripe Connect (Express)
   stripeOnboardingDone Boolean @default(false)

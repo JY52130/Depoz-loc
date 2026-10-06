@@ -2,6 +2,7 @@ import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
 import { JOURS_GRATUITS, JOURS_PROLONGATION, PRIX_PROLONGATION } from "@/lib/dureeAnnonce";
 import { JOURS_MISE_EN_AVANT } from "@/lib/miseEnAvant";
 import { PRIX_ABONNEMENT_PRO } from "@/lib/abonnementPro";
+import { PRIX_VERIFICATION_IDENTITE } from "@/lib/verificationIdentite";
 
 export const metadata = { title: "Tarifs & commissions" };
 
@@ -29,6 +30,11 @@ export default function TarifsPage() {
           {PRIX_ABONNEMENT_PRO.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} € par mois, sans
           engagement. Annonces sans limite de durée, commission propriétaire de 10 % au lieu de 15 %, badge
           « Pro » et une mise « À la une » offerte tous les 30 jours.
+        </li>
+        <li>
+          Badge « Identité vérifiée » (option) :{" "}
+          {PRIX_VERIFICATION_IDENTITE.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} € une seule fois,
+          offert aux membres Pro.
         </li>
         <li>
           Frais point relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,

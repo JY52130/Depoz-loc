@@ -26,6 +26,7 @@ import {
   siretValide,
   tauxCommissionProprietaire,
 } from "../src/lib/abonnementPro";
+import { estIdentiteVerifiee, peutLancerVerification } from "../src/lib/verificationIdentite";
 import {
   TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
@@ -224,6 +225,18 @@ assertEqual(
   finAvantagesPro({ status: "canceled", items: { data: [{ current_period_end: fin }] } }),
   null,
   "Pro : abonnement annulé = plus d'avantages"
+);
+
+// --- Badge « Identité vérifiée » ---
+assertEqual(estIdentiteVerifiee({ identiteVerifieeLe: t0 }), true, "identité : vérifiée");
+assertEqual(estIdentiteVerifiee({ identiteVerifieeLe: null }), false, "identité : pas vérifiée");
+assertEqual(peutLancerVerification({ verificationIdentitePayee: false }, false), false, "identité : doit payer 2,99 €");
+assertEqual(peutLancerVerification({ verificationIdentitePayee: true }, false), true, "identité : payé → peut lancer");
+assertEqual(peutLancerVerification({ verificationIdentitePayee: false }, true), true, "identité : offerte aux Pros");
+assertEqual(
+  peutLancerVerification({ verificationIdentitePayee: true, identiteVerifieeLe: t0 }, false),
+  false,
+  "identité : déjà vérifiée → rien à relancer"
 );
 
 console.log("Terminé.");
