@@ -17,6 +17,7 @@ import {
   prochaineMiseEnAvantOfferte,
 } from "@/lib/abonnementPro";
 import { ChampsModesRemise } from "@/components/ChampsModesRemise";
+import { IdeesObjets } from "@/components/IdeesObjets";
 import { BoutonEnvoi } from "@/components/BoutonEnvoi";
 import { mettreEnAvant, mettreEnAvantOffert, modifierModesRemise, prolongerAnnonce } from "./actions";
 
@@ -76,6 +77,8 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
           </p>
         </div>
       )}
+
+      {(params.creee || annonces.length < 5) && <IdeesObjets ouvert={Boolean(params.creee)} />}
 
       {params.prolongee && (
         <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">

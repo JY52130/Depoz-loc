@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { creerEtatDesLieux } from "@/app/membre/reservations/[bookingId]/actions";
+import { VERIFICATIONS } from "@/lib/etatDesLieux";
 
 type ConditionReport = {
   id: string;
@@ -65,9 +66,29 @@ function FormulaireEtatDesLieux({ bookingId, type }: { bookingId: string; type: 
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="photos" value={JSON.stringify(photos)} />
 
-      <input type="file" accept="image/*" multiple onChange={(e) => gererUpload(e.target.files)} className="text-sm" />
-      {uploadEnCours && <p className="text-sm text-gray-500">Envoi en cours…</p>}
-      {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+      <fieldset className="flex flex-col gap-1.5 text-sm">
+        <legend className="mb-1 font-medium">
+          {type === "ENTREE" ? "À vérifier ensemble au moment de la remise" : "À vérifier ensemble au retour"}
+        </legend>
+        {VERIFICATIONS[type].map((v) => (
+          <label key={v.id} className="flex items-start gap-2">
+            <input type="checkbox" name="verifications" value={v.id} className="mt-1 h-4 w-4 shrink-0" />
+            {v.libelle}
+          </label>
+        ))}
+      </fieldset>
+
+      <label className="flex flex-col gap-1 text-sm">
+        Photos de l&apos;objet
+        <input type="file" accept="image/*" multiple onChange={(e) => gererUpload(e.target.files)} />
+      </label>
+      <div aria-live="polite">
+        {uploadEnCours && <p className="text-sm text-gray-600">Envoi en cours…</p>}
+        {erreur && <p className="text-sm text-red-700">{erreur}</p>}
+        {!uploadEnCours && photos.length > 0 && (
+          <p className="text-sm text-gray-600">{photos.length} photo(s) ajoutée(s).</p>
+        )}
+      </div>
       {photos.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {photos.map((url) => (
@@ -76,12 +97,10 @@ function FormulaireEtatDesLieux({ bookingId, type }: { bookingId: string; type: 
         </div>
       )}
 
-      <textarea
-        name="notes"
-        placeholder="Notes (état du matériel, remarques…)"
-        rows={2}
-        className="rounded-lg border px-3 py-2 text-sm"
-      />
+      <label className="flex flex-col gap-1 text-sm">
+        Remarques (état, défauts, rayures…)
+        <textarea name="notes" rows={2} className="rounded-lg border px-3 py-2" />
+      </label>
 
       <button type="submit" className="w-fit rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
         Déposer mon état des lieux {type === "ENTREE" ? "d'entrée" : "de sortie"}
@@ -115,8 +134,8 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
         ) : (
           <ul className="mt-1 flex flex-col gap-1 text-sm">
             {rapportsEntree.map((r) => (
-              <li key={r.id}>
-                {LABELS_AUTEUR[r.auteurType]} · {r.photos.length} photo(s){r.notes ? ` · ${r.notes}` : ""}
+              <li key={r.id} className="whitespace-pre-line">
+                {LABELS_AUTEUR[r.auteurType]} · {r.photos.length} photo(s){r.notes ? `\n${r.notes}` : ""}
               </li>
             ))}
           </ul>
@@ -136,8 +155,8 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
         ) : (
           <ul className="mt-1 flex flex-col gap-1 text-sm">
             {rapportsSortie.map((r) => (
-              <li key={r.id}>
-                {LABELS_AUTEUR[r.auteurType]} · {r.photos.length} photo(s){r.notes ? ` · ${r.notes}` : ""}
+              <li key={r.id} className="whitespace-pre-line">
+                {LABELS_AUTEUR[r.auteurType]} · {r.photos.length} photo(s){r.notes ? `\n${r.notes}` : ""}
               </li>
             ))}
           </ul>
