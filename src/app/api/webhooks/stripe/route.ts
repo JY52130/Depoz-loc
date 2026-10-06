@@ -13,7 +13,10 @@ import { finPeriodeGratuite } from "@/lib/dureeAnnonce";
 // `${SITE_URL}/api/webhooks/stripe` avec les événements :
 // payment_intent.succeeded, payment_intent.payment_failed, account.updated,
 // customer.subscription.created, customer.subscription.updated,
-// customer.subscription.deleted (abonnement Pro).
+// customer.subscription.deleted (abonnement Pro),
+// identity.verification_session.verified, identity.verification_session.requires_input,
+// identity.verification_session.processing, identity.verification_session.canceled
+// (badge « Identité vérifiée »).
 
 async function prolongerAnnoncePayee(listingId: string | undefined, paymentIntentId: string) {
   if (!listingId) return;
@@ -98,6 +101,30 @@ async function mettreAJourAbonnementPro(abonnement: Stripe.Subscription) {
   revalidatePath("/", "layout");
 }
 
+// Badge « Identité vérifiée » : paiement de 2,99 € reçu (une seule fois).
+async function enregistrerPaiementVerification(userId: string | undefined, paymentIntentId: string) {
+  if (!userId) return;
+  await prisma.user.updateMany({
+    where: { id: userId, NOT: { dernierPaiementVerification: paymentIntentId } },
+    data: { verificationIdentitePayee: true, dernierPaiementVerification: paymentIntentId },
+  });
+}
+
+// Résultat de la vérification Stripe Identity : seul l'état est recopié,
+// aucune donnée de la pièce d'identité.
+async function mettreAJourVerificationIdentite(session: Stripe.Identity.VerificationSession) {
+  const userId = session.metadata?.userId;
+  if (!userId) return;
+  await prisma.user.updateMany({
+    where: { id: userId, stripeVerificationSessionId: session.id, identiteVerifieeLe: null },
+    data: {
+      statutVerificationIdentite: session.status,
+      ...(session.status === "verified" ? { identiteVerifieeLe: new Date() } : {}),
+    },
+  });
+  if (session.status === "verified") revalidatePath("/", "layout");
+}
+
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -123,6 +150,12 @@ export async function POST(request: Request) {
         // Prolongation payante d'une annonce (2 € pour 30 jours).
         if (paymentIntent.metadata?.type === "prolongation_annonce") {
           await prolongerAnnoncePayee(paymentIntent.metadata.listingId, paymentIntent.id);
+          break;
+        }
+
+        // Badge « Identité vérifiée » (2,99 €).
+        if (paymentIntent.metadata?.type === "verification_identite") {
+          await enregistrerPaiementVerification(paymentIntent.metadata.userId, paymentIntent.id);
           break;
         }
 
@@ -200,6 +233,14 @@ export async function POST(request: Request) {
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         await mettreAJourAbonnementPro(event.data.object as Stripe.Subscription);
+        break;
+      }
+
+      case "identity.verification_session.verified":
+      case "identity.verification_session.requires_input":
+      case "identity.verification_session.processing":
+      case "identity.verification_session.canceled": {
+        await mettreAJourVerificationIdentite(event.data.object as Stripe.Identity.VerificationSession);
         break;
       }
 

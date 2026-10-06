@@ -25,6 +25,14 @@ export default function Page() {
           avis), données de paiement traitées exclusivement par notre
           prestataire Stripe (nous ne stockons aucun numéro de carte).
         </p>
+        <p>
+          Vérification d&apos;identité (facultative, badge « Identité
+          vérifiée ») : la photo de votre pièce d&apos;identité et votre selfie
+          sont collectés et analysés directement par Stripe (service Stripe
+          Identity), avec votre accord donné au moment de la vérification.
+          Dépôt Malin ne reçoit pas ces images ; nous conservons seulement
+          le résultat (vérifié ou non) et sa date.
+        </p>
 
         <h2 className="text-lg font-semibold text-black">Finalités</h2>
         <p>
@@ -39,7 +47,7 @@ export default function Page() {
         <p>
           Vos données peuvent être transmises à nos prestataires techniques :
           Supabase (hébergement base de données et authentification), Stripe
-          (paiements et Stripe Connect), Resend (emails transactionnels),
+          (paiements, Stripe Connect et vérification d&apos;identité), Resend (emails transactionnels),
           Anthropic (estimation du prix neuf pour la caution), et Google
           AdSense (publicité, uniquement après consentement).
         </p>

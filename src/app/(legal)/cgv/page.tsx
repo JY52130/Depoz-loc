@@ -91,15 +91,30 @@ export default function Page() {
           il donne droit à : des annonces en ligne sans limite de durée, une
           commission propriétaire de 10 % au lieu de 15 % sur les réservations
           faites pendant l&apos;abonnement, un badge « Pro » avec le nom de
-          l&apos;entreprise, et une mise « À la une » de 7 jours offerte tous
-          les 30 jours. L&apos;abonnement est sans engagement : il peut être
+          l&apos;entreprise, une mise « À la une » de 7 jours offerte tous
+          les 30 jours, et le badge « Identité vérifiée » offert. L&apos;abonnement est sans engagement : il peut être
           résilié à tout moment depuis l&apos;espace membre et s&apos;arrête à
           la fin du mois déjà payé, sans remboursement du mois en cours. À la
           fin de l&apos;abonnement, les annonces repartent pour 15 jours
           gratuits.
         </p>
 
-        <h2 className="text-lg font-semibold text-black">9. Facturation</h2>
+        <h2 className="text-lg font-semibold text-black">9. Badge « Identité vérifiée »</h2>
+        <p>
+          Tout membre peut faire vérifier son identité pour afficher le badge
+          « Identité vérifiée » sur ses annonces. Le service coûte 2,99 € TTC,
+          payé une seule fois par carte bancaire, et il est offert aux membres
+          ayant un abonnement Pro en cours. La vérification (pièce
+          d&apos;identité et selfie) est réalisée par notre prestataire Stripe ;
+          Dépôt Malin ne conserve pas la copie de la pièce d&apos;identité,
+          seulement la date de la vérification. Si la vérification échoue, le
+          membre peut la recommencer sans payer à nouveau. Le badge atteste
+          uniquement que l&apos;identité a été contrôlée : il ne garantit pas
+          le comportement du membre. La somme payée n&apos;est pas remboursable
+          une fois la vérification commencée.
+        </p>
+
+        <h2 className="text-lg font-semibold text-black">10. Facturation</h2>
         <p>
           Un reçu simple est fourni aux particuliers ; les professionnels
           reçoivent une facture conforme incluant leur SIRET.
