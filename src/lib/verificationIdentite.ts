@@ -18,10 +18,21 @@ export function peutLancerVerification(membre: Membre, proActif: boolean): boole
   return proActif || membre.verificationIdentitePayee === true;
 }
 
-/** Message affiché au membre selon l'état de la vérification Stripe. */
+/**
+ * État enregistré chez nous, d'après la session Stripe Identity. Une session
+ * neuve est déjà « requires_input » chez Stripe : sans erreur, cela veut dire
+ * que le membre n'a pas encore terminé, pas que la vérification a échoué.
+ */
+export function etatVerification(statutStripe: string, aUneErreur: boolean): string {
+  if (statutStripe === "requires_input") return aUneErreur ? "echec" : "a_terminer";
+  return statutStripe; // processing, verified, canceled
+}
+
+/** Message affiché au membre selon l'état de la vérification. */
 export const LIBELLES_STATUT_VERIFICATION: Record<string, string> = {
+  a_terminer: "Vous n'avez pas encore terminé la vérification : cliquez sur le bouton pour la continuer.",
   processing: "Vérification en cours d'analyse : cela prend en général quelques minutes.",
-  requires_input:
+  echec:
     "La vérification n'a pas abouti (photo floue, document illisible ou expiré…). Vous pouvez recommencer sans payer à nouveau.",
   canceled: "La vérification a été annulée. Vous pouvez la recommencer sans payer à nouveau.",
 };

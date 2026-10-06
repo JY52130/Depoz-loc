@@ -8,6 +8,7 @@ import { dateApresProlongation } from "@/lib/dureeAnnonce";
 import { dateApresMiseEnAvant } from "@/lib/miseEnAvant";
 import { estProActif, finAvantagesPro } from "@/lib/abonnementPro";
 import { finPeriodeGratuite } from "@/lib/dureeAnnonce";
+import { enregistrerEtatVerification } from "@/lib/stripe/verificationIdentite";
 
 // Webhook Stripe (section 11.1). À configurer dans le dashboard Stripe sur
 // `${SITE_URL}/api/webhooks/stripe` avec les événements :
@@ -115,14 +116,7 @@ async function enregistrerPaiementVerification(userId: string | undefined, payme
 async function mettreAJourVerificationIdentite(session: Stripe.Identity.VerificationSession) {
   const userId = session.metadata?.userId;
   if (!userId) return;
-  await prisma.user.updateMany({
-    where: { id: userId, stripeVerificationSessionId: session.id, identiteVerifieeLe: null },
-    data: {
-      statutVerificationIdentite: session.status,
-      ...(session.status === "verified" ? { identiteVerifieeLe: new Date() } : {}),
-    },
-  });
-  if (session.status === "verified") revalidatePath("/", "layout");
+  await enregistrerEtatVerification(userId, session);
 }
 
 export async function POST(request: Request) {

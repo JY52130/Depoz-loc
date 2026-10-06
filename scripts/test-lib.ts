@@ -26,7 +26,7 @@ import {
   siretValide,
   tauxCommissionProprietaire,
 } from "../src/lib/abonnementPro";
-import { estIdentiteVerifiee, peutLancerVerification } from "../src/lib/verificationIdentite";
+import { estIdentiteVerifiee, etatVerification, peutLancerVerification } from "../src/lib/verificationIdentite";
 import {
   TAUX_COMMISSION_PROPRIETAIRE,
   arrondiCentimes,
@@ -238,5 +238,9 @@ assertEqual(
   false,
   "identité : déjà vérifiée → rien à relancer"
 );
+
+assertEqual(etatVerification("requires_input", false), "a_terminer", "identité : session pas terminée ≠ échec");
+assertEqual(etatVerification("requires_input", true), "echec", "identité : erreur Stripe = échec");
+assertEqual(etatVerification("verified", false), "verified", "identité : vérifiée");
 
 console.log("Terminé.");
