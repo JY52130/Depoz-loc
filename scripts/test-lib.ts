@@ -32,6 +32,7 @@ import {
   erreursOffreLivraison,
   montantReverseProprietaire,
 } from "../src/lib/livraison";
+import { notesAvecVerifications } from "../src/lib/etatDesLieux";
 import { estIdentiteVerifiee, etatVerification, peutLancerVerification } from "../src/lib/verificationIdentite";
 import {
   TAUX_COMMISSION_PROPRIETAIRE,
@@ -273,5 +274,18 @@ assertEqual(
   17,
   "livraison : reversement sans livraison"
 );
+
+// --- État des lieux : liste de vérification ---
+assertEqual(
+  notesAvecVerifications("SORTIE", ["fonctionne", "accessoires", "propre", "dommage", "photos"], ""),
+  "Vérifié : L'objet fonctionne toujours ; Tous les accessoires sont rendus ; L'objet est rendu propre ; Aucun nouveau dommage, ou dommages notés ci-dessous ; Des photos ont été prises sous tous les angles.",
+  "état des lieux : tout coché"
+);
+assertEqual(
+  notesAvecVerifications("ENTREE", ["teste"], " Rayure sur le capot "),
+  "Vérifié : L'objet a été testé ensemble et il fonctionne.\nNon coché : Les accessoires, câbles et pièces prévus sont présents ; La notice est remise ou l'utilisation a été expliquée ; Aucun défaut visible (fil dénudé, rouille, pièce cassée), ou défauts notés ci-dessous ; Des photos ont été prises sous tous les angles.\nRayure sur le capot",
+  "état des lieux : cases non cochées et remarques"
+);
+assertEqual(notesAvecVerifications("ENTREE", ["inconnu"], "").startsWith("Non coché"), true, "état des lieux : valeur inconnue ignorée");
 
 console.log("Terminé.");

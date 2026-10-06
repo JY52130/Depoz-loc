@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { reverserProprietaire } from "@/lib/stripe/reverserProprietaire";
 import { notifierClotureLocation, notifierLitigeOuvert } from "@/lib/email/notifications";
+import { notesAvecVerifications } from "@/lib/etatDesLieux";
 
 async function verifierParticipant(bookingId: string) {
   const user = await getOrCreateUser();
@@ -22,7 +23,12 @@ async function verifierParticipant(bookingId: string) {
 export async function creerEtatDesLieux(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
   const type = String(formData.get("type") ?? "") as "ENTREE" | "SORTIE";
-  const notes = String(formData.get("notes") ?? "").trim();
+  if (type !== "ENTREE" && type !== "SORTIE") throw new Error("Type d'état des lieux invalide.");
+  const notes = notesAvecVerifications(
+    type,
+    formData.getAll("verifications").map(String),
+    String(formData.get("notes") ?? "")
+  );
 
   let photos: string[] = [];
   try {
