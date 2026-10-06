@@ -3,13 +3,14 @@ import { JOURS_GRATUITS, JOURS_PROLONGATION, PRIX_PROLONGATION } from "@/lib/dur
 import { JOURS_MISE_EN_AVANT } from "@/lib/miseEnAvant";
 import { PRIX_ABONNEMENT_PRO } from "@/lib/abonnementPro";
 import { PRIX_VERIFICATION_IDENTITE } from "@/lib/verificationIdentite";
+import { TitreAvecMalin } from "@/components/Malin";
 
 export const metadata = { title: "Tarifs & commissions" };
 
 export default function TarifsPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-semibold">Tarifs & commissions</h1>
+      <TitreAvecMalin titre="Tarifs & commissions" pose="promotion" />
       <ul className="mt-6 space-y-2 text-gray-700">
         <li>Frais de service locataire : 10 % du montant de la location (1 € minimum).</li>
         <li>Commission propriétaire : 15 % du montant de la location.</li>

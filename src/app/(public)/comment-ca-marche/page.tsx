@@ -1,3 +1,4 @@
+import { TitreAvecMalin } from "@/components/Malin";
 export const metadata = { title: "Comment ça marche" };
 
 const etapesLocataire = [
@@ -19,7 +20,7 @@ const etapesProprietaire = [
 export default function CommentCaMarchePage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-semibold">Comment ça marche</h1>
+      <TitreAvecMalin titre="Comment ça marche" pose="livraison" />
       <section className="mt-8">
         <h2 className="text-xl font-semibold">Vous voulez louer un objet</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-gray-700">

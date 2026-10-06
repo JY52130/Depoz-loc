@@ -1,4 +1,5 @@
 import { JsonLd } from "@/components/JsonLd";
+import { TitreAvecMalin } from "@/components/Malin";
 
 export const metadata = { title: "FAQ" };
 
@@ -44,7 +45,7 @@ export default function FaqPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
       <JsonLd data={faqJsonLd} />
-      <h1 className="text-3xl font-semibold">Foire aux questions</h1>
+      <TitreAvecMalin titre="Foire aux questions" pose="contact" />
       <div className="mt-6 flex flex-col gap-6">
         {QUESTIONS.map((q) => (
           <div key={q.question}>
