@@ -7,6 +7,7 @@ import {
   peutLancerVerification,
 } from "@/lib/verificationIdentite";
 import { BoutonEnvoi } from "@/components/BoutonEnvoi";
+import { synchroniserVerification } from "@/lib/stripe/verificationIdentite";
 import { lancerVerificationIdentite, payerVerificationIdentite } from "./actions";
 
 export const metadata = { title: "Identité vérifiée" };
@@ -23,10 +24,12 @@ function dateLongue(d: Date): string {
 export default async function VerificationIdentitePage({ searchParams }: Props) {
   const params = await searchParams;
   const user = await getOrCreateUser();
+  // Relit le résultat chez Stripe (au cas où le webhook n'est pas encore arrivé).
+  const etatAJour = user ? await synchroniserVerification(user) : null;
   const proActif = estProActif(user);
-  const verifiee = estIdentiteVerifiee(user);
+  const verifiee = estIdentiteVerifiee(user) || etatAJour === "verified";
   const peutLancer = user ? peutLancerVerification(user, proActif) : false;
-  const statut = user?.statutVerificationIdentite ?? null;
+  const statut = etatAJour ?? user?.statutVerificationIdentite ?? null;
 
   return (
     <div className="max-w-2xl">
@@ -38,7 +41,7 @@ export default async function VerificationIdentitePage({ searchParams }: Props) 
           bouton n&apos;apparaît pas encore).
         </p>
       )}
-      {params.retour && !verifiee && statut !== "requires_input" && (
+      {params.retour && statut === "processing" && (
         <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
           Merci ! Vos documents sont envoyés. Le résultat arrive en général en quelques minutes : rechargez la page
           pour le voir.
@@ -80,7 +83,8 @@ export default async function VerificationIdentitePage({ searchParams }: Props) 
           </h2>
           {verifiee ? (
             <p className="mt-2 text-sm font-medium text-green-700">
-              ✓ Votre identité est vérifiée depuis le {dateLongue(user.identiteVerifieeLe!)}.
+              ✓ Votre identité est vérifiée
+              {user.identiteVerifieeLe ? ` depuis le ${dateLongue(user.identiteVerifieeLe)}` : ""}.
             </p>
           ) : (
             <>
@@ -91,9 +95,11 @@ export default async function VerificationIdentitePage({ searchParams }: Props) 
                 (peutLancer ? (
                   <form action={lancerVerificationIdentite} className="mt-4">
                     <BoutonEnvoi texteEnCours="Ouverture de la vérification…" className={bouton}>
-                      {statut === "requires_input" || statut === "canceled"
+                      {statut === "echec" || statut === "canceled"
                         ? "Recommencer la vérification"
-                        : "Lancer la vérification"}
+                        : statut === "a_terminer"
+                          ? "Continuer la vérification"
+                          : "Lancer la vérification"}
                     </BoutonEnvoi>
                   </form>
                 ) : (

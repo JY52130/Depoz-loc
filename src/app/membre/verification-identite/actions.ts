@@ -8,6 +8,7 @@ import { estProActif } from "@/lib/abonnementPro";
 import {
   PRIX_VERIFICATION_IDENTITE,
   estIdentiteVerifiee,
+  etatVerification,
   peutLancerVerification,
 } from "@/lib/verificationIdentite";
 
@@ -64,6 +65,7 @@ export async function lancerVerificationIdentite() {
       .retrieve(user.stripeVerificationSessionId)
       .catch(() => null);
     if (existante?.status === "processing") erreur("Votre vérification est en cours d'analyse.");
+    // Une session pas terminée (ou à refaire) garde son lien : on le réutilise.
     if (existante?.status === "requires_input" && existante.url) redirect(existante.url);
   }
 
@@ -77,7 +79,10 @@ export async function lancerVerificationIdentite() {
 
   await prisma.user.update({
     where: { id: user.id },
-    data: { stripeVerificationSessionId: session.id, statutVerificationIdentite: session.status },
+    data: {
+      stripeVerificationSessionId: session.id,
+      statutVerificationIdentite: etatVerification(session.status, session.last_error != null),
+    },
   });
 
   if (!session.url) erreur("La vérification n'a pas pu démarrer.");
