@@ -4,6 +4,7 @@
 // n'est appelée nulle part mais est prête à l'emploi.
 import { stripe } from "@/lib/stripe/client";
 import { prisma } from "@/lib/prisma";
+import { netProprietaireReservation } from "@/lib/livraison";
 
 export async function reverserProprietaire(bookingId: string) {
   const booking = await prisma.booking.findUnique({
@@ -22,9 +23,8 @@ export async function reverserProprietaire(bookingId: string) {
     throw new Error("Le propriétaire n'a pas terminé son inscription Stripe Connect.");
   }
 
-  const montantNet = Math.round(
-    (Number(booking.montantLocation) - Number(booking.commissionProprietaire)) * 100
-  ) / 100;
+  // Location + éventuelle livraison faite par le propriétaire, moins les commissions.
+  const montantNet = netProprietaireReservation(booking);
 
   const transfer = await stripe.transfers.create({
     amount: Math.round(montantNet * 100),

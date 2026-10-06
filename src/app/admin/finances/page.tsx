@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { netProprietaireReservation } from "@/lib/livraison";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = { title: "Finances" };
@@ -15,12 +16,17 @@ export default async function AdminFinancesPage() {
 
   const totalEncaisse = transactions.reduce((s, t) => s + Number(t.montantTotal), 0);
   const totalCommissions = transactions.reduce(
-    (s, t) => s + Number(t.booking.fraisServiceLocataire) + Number(t.booking.commissionProprietaire),
+    (s, t) =>
+      s +
+      Number(t.booking.fraisServiceLocataire) +
+      Number(t.booking.commissionProprietaire) +
+      Number(t.booking.commissionLivraison ?? 0) +
+      Number(t.booking.fraisPointRelais ?? 0),
     0
   );
   const totalReverse = transactions
     .filter((t) => t.booking.statut === "CLOTUREE")
-    .reduce((s, t) => s + (Number(t.booking.montantLocation) - Number(t.booking.commissionProprietaire)), 0);
+    .reduce((s, t) => s + netProprietaireReservation(t.booking), 0);
 
   const disputesResolus = await prisma.dispute.findMany({
     where: { statut: "RESOLU", montantCautionRetenu: { not: null } },

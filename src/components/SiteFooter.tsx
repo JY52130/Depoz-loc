@@ -4,7 +4,7 @@ import { LogoIcone } from "@/components/Logo";
 const liensAide = [
   { href: "/comment-ca-marche", label: "Comment ça marche" },
   { href: "/tarifs", label: "Tarifs & commissions" },
-  { href: "/points-relais", label: "Nos points relais" },
+  { href: "/points-relais", label: "Commerçants relais" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];

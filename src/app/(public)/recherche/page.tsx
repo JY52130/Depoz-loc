@@ -68,7 +68,8 @@ export default async function RecherchePage({ searchParams }: Props) {
         <select name="mode" defaultValue={params.mode ?? ""} className="rounded-lg border px-3 py-2 text-sm">
           <option value="">Tous modes de remise</option>
           <option value="P2P">Main à main</option>
-          <option value="POINT_RELAIS">Point relais</option>
+          <option value="POINT_RELAIS">Commerçant relais</option>
+          <option value="LIVRAISON">Livraison possible</option>
         </select>
         <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
           Filtrer

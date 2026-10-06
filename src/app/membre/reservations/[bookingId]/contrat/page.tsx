@@ -20,6 +20,7 @@ export default async function ContratReservationPage({ params }: Props) {
       listing: true,
       locataire: { select: { nom: true, email: true } },
       proprietaire: { select: { nom: true, email: true } },
+      relayPoint: true,
     },
   });
 
@@ -53,6 +54,12 @@ export default async function ContratReservationPage({ params }: Props) {
           montantLocation: Number(booking.montantLocation),
           fraisServiceLocataire: Number(booking.fraisServiceLocataire),
           fraisPointRelais: booking.fraisPointRelais ? Number(booking.fraisPointRelais) : null,
+          fraisLivraison: booking.fraisLivraison ? Number(booking.fraisLivraison) : null,
+          commissionLivraison: booking.commissionLivraison ? Number(booking.commissionLivraison) : null,
+          adresseLivraison: booking.adresseLivraison,
+          relais: booking.relayPoint
+            ? `${booking.relayPoint.nom}, ${booking.relayPoint.adresse}, ${booking.relayPoint.codePostal} ${booking.relayPoint.ville}`
+            : null,
           commissionProprietaire: Number(booking.commissionProprietaire),
           montantCaution: Number(booking.montantCaution),
           contratAccepteProprietaireLe: booking.contratAccepteProprietaireLe,

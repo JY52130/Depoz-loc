@@ -26,7 +26,7 @@ type BookingLite = {
 const LABELS_AUTEUR: Record<string, string> = {
   PROPRIETAIRE: "Propriétaire",
   LOCATAIRE: "Locataire",
-  STAFF: "Personnel point relais",
+  STAFF: "Équipe Dépôt Malin",
 };
 
 function FormulaireEtatDesLieux({ bookingId, type }: { bookingId: string; type: "ENTREE" | "SORTIE" }) {
@@ -94,19 +94,17 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
   const rapportsEntree = booking.conditionReports.filter((r) => r.type === "ENTREE");
   const rapportsSortie = booking.conditionReports.filter((r) => r.type === "SORTIE");
 
-  const circuitPointRelais = booking.modeRemise === "POINT_RELAIS";
   const contratAccepte = Boolean(booking.contratAccepteLocataireLe && booking.contratAccepteProprietaireLe);
-  const peutDeposerEntree = !circuitPointRelais && booking.statut === "EN_COURS" && contratAccepte;
-  const peutDeposerSortie =
-    !circuitPointRelais && (booking.statut === "EN_COURS" || booking.statut === "RETOURNEE");
+  const peutDeposerEntree = booking.statut === "EN_COURS" && contratAccepte;
+  const peutDeposerSortie = booking.statut === "EN_COURS" || booking.statut === "RETOURNEE";
 
   return (
     <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">États des lieux</h2>
-      {circuitPointRelais && (
-        <p className="mt-1 text-sm text-gray-500">
-          Cette location passe par le point relais : les états des lieux sont
-          réalisés par le personnel, à l&apos;entrée et à la sortie.
+      {booking.modeRemise === "POINT_RELAIS" && (
+        <p className="mt-1 text-sm text-gray-600">
+          Location par un commerçant relais : prenez vos photos au moment du
+          dépôt et du retrait chez le commerçant.
         </p>
       )}
 
@@ -124,7 +122,7 @@ export function EtatDesLieuxSection({ booking }: { booking: BookingLite }) {
           </ul>
         )}
         {peutDeposerEntree && <FormulaireEtatDesLieux bookingId={booking.id} type="ENTREE" />}
-        {!circuitPointRelais && booking.statut === "EN_COURS" && !contratAccepte && (
+        {booking.statut === "EN_COURS" && !contratAccepte && (
           <p className="mt-1 text-sm text-gray-600">
             L&apos;état des lieux d&apos;entrée sera possible une fois le contrat accepté par les deux parties.
           </p>

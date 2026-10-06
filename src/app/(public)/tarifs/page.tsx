@@ -1,4 +1,5 @@
 import { FRAIS_POINT_RELAIS } from "@/lib/constantesReservation";
+import { COMMISSION_LIVRAISON_MINIMUM, TAUX_COMMISSION_LIVRAISON } from "@/lib/livraison";
 import { JOURS_GRATUITS, JOURS_PROLONGATION, PRIX_PROLONGATION } from "@/lib/dureeAnnonce";
 import { JOURS_MISE_EN_AVANT } from "@/lib/miseEnAvant";
 import { PRIX_ABONNEMENT_PRO } from "@/lib/abonnementPro";
@@ -38,8 +39,14 @@ export default function TarifsPage() {
           offert aux membres Pro.
         </li>
         <li>
-          Frais point relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,
+          Commerçant relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,
           à la charge du locataire.
+        </li>
+        <li>
+          Livraison par le propriétaire (optionnel) : prix fixé par le propriétaire pour l&apos;aller-retour,
+          payé par le locataire. Commission Dépôt Malin : {TAUX_COMMISSION_LIVRAISON * 100} % (
+          {COMMISSION_LIVRAISON_MINIMUM.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} € minimum), prélevée
+          sur le montant reversé au propriétaire.
         </li>
       </ul>
     </main>

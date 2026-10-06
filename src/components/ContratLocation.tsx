@@ -14,6 +14,10 @@ export type DonneesContrat = {
   montantLocation: number;
   fraisServiceLocataire: number;
   fraisPointRelais: number | null;
+  fraisLivraison: number | null;
+  commissionLivraison: number | null;
+  adresseLivraison: string | null;
+  relais: string | null; // nom et adresse du commerçant relais
   commissionProprietaire: number;
   montantCaution: number;
   contratAccepteProprietaireLe: Date | null;
@@ -22,7 +26,8 @@ export type DonneesContrat = {
 
 const LABELS_REMISE: Record<string, string> = {
   P2P: "remise en main propre entre les parties",
-  POINT_RELAIS: "remise et retour au point relais Dépôt Malin",
+  POINT_RELAIS: "dépôt et retrait chez un commerçant relais",
+  LIVRAISON: "livraison et reprise par le propriétaire",
 };
 
 function euros(montant: number): string {
@@ -52,7 +57,7 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
   const nbJours = d ? nombreDemiJournees(d.dateDebut, d.dateFin) / 2 : undefined;
   const prixParJour = d && nbJours ? Math.round((d.montantLocation / nbJours) * 100) / 100 : undefined;
   const totalLocataire = d
-    ? d.montantLocation + d.fraisServiceLocataire + (d.fraisPointRelais ?? 0)
+    ? d.montantLocation + d.fraisServiceLocataire + (d.fraisPointRelais ?? 0) + (d.fraisLivraison ?? 0)
     : undefined;
 
   return (
@@ -89,9 +94,12 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
       <p>
         La location a lieu{" "}
         <Champ valeur={d ? libellePeriode(d.dateDebut, d.dateFin) : undefined} modele="du … au …, à la demi-journée, à la journée ou à la semaine" />. Mode de
-        remise : <Champ valeur={d ? LABELS_REMISE[d.modeRemise] ?? d.modeRemise : undefined} modele="main à main ou point relais" />.
-        Le lieu et l&apos;heure de remise et de retour sont convenus entre les parties
-        par la messagerie du site.
+        remise : <Champ valeur={d ? LABELS_REMISE[d.modeRemise] ?? d.modeRemise : undefined} modele="main à main, commerçant relais ou livraison par le propriétaire" />
+        {d?.relais ? <> ({d.relais})</> : null}
+        {d?.adresseLivraison ? <> à l&apos;adresse : {d.adresseLivraison}</> : null}.
+        {d?.modeRemise === "POINT_RELAIS"
+          ? " Le commerçant relais garde l'objet entre le dépôt et le retrait ; il n'est pas partie au présent contrat et n'en vérifie pas l'état. Les heures de dépôt, de retrait et de retour sont convenues entre les parties par la messagerie du site, dans les horaires d'ouverture du commerçant."
+          : " Le lieu et l'heure de remise et de retour sont convenus entre les parties par la messagerie du site."}
       </p>
 
       <h2 className="text-lg font-semibold text-black">4. Prix</h2>
@@ -99,14 +107,21 @@ export function ContratLocation({ donnees }: { donnees?: DonneesContrat }) {
         Prix de la location : <Champ valeur={d ? euros(d.montantLocation) : undefined} modele="montant" />.
         Le locataire paie en plus des frais de service de{" "}
         <Champ valeur={d ? euros(d.fraisServiceLocataire) : undefined} modele="10 %, 1 € minimum" />
-        {d?.fraisPointRelais ? <> et des frais de point relais de {euros(d.fraisPointRelais)}</> : null},
+        {d?.fraisPointRelais ? <>, des frais de commerçant relais de {euros(d.fraisPointRelais)}</> : null}
+        {d?.fraisLivraison ? <>, des frais de livraison et reprise de {euros(d.fraisLivraison)}</> : null},
         soit un total de <Champ valeur={totalLocataire !== undefined ? euros(totalLocataire) : undefined} modele="total" />,
         payé en ligne à la réservation.
       </p>
       <p>
         Le propriétaire reçoit le prix de la location diminué de la commission de
-        Dépôt Malin (<Champ valeur={d ? euros(d.commissionProprietaire) : undefined} modele="15 %, ou 10 % pour un membre Pro" />),
-        après la fin de la location et la confirmation du retour de l&apos;objet.
+        Dépôt Malin (<Champ valeur={d ? euros(d.commissionProprietaire) : undefined} modele="15 %, ou 10 % pour un membre Pro" />)
+        {d?.fraisLivraison ? (
+          <>
+            , ainsi que les frais de livraison diminués de la commission de Dépôt Malin (
+            {euros(d.commissionLivraison ?? 0)})
+          </>
+        ) : null}
+        , après la fin de la location et la confirmation du retour de l&apos;objet.
       </p>
 
       <h2 className="text-lg font-semibold text-black">5. Caution</h2>

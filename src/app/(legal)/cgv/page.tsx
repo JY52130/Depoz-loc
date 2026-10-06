@@ -16,8 +16,12 @@ export default function Page() {
           frais de service (1 € minimum). Le propriétaire perçoit ce montant diminué
           d&apos;une commission de 15 % (10 % pour les membres ayant un
           abonnement Pro en cours), une fois la location clôturée. Un
-          forfait supplémentaire s&apos;applique lorsque la remise transite
-          par un point relais, à la charge du locataire.
+          forfait supplémentaire s&apos;applique lorsque la remise se fait
+          chez un commerçant relais, à la charge du locataire. Lorsque le
+          propriétaire propose la livraison, son prix (aller-retour) est
+          payé par le locataire avec la location ; le propriétaire le perçoit
+          diminué d&apos;une commission de 10 % (0,50 € minimum). Dépôt Malin
+          n&apos;assure aucun transport.
         </p>
 
         <h2 className="text-lg font-semibold text-black">2. Caution</h2>

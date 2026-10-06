@@ -5,7 +5,7 @@ const etapesLocataire = [
   "Cherchez un objet par catégorie, puis affinez par ville, distance, dates et prix.",
   "Consultez la fiche : photos, tarifs, caution, disponibilités et avis sur le propriétaire.",
   "Choisissez vos dates sur le calendrier et réservez. L'objet est bloqué pour vous.",
-  "Récupérez l'objet en main propre ou au point relais, après un état des lieux en photos.",
+  "Récupérez l'objet en main propre, chez un commerçant relais ou faites-vous livrer si le propriétaire le propose, après un état des lieux en photos.",
   "Rendez-le à la date prévue. Si tout est en ordre, la caution n'est pas prélevée.",
 ];
 
@@ -13,7 +13,7 @@ const etapesProprietaire = [
   "Créez votre annonce : catégorie, photos, description et ville.",
   "Fixez vos tarifs à la demi-journée, à la journée, à la semaine ou au mois.",
   "La caution est calculée automatiquement à partir du prix neuf et de l'âge de l'objet.",
-  "Indiquez vos disponibilités et le mode de remise : en main propre ou au point relais.",
+  "Indiquez vos disponibilités et le mode de remise : en main propre, chez un commerçant relais, ou en livrant vous-même (à votre prix).",
   "Acceptez les réservations, échangez avec le locataire par la messagerie et recevez vos revenus.",
 ];
 

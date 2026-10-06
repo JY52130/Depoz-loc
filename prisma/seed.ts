@@ -1,4 +1,4 @@
-// Seed de base : catégories de 1er niveau + le point relais de lancement (Haute-Marne).
+// Seed de base : catégories de 1er niveau.
 // Lancer avec : npx prisma db seed
 
 import { PrismaClient } from "@prisma/client";
@@ -20,25 +20,7 @@ async function main() {
     });
   }
   console.log(`${CATEGORIES.length} catégories synchronisées.`);
-
-  const relaisExistant = await prisma.relayPoint.findFirst({
-    where: { codePostal: "52000" },
-  });
-
-  if (!relaisExistant) {
-    await prisma.relayPoint.create({
-      data: {
-        nom: "Dépôt Malin — Point relais Chaumont",
-        adresse: "À compléter",
-        ville: "Chaumont",
-        codePostal: "52000",
-        horaires: "À compléter",
-      },
-    });
-    console.log("Point relais de Haute-Marne créé.");
-  } else {
-    console.log("Point relais de Haute-Marne déjà présent.");
-  }
+  // Les commerçants relais sont ajoutés depuis l'espace admin (/admin/point-relais).
 }
 
 main()
