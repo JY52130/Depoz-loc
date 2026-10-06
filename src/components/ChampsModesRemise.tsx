@@ -11,13 +11,21 @@ type Props = {
   modesRemise?: string[];
   prixLivraison?: number | null;
   distanceLivraisonKm?: number | null;
+  /** Faux tant qu'aucun commerçant relais n'est proposé : la case est masquée. */
+  relaisDisponibles: boolean;
 };
 
 const champ = "w-28 rounded-lg border px-3 py-2";
 
 // Cases « mode de remise » d'une annonce : main à main, commerçant relais,
 // livraison par le propriétaire (avec son prix et sa distance maximale).
-export function ChampsModesRemise({ idPrefixe, modesRemise = ["P2P"], prixLivraison, distanceLivraisonKm }: Props) {
+export function ChampsModesRemise({
+  idPrefixe,
+  modesRemise = ["P2P"],
+  prixLivraison,
+  distanceLivraisonKm,
+  relaisDisponibles,
+}: Props) {
   const aide = `${idPrefixe}-aide-livraison`;
   return (
     <fieldset className="flex flex-col gap-2 text-sm">
@@ -26,15 +34,17 @@ export function ChampsModesRemise({ idPrefixe, modesRemise = ["P2P"], prixLivrai
         <input type="checkbox" name="modesRemise" value="P2P" defaultChecked={modesRemise.includes("P2P")} />
         Main à main : le locataire vient chercher l&apos;objet
       </label>
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          name="modesRemise"
-          value="POINT_RELAIS"
-          defaultChecked={modesRemise.includes("POINT_RELAIS")}
-        />
-        Commerçant relais : vous déposez l&apos;objet chez un commerçant partenaire
-      </label>
+      {(relaisDisponibles || modesRemise.includes("POINT_RELAIS")) && (
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="modesRemise"
+            value="POINT_RELAIS"
+            defaultChecked={modesRemise.includes("POINT_RELAIS")}
+          />
+          Commerçant relais : vous déposez l&apos;objet chez un commerçant partenaire
+        </label>
+      )}
       <label className="flex items-center gap-2">
         <input
           type="checkbox"

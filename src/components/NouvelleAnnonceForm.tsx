@@ -12,7 +12,13 @@ type Categorie = { id: string; nom: string };
 
 type Disponibilite = { debut: string; fin: string };
 
-export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] }) {
+export function NouvelleAnnonceForm({
+  categories,
+  relaisDisponibles,
+}: {
+  categories: Categorie[];
+  relaisDisponibles: boolean;
+}) {
   const [titre, setTitre] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [uploadEnCours, setUploadEnCours] = useState(false);
@@ -326,7 +332,7 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
       <section>
         <h2 className="text-lg font-semibold">7. Mode de remise</h2>
         <div className="mt-3">
-          <ChampsModesRemise idPrefixe="nouvelle" />
+          <ChampsModesRemise idPrefixe="nouvelle" relaisDisponibles={relaisDisponibles} />
         </div>
       </section>
 
