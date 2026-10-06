@@ -13,6 +13,7 @@ import {
 } from "@/lib/dureeAnnonce";
 import { JOURS_MISE_EN_AVANT, dateApresMiseEnAvant, prixMiseEnAvant } from "@/lib/miseEnAvant";
 import { JOURS_ENTRE_MISES_EN_AVANT_OFFERTES, estProActif } from "@/lib/abonnementPro";
+import { lireModesRemise } from "@/lib/livraison";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -152,4 +153,30 @@ export async function mettreEnAvantOffert(formData: FormData) {
   revalidatePath("/membre/mes-annonces");
   revalidatePath("/", "layout");
   redirect("/membre/mes-annonces?enavant=offert");
+}
+
+// Modes de remise d'une annonce existante (main à main, commerçant relais,
+// livraison par le propriétaire) : modifiables sans nouvelle modération.
+export async function modifierModesRemise(formData: FormData) {
+  const user = await getOrCreateUser();
+  if (!user) redirect("/connexion?redirect=/membre/mes-annonces");
+
+  const listingId = String(formData.get("listingId") ?? "");
+  const remise = lireModesRemise(formData);
+  if (remise.erreurs.length > 0) {
+    redirect(`/membre/mes-annonces?erreur=${encodeURIComponent(remise.erreurs.join(" "))}`);
+  }
+
+  const { count } = await prisma.listing.updateMany({
+    where: { id: listingId, proprietaireId: user.id },
+    data: {
+      modesRemise: remise.modesRemise,
+      prixLivraison: remise.prixLivraison,
+      distanceLivraisonKm: remise.distanceLivraisonKm,
+    },
+  });
+  if (count === 0) redirect("/membre/mes-annonces?erreur=Annonce+introuvable.");
+
+  revalidatePath("/membre/mes-annonces");
+  redirect("/membre/mes-annonces?remise=ok");
 }

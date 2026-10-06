@@ -40,7 +40,7 @@ const ETAPES = [
   },
   {
     titre: "Récupérez-le",
-    texte: "En main propre auprès du propriétaire, ou dans notre point relais de Chaumont. Rendez-le à la date prévue, c'est tout.",
+    texte: "En main propre, chez un commerçant relais, ou livré par le propriétaire s'il le propose. Rendez-le à la date prévue, c'est tout.",
   },
 ];
 
@@ -121,7 +121,7 @@ export default async function AccueilPage() {
           <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600 md:mx-0 md:justify-start">
             <li>✓ Inscription gratuite</li>
             <li>✓ Caution calculée automatiquement</li>
-            <li>✓ Remise en main propre ou en point relais</li>
+            <li>✓ En main propre, en relais ou livré</li>
           </ul>
         </div>
         <Malin pose="accueil" hauteur={400} classeTaille="h-56 md:h-[26rem]" prioritaire className="mx-auto -order-1 md:order-none" />

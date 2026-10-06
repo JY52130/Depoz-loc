@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { netProprietaireReservation } from "@/lib/livraison";
 import { stripe } from "@/lib/stripe/client";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { demarrerOnboardingStripe } from "./actions";
@@ -84,7 +85,7 @@ export default async function PortefeuillePage({ searchParams }: Props) {
         ) : (
           <ul className="mt-4 flex flex-col gap-2">
             {bookings.map((booking) => {
-              const net = Number(booking.montantLocation) - Number(booking.commissionProprietaire);
+              const net = netProprietaireReservation(booking);
               return (
                 <li key={booking.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
                   <div>

@@ -7,8 +7,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -31,6 +31,7 @@ enum ListingStatus {
 enum DeliveryMode {
   P2P
   POINT_RELAIS
+  LIVRAISON // le propriétaire apporte et vient rechercher l'objet (voir src/lib/livraison.ts)
 }
 
 enum BookingStatus {
@@ -71,47 +72,47 @@ enum DisputeStatus {
 // ---------------------------------------------------------------------------
 
 model User {
-  id                  String   @id @default(uuid())
+  id                          String     @id @default(uuid())
   // Lié à l'utilisateur Supabase Auth (auth.users.id) — pas de mot de passe stocké ici.
-  supabaseAuthId      String   @unique
-  email               String   @unique
-  nom                 String?
-  telephone           String?
-  statut              UserStatus @default(PARTICULIER)
-  siret               String?  // obligatoire si statut = PRO
-  numeroTva           String?
-  nomEntreprise       String?
+  supabaseAuthId              String     @unique
+  email                       String     @unique
+  nom                         String?
+  telephone                   String?
+  statut                      UserStatus @default(PARTICULIER)
+  siret                       String? // obligatoire si statut = PRO
+  numeroTva                   String?
+  nomEntreprise               String?
   // Abonnement Pro (voir src/lib/abonnementPro.ts), tenu à jour par le webhook Stripe.
-  stripeCustomerId    String?  @unique
-  stripeSubscriptionId String?
-  proActifJusquau     DateTime? // fin de la période payée ; avantages Pro jusqu'à cette date
-  proResiliationPrevue Boolean @default(false)
-  derniereMiseEnAvantOfferte DateTime?
+  stripeCustomerId            String?    @unique
+  stripeSubscriptionId        String?
+  proActifJusquau             DateTime? // fin de la période payée ; avantages Pro jusqu'à cette date
+  proResiliationPrevue        Boolean    @default(false)
+  derniereMiseEnAvantOfferte  DateTime?
   // Badge « Identité vérifiée » (voir src/lib/verificationIdentite.ts). On ne
   // stocke aucune donnée de la pièce d'identité, seulement l'état.
-  identiteVerifieeLe  DateTime?
-  verificationIdentitePayee Boolean @default(false)
+  identiteVerifieeLe          DateTime?
+  verificationIdentitePayee   Boolean    @default(false)
   dernierPaiementVerification String?
   stripeVerificationSessionId String?
-  statutVerificationIdentite String?  // statut Stripe : processing, requires_input…
-  noteMoyenne         Float?
-  stripeAccountId     String?  // compte Stripe Connect (Express)
-  stripeOnboardingDone Boolean @default(false)
+  statutVerificationIdentite  String? // statut Stripe : processing, requires_input…
+  noteMoyenne                 Float?
+  stripeAccountId             String? // compte Stripe Connect (Express)
+  stripeOnboardingDone        Boolean    @default(false)
   // Rôle interne (section 3.2) : donne accès au back-office (/admin). Aucune
   // UI d'auto-promotion — à définir manuellement en base (voir README).
-  estAdmin            Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  estAdmin                    Boolean    @default(false)
+  createdAt                   DateTime   @default(now())
+  updatedAt                   DateTime   @updatedAt
 
-  listings            Listing[]        @relation("ProprietaireListings")
-  bookingsAsLocataire Booking[]        @relation("LocataireBookings")
-  bookingsAsProprietaire Booking[]     @relation("ProprietaireBookings")
-  conversations       ConversationParticipant[]
-  messagesSent        Message[]
-  reviewsWritten      Review[]         @relation("ReviewAuteur")
-  reviewsReceived     Review[]         @relation("ReviewCible")
-  conditionReports    ConditionReport[]
-  disputesOuverts     Dispute[]        @relation("DisputeOuvrePar")
+  listings               Listing[]                 @relation("ProprietaireListings")
+  bookingsAsLocataire    Booking[]                 @relation("LocataireBookings")
+  bookingsAsProprietaire Booking[]                 @relation("ProprietaireBookings")
+  conversations          ConversationParticipant[]
+  messagesSent           Message[]
+  reviewsWritten         Review[]                  @relation("ReviewAuteur")
+  reviewsReceived        Review[]                  @relation("ReviewCible")
+  conditionReports       ConditionReport[]
+  disputesOuverts        Dispute[]                 @relation("DisputeOuvrePar")
 
   @@index([statut])
 }
@@ -128,7 +129,7 @@ model Category {
   ordre       Int      @default(0)
   createdAt   DateTime @default(now())
 
-  listings    Listing[]
+  listings Listing[]
 }
 
 // ---------------------------------------------------------------------------
@@ -136,44 +137,48 @@ model Category {
 // ---------------------------------------------------------------------------
 
 model Listing {
-  id                String   @id @default(uuid())
-  slug              String   @unique
-  proprietaireId    String
-  proprietaire      User     @relation("ProprietaireListings", fields: [proprietaireId], references: [id])
-  categoryId        String
-  category          Category @relation(fields: [categoryId], references: [id])
+  id             String   @id @default(uuid())
+  slug           String   @unique
+  proprietaireId String
+  proprietaire   User     @relation("ProprietaireListings", fields: [proprietaireId], references: [id])
+  categoryId     String
+  category       Category @relation(fields: [categoryId], references: [id])
 
-  titre             String
-  description       String
-  photos            String[] // URLs vers le storage S3-compatible / Supabase Storage
+  titre       String
+  description String
+  photos      String[] // URLs vers le storage S3-compatible / Supabase Storage
 
   // Tarifs par palier (4 optionnels — voir section 9.1)
-  prixDemiJournee   Decimal? @db.Decimal(10, 2)
-  prixJournee       Decimal? @db.Decimal(10, 2)
-  prixSemaine       Decimal? @db.Decimal(10, 2)
-  prixMois          Decimal? @db.Decimal(10, 2)
+  prixDemiJournee Decimal? @db.Decimal(10, 2)
+  prixJournee     Decimal? @db.Decimal(10, 2)
+  prixSemaine     Decimal? @db.Decimal(10, 2)
+  prixMois        Decimal? @db.Decimal(10, 2)
 
   // Caution (section 9.2)
-  prixNeufEstime    Decimal? @db.Decimal(10, 2)
-  ageMateriel       String?  // ex: "< 1 an", "1-3 ans", "3-5 ans", "> 5 ans"
-  montantCaution    Decimal? @db.Decimal(10, 2)
-  cautionEstimeeParIA Boolean @default(false)
-  attestationHonneur  Boolean @default(false)
+  prixNeufEstime      Decimal? @db.Decimal(10, 2)
+  ageMateriel         String? // ex: "< 1 an", "1-3 ans", "3-5 ans", "> 5 ans"
+  montantCaution      Decimal? @db.Decimal(10, 2)
+  cautionEstimeeParIA Boolean  @default(false)
+  attestationHonneur  Boolean  @default(false)
 
-  modesRemise       DeliveryMode[]
+  modesRemise         DeliveryMode[]
+  // Livraison par le propriétaire (mode LIVRAISON) : prix aller-retour et
+  // distance maximale autour de l'adresse de l'annonce.
+  prixLivraison       Decimal?       @db.Decimal(10, 2)
+  distanceLivraisonKm Int?
 
   // Géolocalisation
-  latitude          Float?
-  longitude         Float?
-  ville             String?
-  codePostal        String?
-  adresse           String?
+  latitude   Float?
+  longitude  Float?
+  ville      String?
+  codePostal String?
+  adresse    String?
 
-  statut            ListingStatus @default(BROUILLON)
+  statut ListingStatus @default(BROUILLON)
 
   // Durée de mise en ligne (voir src/lib/dureeAnnonce.ts) : visible jusqu'à
   // cette date ; null = sans limite (membres Pro, annonces non validées).
-  enLigneJusquau    DateTime?
+  enLigneJusquau               DateTime?
   // Dernier paiement de prolongation traité (évite de prolonger deux fois
   // si Stripe renvoie le même événement).
   derniereProlongationPaiement String?
@@ -181,11 +186,11 @@ model Listing {
   misEnAvantJusquau            DateTime?
   dernierPaiementMiseEnAvant   String?
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  availabilities    Availability[]
-  bookings          Booking[]
+  availabilities Availability[]
+  bookings       Booking[]
 
   @@index([categoryId])
   @@index([ville])
@@ -197,12 +202,12 @@ model Listing {
 // ---------------------------------------------------------------------------
 
 model Availability {
-  id         String   @id @default(uuid())
-  listingId  String
-  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  dateDebut  DateTime
-  dateFin    DateTime
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  dateDebut DateTime
+  dateFin   DateTime
+  createdAt DateTime @default(now())
 
   @@index([listingId])
 }
@@ -212,40 +217,48 @@ model Availability {
 // ---------------------------------------------------------------------------
 
 model Booking {
-  id                    String   @id @default(uuid())
-  listingId             String
-  listing               Listing  @relation(fields: [listingId], references: [id])
-  locataireId           String
-  locataire             User     @relation("LocataireBookings", fields: [locataireId], references: [id])
-  proprietaireId        String
-  proprietaire          User     @relation("ProprietaireBookings", fields: [proprietaireId], references: [id])
+  id             String  @id @default(uuid())
+  listingId      String
+  listing        Listing @relation(fields: [listingId], references: [id])
+  locataireId    String
+  locataire      User    @relation("LocataireBookings", fields: [locataireId], references: [id])
+  proprietaireId String
+  proprietaire   User    @relation("ProprietaireBookings", fields: [proprietaireId], references: [id])
 
-  dateDebut             DateTime
-  dateFin               DateTime
-  palierApplique        String   // "demi_journee" | "journee" | "semaine" | "mois" | "combinaison"
-  montantLocation       Decimal  @db.Decimal(10, 2)
-  fraisServiceLocataire Decimal  @db.Decimal(10, 2) // TAUX_FRAIS_LOCATAIRE
-  commissionProprietaire Decimal @db.Decimal(10, 2) // TAUX_COMMISSION_PROPRIETAIRE
-  fraisPointRelais      Decimal? @db.Decimal(10, 2) // à la charge du locataire si mode = POINT_RELAIS
-  montantCaution        Decimal  @db.Decimal(10, 2)
-  modeRemise            DeliveryMode
+  dateDebut              DateTime
+  dateFin                DateTime
+  palierApplique         String // "demi_journee" | "journee" | "semaine" | "mois" | "combinaison"
+  montantLocation        Decimal      @db.Decimal(10, 2)
+  fraisServiceLocataire  Decimal      @db.Decimal(10, 2) // TAUX_FRAIS_LOCATAIRE
+  commissionProprietaire Decimal      @db.Decimal(10, 2) // TAUX_COMMISSION_PROPRIETAIRE
+  fraisPointRelais       Decimal?     @db.Decimal(10, 2) // à la charge du locataire si mode = POINT_RELAIS
+  // Commerçant relais choisi par le locataire (mode POINT_RELAIS).
+  relayPointId           String?
+  relayPoint             RelayPoint?  @relation(fields: [relayPointId], references: [id])
+  // Livraison par le propriétaire (mode LIVRAISON) : payée par le locataire,
+  // reversée au propriétaire moins la commission Dépôt Malin.
+  fraisLivraison         Decimal?     @db.Decimal(10, 2)
+  commissionLivraison    Decimal?     @db.Decimal(10, 2)
+  adresseLivraison       String?
+  montantCaution         Decimal      @db.Decimal(10, 2)
+  modeRemise             DeliveryMode
 
-  statut                BookingStatus @default(RESERVEE)
+  statut BookingStatus @default(RESERVEE)
 
   // Contrat de location (voir src/components/ContratLocation.tsx) : date et
   // heure d'acceptation en ligne par chaque partie, valant signature.
   contratAccepteLocataireLe    DateTime?
   contratAccepteProprietaireLe DateTime?
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  transaction           Transaction?
-  conditionReports      ConditionReport[]
-  conversation          Conversation?
-  reviews               Review[]
-  dispute               Dispute?
-  relayStock            RelayStock?
+  transaction      Transaction?
+  conditionReports ConditionReport[]
+  conversation     Conversation?
+  reviews          Review[]
+  dispute          Dispute?
+  relayStock       RelayStock?
 
   @@index([listingId])
   @@index([locataireId])
@@ -258,20 +271,20 @@ model Booking {
 // ---------------------------------------------------------------------------
 
 model Transaction {
-  id                     String   @id @default(uuid())
-  bookingId               String   @unique
-  booking                 Booking  @relation(fields: [bookingId], references: [id])
+  id        String  @id @default(uuid())
+  bookingId String  @unique
+  booking   Booking @relation(fields: [bookingId], references: [id])
 
-  stripePaymentIntentId   String?
-  stripeSetupIntentId     String?  // caution : carte enregistrée, débit off-session si dommage
-  stripeApplicationFee    Decimal? @db.Decimal(10, 2)
-  stripeTransferId        String?  // reversement au propriétaire
+  stripePaymentIntentId String?
+  stripeSetupIntentId   String? // caution : carte enregistrée, débit off-session si dommage
+  stripeApplicationFee  Decimal? @db.Decimal(10, 2)
+  stripeTransferId      String? // reversement au propriétaire
 
-  statut                  String   // libre, à préciser en Phase 3 (ex: "en_attente"/"paye"/"rembourse"/...)
-  montantTotal            Decimal  @db.Decimal(10, 2)
+  statut       String // libre, à préciser en Phase 3 (ex: "en_attente"/"paye"/"rembourse"/...)
+  montantTotal Decimal @db.Decimal(10, 2)
 
-  createdAt               DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ---------------------------------------------------------------------------
@@ -279,16 +292,16 @@ model Transaction {
 // ---------------------------------------------------------------------------
 
 model ConditionReport {
-  id         String   @id @default(uuid())
+  id         String                @id @default(uuid())
   bookingId  String
-  booking    Booking  @relation(fields: [bookingId], references: [id])
+  booking    Booking               @relation(fields: [bookingId], references: [id])
   type       ConditionReportType
   auteurType ConditionReportAuthor
   auteurId   String?
-  auteur     User?    @relation(fields: [auteurId], references: [id])
+  auteur     User?                 @relation(fields: [auteurId], references: [id])
   photos     String[]
   notes      String?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime              @default(now())
 
   @@index([bookingId])
 }
@@ -298,10 +311,10 @@ model ConditionReport {
 // ---------------------------------------------------------------------------
 
 model Conversation {
-  id           String   @id @default(uuid())
-  bookingId    String?  @unique
-  booking      Booking? @relation(fields: [bookingId], references: [id])
-  createdAt    DateTime @default(now())
+  id        String   @id @default(uuid())
+  bookingId String?  @unique
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  createdAt DateTime @default(now())
 
   participants ConversationParticipant[]
   messages     Message[]
@@ -335,16 +348,16 @@ model Message {
 // ---------------------------------------------------------------------------
 
 model Review {
-  id         String   @id @default(uuid())
-  bookingId  String
-  booking    Booking  @relation(fields: [bookingId], references: [id])
-  auteurId   String
-  auteur     User     @relation("ReviewAuteur", fields: [auteurId], references: [id])
-  cibleId    String
-  cible      User     @relation("ReviewCible", fields: [cibleId], references: [id])
-  note       Int      // 1 à 5
+  id          String   @id @default(uuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  auteurId    String
+  auteur      User     @relation("ReviewAuteur", fields: [auteurId], references: [id])
+  cibleId     String
+  cible       User     @relation("ReviewCible", fields: [cibleId], references: [id])
+  note        Int // 1 à 5
   commentaire String?
-  createdAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   @@index([bookingId])
   @@index([cibleId])
@@ -363,17 +376,21 @@ model RelayPoint {
   latitude   Float?
   longitude  Float?
   horaires   String?
+  telephone  String?
+  // Commerçant partenaire proposé aux locataires (false = retiré de la liste).
+  actif      Boolean  @default(true)
   createdAt  DateTime @default(now())
 
-  stocks     RelayStock[]
+  stocks   RelayStock[]
+  bookings Booking[]
 }
 
 model RelayStock {
-  id           String   @id @default(uuid())
+  id           String           @id @default(uuid())
   relayPointId String
-  relayPoint   RelayPoint @relation(fields: [relayPointId], references: [id])
-  bookingId    String   @unique
-  booking      Booking  @relation(fields: [bookingId], references: [id])
+  relayPoint   RelayPoint       @relation(fields: [relayPointId], references: [id])
+  bookingId    String           @unique
+  booking      Booking          @relation(fields: [bookingId], references: [id])
   statut       RelayStockStatus @default(DEPOSE)
   dateDepot    DateTime?
   dateRetrait  DateTime?
@@ -387,15 +404,15 @@ model RelayStock {
 // ---------------------------------------------------------------------------
 
 model Dispute {
-  id                    String   @id @default(uuid())
-  bookingId             String   @unique
-  booking               Booking  @relation(fields: [bookingId], references: [id])
-  ouvertParId           String
-  ouvertPar             User     @relation("DisputeOuvrePar", fields: [ouvertParId], references: [id])
-  motif                 String
-  statut                DisputeStatus @default(OUVERT)
-  decision              String?
-  montantCautionRetenu  Decimal? @db.Decimal(10, 2)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                   String        @id @default(uuid())
+  bookingId            String        @unique
+  booking              Booking       @relation(fields: [bookingId], references: [id])
+  ouvertParId          String
+  ouvertPar            User          @relation("DisputeOuvrePar", fields: [ouvertParId], references: [id])
+  motif                String
+  statut               DisputeStatus @default(OUVERT)
+  decision             String?
+  montantCautionRetenu Decimal?      @db.Decimal(10, 2)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 }

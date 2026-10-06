@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `Location ${donnees.categorie.nom} à ${donnees.nomVille}`,
-    description: `Louez du matériel (${donnees.categorie.nom}) près de ${donnees.nomVille}. Réservation en ligne, remise en main propre ou en point relais.`,
+    description: `Louez du matériel (${donnees.categorie.nom}) près de ${donnees.nomVille}. Réservation en ligne, remise en main propre, chez un commerçant relais ou livraison.`,
   };
 }
 

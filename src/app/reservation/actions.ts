@@ -15,6 +15,8 @@ import { construirePeriode } from "@/lib/periodeLocation";
 import type { DeliveryMode } from "@prisma/client";
 import { estExpiree } from "@/lib/dureeAnnonce";
 import { estProActif, tauxCommissionProprietaire } from "@/lib/abonnementPro";
+import { calculerCommissionLivraison, distanceKm } from "@/lib/livraison";
+import { geocoderAdresse } from "@/lib/geocodage";
 
 export async function creerReservation(formData: FormData) {
   const user = await getOrCreateUser();
@@ -44,6 +46,39 @@ export async function creerReservation(formData: FormData) {
 
   if (!listing.modesRemise.includes(modeRemise)) {
     redirect(`/annonce/${listing.slug}?erreur=Mode+de+remise+invalide.`);
+  }
+
+  const erreurRemise = (message: string) =>
+    redirect(`/annonce/${listing.slug}?erreur=${encodeURIComponent(message)}`);
+
+  // Commerçant relais choisi par le locataire.
+  let relayPointId: string | null = null;
+  if (modeRemise === "POINT_RELAIS") {
+    const relais = await prisma.relayPoint.findFirst({
+      where: { id: String(formData.get("relayPointId") ?? ""), actif: true },
+    });
+    if (!relais) erreurRemise("Choisissez un commerçant relais dans la liste.");
+    relayPointId = relais!.id;
+  }
+
+  // Livraison par le propriétaire : adresse dans la zone qu'il a indiquée.
+  let adresseLivraison: string | null = null;
+  if (modeRemise === "LIVRAISON") {
+    if (listing.prixLivraison == null) erreurRemise("Cet objet n'est pas livré par son propriétaire.");
+    adresseLivraison = String(formData.get("adresseLivraison") ?? "").trim();
+    if (adresseLivraison.length < 5) erreurRemise("Indiquez l'adresse de livraison.");
+    if (listing.latitude != null && listing.longitude != null && listing.distanceLivraisonKm != null) {
+      const position = await geocoderAdresse(adresseLivraison);
+      if (!position) {
+        erreurRemise("Adresse de livraison introuvable : vérifiez-la (numéro, rue, code postal, ville).");
+      }
+      const km = distanceKm({ latitude: listing.latitude, longitude: listing.longitude }, position!);
+      if (km > listing.distanceLivraisonKm) {
+        erreurRemise(
+          `Cette adresse est à environ ${Math.round(km)} km : le propriétaire livre jusqu'à ${listing.distanceLivraisonKm} km.`
+        );
+      }
+    }
   }
 
   // Durée choisie : demi-journée, jours ou semaines (voir periodeLocation.ts).
@@ -88,11 +123,13 @@ export async function creerReservation(formData: FormData) {
     montantLocation * tauxCommissionProprietaire(estProActif(listing.proprietaire))
   );
   const fraisPointRelais = modeRemise === "POINT_RELAIS" ? FRAIS_POINT_RELAIS : null;
+  const fraisLivraison = modeRemise === "LIVRAISON" ? Number(listing.prixLivraison) : null;
+  const commissionLivraison = fraisLivraison != null ? calculerCommissionLivraison(fraisLivraison) : null;
   const montantCaution = listing.montantCaution ? Number(listing.montantCaution) : 0;
 
-  const montantTotalLocataire = Math.round(
-    (montantLocation + fraisServiceLocataire + (fraisPointRelais ?? 0)) * 100
-  ) / 100;
+  const montantTotalLocataire = arrondiCentimes(
+    montantLocation + fraisServiceLocataire + (fraisPointRelais ?? 0) + (fraisLivraison ?? 0)
+  );
 
   // --- Booking (statut RESERVEE tant que le paiement n'est pas confirmé) ---
   const booking = await prisma.booking.create({
@@ -107,6 +144,10 @@ export async function creerReservation(formData: FormData) {
       fraisServiceLocataire,
       commissionProprietaire,
       fraisPointRelais: fraisPointRelais ?? undefined,
+      relayPointId,
+      fraisLivraison,
+      commissionLivraison,
+      adresseLivraison,
       montantCaution,
       modeRemise,
       statut: "RESERVEE",

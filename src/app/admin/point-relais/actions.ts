@@ -1,91 +1,52 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { exigerAdmin } from "@/lib/exigerAdmin";
 import { prisma } from "@/lib/prisma";
-import { reverserProprietaire } from "@/lib/stripe/reverserProprietaire";
-import { notifierClotureLocation } from "@/lib/email/notifications";
+import { geocoderAdresse } from "@/lib/geocodage";
 
-async function getRelayPointUnique() {
-  const relais = await prisma.relayPoint.findFirst();
-  if (!relais) throw new Error("Aucun point relais enregistré (lancez le seed : npx prisma db seed).");
-  return relais;
-}
+// Commerçants relais (décision du 6 octobre 2026) : des commerces partenaires
+// où le propriétaire dépose l'objet et où le locataire le retire. Dépôt
+// Malin ne transporte rien ; l'accord avec chaque commerçant se fait hors site.
 
-export async function enregistrerDepot(formData: FormData) {
-  await exigerAdmin();
-  const bookingId = String(formData.get("bookingId") ?? "");
-  const relais = await getRelayPointUnique();
-
-  await prisma.relayStock.create({
-    data: {
-      relayPointId: relais.id,
-      bookingId,
-      statut: "DEPOSE",
-      dateDepot: new Date(),
-    },
-  });
-
+function retour(message: string, cle: "ok" | "erreur" = "ok"): never {
   revalidatePath("/admin/point-relais");
+  revalidatePath("/points-relais");
+  redirect(`/admin/point-relais?${cle}=${encodeURIComponent(message)}`);
 }
 
-export async function enregistrerRetrait(formData: FormData) {
+export async function ajouterCommercantRelais(formData: FormData) {
   await exigerAdmin();
-  const bookingId = String(formData.get("bookingId") ?? "");
-
-  await prisma.relayStock.update({
-    where: { bookingId },
-    data: { statut: "RETIRE", dateRetrait: new Date() },
-  });
-
-  await prisma.conditionReport.create({
-    data: { bookingId, type: "ENTREE", auteurType: "STAFF" },
-  });
-
-  revalidatePath("/admin/point-relais");
-}
-
-export async function enregistrerRetour(formData: FormData) {
-  await exigerAdmin();
-  const bookingId = String(formData.get("bookingId") ?? "");
-
-  await prisma.relayStock.update({
-    where: { bookingId },
-    data: { statut: "RETOURNE", dateRetour: new Date() },
-  });
-
-  await prisma.conditionReport.create({
-    data: { bookingId, type: "SORTIE", auteurType: "STAFF" },
-  });
-
-  await prisma.booking.updateMany({
-    where: { id: bookingId, statut: "EN_COURS" },
-    data: { statut: "RETOURNEE" },
-  });
-
-  revalidatePath("/admin/point-relais");
-}
-
-// Clôture pour le circuit point relais : c'est le personnel (pas le
-// propriétaire) qui a physiquement inspecté le retour — voir section 5.2.
-export async function validerRetourPointRelais(formData: FormData) {
-  await exigerAdmin();
-  const bookingId = String(formData.get("bookingId") ?? "");
-
-  await reverserProprietaire(bookingId);
-
-  const booking = await prisma.booking.findUnique({
-    where: { id: bookingId },
-    include: { listing: true, locataire: { select: { email: true } }, proprietaire: { select: { email: true } } },
-  });
-  if (booking) {
-    await notifierClotureLocation({
-      emailLocataire: booking.locataire.email,
-      emailProprietaire: booking.proprietaire.email,
-      titreAnnonce: booking.listing.titre,
-    });
+  const texte = (champ: string) => String(formData.get(champ) ?? "").trim();
+  const nom = texte("nom");
+  const adresse = texte("adresse");
+  const codePostal = texte("codePostal");
+  const ville = texte("ville");
+  if (!nom || !adresse || !/^\d{5}$/.test(codePostal) || !ville) {
+    retour("Nom, adresse, code postal (5 chiffres) et ville sont obligatoires.", "erreur");
   }
 
-  revalidatePath("/admin/point-relais");
-  revalidatePath("/membre/portefeuille");
+  const geo = await geocoderAdresse(`${adresse} ${codePostal} ${ville}`);
+  await prisma.relayPoint.create({
+    data: {
+      nom,
+      adresse,
+      codePostal,
+      ville,
+      horaires: texte("horaires") || null,
+      telephone: texte("telephone") || null,
+      latitude: geo?.latitude,
+      longitude: geo?.longitude,
+    },
+  });
+  retour(`${nom} est ajouté à la liste des commerçants relais.`);
+}
+
+export async function changerActivationRelais(formData: FormData) {
+  await exigerAdmin();
+  const id = String(formData.get("relayPointId") ?? "");
+  const actif = formData.get("actif") === "true";
+  await prisma.relayPoint.update({ where: { id }, data: { actif } });
+  retour(actif ? "Le commerçant est de nouveau proposé." : "Le commerçant n'est plus proposé aux locataires.");
 }

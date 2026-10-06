@@ -4,7 +4,7 @@ import { LiensCompte } from "@/components/LiensCompte";
 
 const liens = [
   { href: "/comment-ca-marche", label: "Comment ça marche" },
-  { href: "/points-relais", label: "Nos points relais" },
+  { href: "/points-relais", label: "Commerçants relais" },
   { href: "/tarifs", label: "Tarifs" },
   { href: "/faq", label: "FAQ" },
 ];

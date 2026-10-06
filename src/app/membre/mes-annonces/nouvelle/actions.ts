@@ -7,7 +7,7 @@ import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { calculerCaution, AGES_MATERIEL, type AgeMateriel } from "@/lib/caution";
 import { geocoderAdresse } from "@/lib/geocodage";
 import { genererSlugAnnonce } from "@/lib/slugify";
-import type { DeliveryMode } from "@prisma/client";
+import { lireModesRemise } from "@/lib/livraison";
 
 function nombreOptionnel(formData: FormData, champ: string): number | undefined {
   const valeur = formData.get(champ);
@@ -28,7 +28,7 @@ export async function creerAnnonce(formData: FormData) {
   const ageMateriel = String(formData.get("ageMateriel") ?? "") as AgeMateriel;
   const prixNeufEstime = Number(formData.get("prixNeufEstime") ?? 0);
   const attestation = formData.get("attestation") === "on";
-  const modesRemise = formData.getAll("modesRemise") as DeliveryMode[];
+  const remise = lireModesRemise(formData);
   const adresse = String(formData.get("adresse") ?? "").trim();
   const ville = String(formData.get("ville") ?? "").trim();
   const codePostal = String(formData.get("codePostal") ?? "").trim();
@@ -64,7 +64,7 @@ export async function creerAnnonce(formData: FormData) {
   if (!AGES_MATERIEL.includes(ageMateriel)) erreurs.push("L'âge du matériel est invalide.");
   if (!prixNeufEstime || prixNeufEstime <= 0) erreurs.push("Le prix neuf estimé doit être renseigné.");
   if (!attestation) erreurs.push("L'attestation sur l'honneur doit être cochée.");
-  if (modesRemise.length === 0) erreurs.push("Au moins un mode de remise doit être sélectionné.");
+  erreurs.push(...remise.erreurs);
 
   if (erreurs.length > 0) {
     redirect(
@@ -95,7 +95,9 @@ export async function creerAnnonce(formData: FormData) {
       montantCaution,
       cautionEstimeeParIA: formData.get("estimeParIA") === "true",
       attestationHonneur: attestation,
-      modesRemise,
+      modesRemise: remise.modesRemise,
+      prixLivraison: remise.prixLivraison,
+      distanceLivraisonKm: remise.distanceLivraisonKm,
       latitude: geo?.latitude,
       longitude: geo?.longitude,
       ville: geo?.ville || ville || undefined,

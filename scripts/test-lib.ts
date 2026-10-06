@@ -26,6 +26,12 @@ import {
   siretValide,
   tauxCommissionProprietaire,
 } from "../src/lib/abonnementPro";
+import {
+  calculerCommissionLivraison,
+  distanceKm,
+  erreursOffreLivraison,
+  montantReverseProprietaire,
+} from "../src/lib/livraison";
 import { estIdentiteVerifiee, etatVerification, peutLancerVerification } from "../src/lib/verificationIdentite";
 import {
   TAUX_COMMISSION_PROPRIETAIRE,
@@ -242,5 +248,30 @@ assertEqual(
 assertEqual(etatVerification("requires_input", false), "a_terminer", "identité : session pas terminée ≠ échec");
 assertEqual(etatVerification("requires_input", true), "echec", "identité : erreur Stripe = échec");
 assertEqual(etatVerification("verified", false), "verified", "identité : vérifiée");
+
+// --- Livraison par le propriétaire ---
+assertEqual(calculerCommissionLivraison(8), 0.8, "livraison : 10 % de 8 €");
+assertEqual(calculerCommissionLivraison(3), 0.5, "livraison : minimum 0,50 €");
+assertEqual(calculerCommissionLivraison(0.3), 0.3, "livraison : jamais plus que les frais");
+assertEqual(calculerCommissionLivraison(0), 0, "livraison : gratuite = pas de commission");
+assertEqual(erreursOffreLivraison(8, 15).length, 0, "livraison : offre valide");
+assertEqual(erreursOffreLivraison(undefined, 15).length, 1, "livraison : prix manquant");
+assertEqual(erreursOffreLivraison(8, 0).length, 1, "livraison : distance nulle refusée");
+assertEqual(erreursOffreLivraison(80, 2.5).length, 2, "livraison : prix trop haut et distance non entière");
+assertEqual(
+  Math.round(distanceKm({ latitude: 48.6383, longitude: 4.9497 }, { latitude: 48.1113, longitude: 5.1392 })),
+  60,
+  "livraison : Saint-Dizier → Chaumont ≈ 60 km"
+);
+assertEqual(
+  montantReverseProprietaire({ montantLocation: 20, commissionProprietaire: 3, fraisLivraison: 8, commissionLivraison: 0.8 }),
+  24.2,
+  "livraison : reversement location + livraison"
+);
+assertEqual(
+  montantReverseProprietaire({ montantLocation: 20, commissionProprietaire: 3 }),
+  17,
+  "livraison : reversement sans livraison"
+);
 
 console.log("Terminé.");

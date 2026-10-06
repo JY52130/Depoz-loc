@@ -16,12 +16,14 @@ import {
   miseEnAvantOfferteDisponible,
   prochaineMiseEnAvantOfferte,
 } from "@/lib/abonnementPro";
-import { mettreEnAvant, mettreEnAvantOffert, prolongerAnnonce } from "./actions";
+import { ChampsModesRemise } from "@/components/ChampsModesRemise";
+import { BoutonEnvoi } from "@/components/BoutonEnvoi";
+import { mettreEnAvant, mettreEnAvantOffert, modifierModesRemise, prolongerAnnonce } from "./actions";
 
 export const metadata = { title: "Mes annonces" };
 
 type Props = {
-  searchParams: Promise<{ creee?: string; prolongee?: string; enavant?: string; erreur?: string }>;
+  searchParams: Promise<{ creee?: string; prolongee?: string; enavant?: string; remise?: string; erreur?: string }>;
 };
 
 function dateCourte(d: Date): string {
@@ -87,6 +89,12 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
           {params.enavant === "offert"
             ? `C'est fait : votre annonce est « À la une » pendant ${JOURS_MISE_EN_AVANT} jours, offert avec votre abonnement Pro.`
             : `Merci ! Votre paiement est reçu : votre annonce est « À la une » pendant ${JOURS_MISE_EN_AVANT} jours (cela s'affiche dans quelques instants).`}
+        </p>
+      )}
+
+      {params.remise && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+          C&apos;est enregistré : les modes de remise de votre annonce sont à jour.
         </p>
       )}
 
@@ -172,6 +180,27 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
                   </div>
                 </div>
               )}
+              <details className="mt-3 border-t pt-3 text-sm">
+                <summary className="cursor-pointer font-medium text-brand-dark">
+                  Remise de l&apos;objet : main à main, commerçant relais, livraison
+                  <span className="sr-only"> ({annonce.titre})</span>
+                </summary>
+                <form action={modifierModesRemise} className="mt-3 flex flex-col gap-3">
+                  <input type="hidden" name="listingId" value={annonce.id} />
+                  <ChampsModesRemise
+                    idPrefixe={`annonce-${annonce.id}`}
+                    modesRemise={annonce.modesRemise}
+                    prixLivraison={annonce.prixLivraison != null ? Number(annonce.prixLivraison) : null}
+                    distanceLivraisonKm={annonce.distanceLivraisonKm}
+                  />
+                  <BoutonEnvoi
+                    texteEnCours="Enregistrement…"
+                    className="w-fit rounded-lg bg-brand px-3 py-1.5 font-medium text-white transition-colors hover:bg-brand-dark"
+                  >
+                    Enregistrer
+                  </BoutonEnvoi>
+                </form>
+              </details>
             </li>
           ))}
         </ul>

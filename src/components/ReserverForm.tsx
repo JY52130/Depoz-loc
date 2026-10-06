@@ -21,6 +21,8 @@ type Props = {
   listingId: string;
   slug: string;
   modesRemise: DeliveryMode[];
+  relais: { id: string; nom: string; adresse: string; horaires: string | null }[];
+  prixLivraison: number | null;
   tarifs: {
     demiJournee?: number;
     journee?: number;
@@ -30,8 +32,9 @@ type Props = {
 };
 
 const LABELS_REMISE: Record<string, string> = {
-  P2P: "Main à main",
-  POINT_RELAIS: "Point relais (Haute-Marne)",
+  P2P: "Main à main : je viens chercher l'objet",
+  POINT_RELAIS: "Chez un commerçant relais",
+  LIVRAISON: "Livraison et reprise par le propriétaire",
 };
 
 const LABELS_FORMULE: Record<FormuleLocation, string> = {
@@ -44,7 +47,7 @@ function aujourdhui(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
+export function ReserverForm({ listingId, slug, modesRemise, relais, prixLivraison, tarifs }: Props) {
   // Formules proposées selon les tarifs saisis par le propriétaire.
   const formules: FormuleLocation[] = [
     ...(tarifs.demiJournee != null ? (["demi_journee"] as const) : []),
@@ -81,17 +84,22 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
       const frais = calculerFraisLocataire(montant);
       const fraisRelais =
         modeRemise === "POINT_RELAIS" ? FRAIS_POINT_RELAIS : 0;
+      const fraisLivraison =
+        modeRemise === "LIVRAISON" ? (prixLivraison ?? 0) : 0;
       return {
         periode: libellePeriode(periode.dateDebut, periode.dateFin),
         montant,
         frais,
         fraisRelais,
-        total: Math.round((montant + frais + fraisRelais) * 100) / 100,
+        fraisLivraison,
+        total:
+          Math.round((montant + frais + fraisRelais + fraisLivraison) * 100) /
+          100,
       };
     } catch {
       return null;
     }
-  }, [formule, dateDebut, creneau, dateFin, nbSemaines, modeRemise, tarifs]);
+  }, [formule, dateDebut, creneau, dateFin, nbSemaines, modeRemise, prixLivraison, tarifs]);
 
   return (
     <form
@@ -221,6 +229,57 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
         <input type="hidden" name="modeRemise" value={modeRemise} />
       )}
 
+      {modeRemise === "POINT_RELAIS" && (
+        <fieldset className="flex flex-col gap-2 text-sm">
+          <legend className="mb-1">Commerçant relais</legend>
+          {relais.map((r, i) => (
+            <label key={r.id} className="flex items-start gap-2 rounded-lg border px-3 py-2">
+              <input
+                type="radio"
+                name="relayPointId"
+                value={r.id}
+                required
+                defaultChecked={i === 0}
+                className="mt-1 h-4 w-4 shrink-0"
+              />
+              <span>
+                <span className="font-medium">{r.nom}</span>
+                <br />
+                {r.adresse}
+                {r.horaires && (
+                  <>
+                    <br />
+                    <span className="text-gray-600">{r.horaires}</span>
+                  </>
+                )}
+              </span>
+            </label>
+          ))}
+          <p className="text-xs text-gray-600">
+            Le propriétaire y dépose l&apos;objet, vous le retirez puis le
+            rapportez au même endroit.
+          </p>
+        </fieldset>
+      )}
+
+      {modeRemise === "LIVRAISON" && (
+        <label className="flex flex-col gap-1 text-sm">
+          Adresse de livraison *
+          <input
+            name="adresseLivraison"
+            required
+            autoComplete="street-address"
+            aria-describedby="aide-adresse-livraison"
+            className="rounded-lg border px-3 py-2"
+          />
+          <span id="aide-adresse-livraison" className="text-xs text-gray-600">
+            Numéro, rue, code postal et ville. Le propriétaire apporte
+            l&apos;objet et vient le rechercher ; l&apos;heure se fixe par la
+            messagerie.
+          </span>
+        </label>
+      )}
+
       <div aria-live="polite">
         {apercu && (
           <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm">
@@ -232,7 +291,10 @@ export function ReserverForm({ listingId, slug, modesRemise, tarifs }: Props) {
               €
             </p>
             {apercu.fraisRelais > 0 && (
-              <p>Frais point relais : {apercu.fraisRelais} €</p>
+              <p>Frais commerçant relais : {apercu.fraisRelais} €</p>
+            )}
+            {apercu.fraisLivraison > 0 && (
+              <p>Livraison et reprise : {apercu.fraisLivraison} €</p>
             )}
             <p className="font-medium">Total à payer : {apercu.total} €</p>
           </div>

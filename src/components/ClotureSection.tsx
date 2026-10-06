@@ -15,19 +15,6 @@ export function ClotureSection({ booking, role }: { booking: BookingLite; role: 
     return null;
   }
 
-  if (booking.modeRemise === "POINT_RELAIS") {
-    return (
-      <section className="rounded-xl border bg-white p-4 shadow-sm">
-        <h2 className="font-medium">Clôture de la location</h2>
-        <p className="mt-1 text-sm text-gray-600">
-          L&apos;objet est passé par le point relais : c&apos;est le personnel du
-          point relais qui vérifie le retour et déclenche la clôture depuis
-          le back-office.
-        </p>
-      </section>
-    );
-  }
-
   return (
     <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="font-medium">Clôture de la location</h2>

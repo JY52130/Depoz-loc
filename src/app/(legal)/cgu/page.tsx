@@ -31,8 +31,10 @@ export default function Page() {
         <p>
           Dépôt Malin met à disposition les outils de réservation, de paiement
           (via Stripe Connect) et de communication entre membres, mais
-          n&apos;intervient pas dans la remise physique des objets (hors
-          circuit point relais) ni dans leur bon usage. La responsabilité de
+          n&apos;intervient pas dans la remise physique des objets ni dans
+          leur bon usage : la livraison éventuelle est assurée par le
+          propriétaire, et les commerçants relais ne font que garder
+          l&apos;objet entre le dépôt et le retrait. La responsabilité de
           l&apos;état, de l&apos;usage et de la restitution de l&apos;objet
           loué incombe aux parties à la location.
         </p>

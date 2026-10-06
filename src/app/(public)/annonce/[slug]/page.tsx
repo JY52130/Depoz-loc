@@ -41,8 +41,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const LABELS_REMISE: Record<string, string> = {
   P2P: "Main à main",
-  POINT_RELAIS: "Point relais",
+  POINT_RELAIS: "Chez un commerçant relais",
+  LIVRAISON: "🚚 Livraison possible",
 };
+
+const euros = (n: number) => `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €`;
 
 export default async function AnnoncePage({ params, searchParams }: Props) {
   const { slug } = await params;
@@ -52,6 +55,16 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
   if (!listing || listing.statut !== "EN_LIGNE" || estExpiree(listing.enLigneJusquau)) {
     notFound();
   }
+
+  // Commerçants relais proposés au locataire ; un mode n'est proposé que s'il
+  // est vraiment possible (relais existants, prix de livraison renseigné).
+  const relais = listing.modesRemise.includes("POINT_RELAIS")
+    ? await prisma.relayPoint.findMany({ where: { actif: true }, orderBy: { ville: "asc" } })
+    : [];
+  const prixLivraison = listing.prixLivraison != null ? Number(listing.prixLivraison) : null;
+  const modesProposes = listing.modesRemise.filter(
+    (mode) => (mode !== "POINT_RELAIS" || relais.length > 0) && (mode !== "LIVRAISON" || prixLivraison != null)
+  );
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
   const prixAffiche = listing.prixJournee ?? listing.prixDemiJournee ?? listing.prixSemaine ?? listing.prixMois;
@@ -141,8 +154,12 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
           <div className="mt-4 rounded-xl border bg-white p-4 shadow-sm">
             <h2 className="font-medium">Mode(s) de remise</h2>
             <ul className="mt-2 text-sm text-gray-700">
-              {listing.modesRemise.map((mode) => (
-                <li key={mode}>{LABELS_REMISE[mode] ?? mode}</li>
+              {modesProposes.map((mode) => (
+                <li key={mode}>
+                  {LABELS_REMISE[mode] ?? mode}
+                  {mode === "LIVRAISON" &&
+                    ` par le propriétaire : ${euros(prixLivraison!)} aller-retour, jusqu'à ${listing.distanceLivraisonKm} km${listing.ville ? ` autour de ${listing.ville}` : ""}`}
+                </li>
               ))}
             </ul>
           </div>
@@ -170,17 +187,25 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
             <p role="alert" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>
           )}
 
-          <ReserverForm
-            listingId={listing.id}
-            slug={listing.slug}
-            modesRemise={listing.modesRemise}
-            tarifs={{
-              demiJournee: listing.prixDemiJournee != null ? Number(listing.prixDemiJournee) : undefined,
-              journee: listing.prixJournee != null ? Number(listing.prixJournee) : undefined,
-              semaine: listing.prixSemaine != null ? Number(listing.prixSemaine) : undefined,
-              mois: listing.prixMois != null ? Number(listing.prixMois) : undefined,
-            }}
-          />
+          {modesProposes.length === 0 ? (
+            <p className="mt-6 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              Cet objet ne peut pas être réservé pour le moment.
+            </p>
+          ) : (
+            <ReserverForm
+              listingId={listing.id}
+              slug={listing.slug}
+              modesRemise={modesProposes}
+              relais={relais.map((r) => ({ id: r.id, nom: r.nom, adresse: `${r.adresse}, ${r.codePostal} ${r.ville}`, horaires: r.horaires }))}
+              prixLivraison={prixLivraison}
+              tarifs={{
+                demiJournee: listing.prixDemiJournee != null ? Number(listing.prixDemiJournee) : undefined,
+                journee: listing.prixJournee != null ? Number(listing.prixJournee) : undefined,
+                semaine: listing.prixSemaine != null ? Number(listing.prixSemaine) : undefined,
+                mois: listing.prixMois != null ? Number(listing.prixMois) : undefined,
+              }}
+            />
+          )}
 
           <AdSlot slot="3234567890" />
         </div>

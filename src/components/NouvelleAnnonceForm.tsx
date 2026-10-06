@@ -1,5 +1,6 @@
 "use client";
 
+import { ChampsModesRemise } from "@/components/ChampsModesRemise";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -170,7 +171,7 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Ville
-            <input name="ville" required className="rounded-lg border px-3 py-2" placeholder="Chaumont" />
+            <input name="ville" required className="rounded-lg border px-3 py-2" placeholder="Saint-Dizier" />
           </label>
         </div>
       </section>
@@ -324,15 +325,8 @@ export function NouvelleAnnonceForm({ categories }: { categories: Categorie[] })
 
       <section>
         <h2 className="text-lg font-semibold">7. Mode de remise</h2>
-        <div className="mt-3 flex flex-col gap-2 text-sm">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="modesRemise" value="P2P" defaultChecked />
-            Main à main (P2P)
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="modesRemise" value="POINT_RELAIS" />
-            Point relais (Haute-Marne)
-          </label>
+        <div className="mt-3">
+          <ChampsModesRemise idPrefixe="nouvelle" />
         </div>
       </section>
 
