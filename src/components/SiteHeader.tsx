@@ -11,7 +11,7 @@ const liens = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b bg-creme/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Logo />
         <nav className="hidden gap-1 text-sm font-medium text-gray-600 md:flex">

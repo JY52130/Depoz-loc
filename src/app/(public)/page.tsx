@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { CATEGORIES } from "@/lib/categories";
 import { annoncesALaUne } from "@/lib/annoncesALaUne";
 import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
+import { Malin } from "@/components/Malin";
 
 export const metadata = {
   title: "Louer plutôt qu'acheter, près de chez soi",
@@ -75,19 +76,20 @@ export default async function AccueilPage() {
       <JsonLd data={organisationJsonLd} />
       <JsonLd data={siteJsonLd} />
 
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-white">
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50 via-creme to-creme">
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand-100 opacity-60 blur-3xl" />
         <div className="pointer-events-none absolute top-40 -left-24 h-64 w-64 rounded-full bg-accent-light opacity-70 blur-3xl" />
-        <div className="relative mx-auto max-w-6xl px-4 pt-16 pb-20 text-center md:pt-24">
+        <div className="relative mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] items-center gap-8 px-4 pt-12 pb-16 md:grid-cols-[minmax(0,1fr)_auto] md:pt-16 md:pb-20">
+        <div className="min-w-0 text-center md:text-left">
           <p className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-3 py-1 text-sm font-medium text-brand-dark shadow-sm">
             <span className="h-2 w-2 rounded-full bg-accent" />
             Location entre particuliers et professionnels
           </p>
-          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold tracking-tight text-ink md:text-6xl">
+          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold tracking-tight text-ink md:mx-0 md:text-6xl">
             Louer plutôt qu&apos;acheter,{" "}
             <span className="text-brand">près de chez soi</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-600 md:mx-0">
             Perceuse, tente, poussette, vidéoprojecteur… Trouvez l&apos;objet
             qu&apos;il vous faut chez vos voisins, ou gagnez de l&apos;argent avec
             ceux qui dorment dans vos placards.
@@ -95,7 +97,7 @@ export default async function AccueilPage() {
 
           <form
             action="/recherche"
-            className="mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-2xl border bg-white p-2 shadow-lg shadow-brand/10"
+            className="mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-full border bg-white p-2 shadow-lg shadow-brand/10 md:mx-0"
           >
             <svg viewBox="0 0 24 24" className="ml-2 h-5 w-5 shrink-0 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <circle cx="11" cy="11" r="7" />
@@ -110,17 +112,19 @@ export default async function AccueilPage() {
             />
             <button
               type="submit"
-              className="rounded-xl bg-brand px-5 py-3 font-medium text-white transition-colors hover:bg-brand-dark"
+              className="rounded-full bg-brand px-5 py-3 font-medium text-white transition-colors hover:bg-brand-dark"
             >
               Rechercher
             </button>
           </form>
 
-          <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
+          <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600 md:mx-0 md:justify-start">
             <li>✓ Inscription gratuite</li>
             <li>✓ Caution calculée automatiquement</li>
             <li>✓ Remise en main propre ou en point relais</li>
           </ul>
+        </div>
+        <Malin pose="accueil" hauteur={400} classeTaille="h-56 md:h-[26rem]" prioritaire className="mx-auto -order-1 md:order-none" />
         </div>
       </section>
 
@@ -181,9 +185,12 @@ export default async function AccueilPage() {
 
       <AdSlot slot="1234567890" />
 
-      <section className="bg-gray-50">
+      <section className="rounded-t-[3rem] bg-creme-fonce">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-3xl font-bold tracking-tight">Comment ça marche</h2>
+          <div className="flex items-end justify-between gap-6">
+            <h2 className="text-3xl font-bold tracking-tight">Comment ça marche</h2>
+            <Malin pose="livraison" hauteur={150} className="hidden sm:block" />
+          </div>
           <ol className="mt-8 grid gap-6 md:grid-cols-3">
             {ETAPES.map((etape, index) => (
               <li key={etape.titre} className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -206,14 +213,7 @@ export default async function AccueilPage() {
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-brand px-8 py-10 text-white md:flex-row md:items-center">
           <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
-            <Image
-              src="/mascotte-malin.svg"
-              alt=""
-              width={128}
-              height={128}
-              unoptimized
-              className="h-28 w-28 shrink-0 drop-shadow-lg md:h-32 md:w-32"
-            />
+            <Malin pose="malin" hauteur={170} className="shrink-0" />
             <div>
               <p className="relative inline-block rounded-2xl rounded-bl-sm bg-white px-5 py-3 text-xl font-bold text-ink shadow-sm md:text-2xl">
                 Vos objets dorment ? Louez-les et arrondissez vos fins de mois !
@@ -226,7 +226,7 @@ export default async function AccueilPage() {
           </div>
           <Link
             href="/membre/mes-annonces/nouvelle"
-            className="shrink-0 rounded-xl bg-accent px-6 py-3 font-semibold text-ink shadow-sm transition hover:brightness-105"
+            className="shrink-0 rounded-full bg-accent px-6 py-3 font-semibold text-ink shadow-sm transition hover:brightness-105"
           >
             Mettre un objet en location
           </Link>

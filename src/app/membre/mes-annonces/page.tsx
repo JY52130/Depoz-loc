@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Malin } from "@/components/Malin";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import {
@@ -64,10 +65,13 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
       </div>
 
       {params.creee && (
-        <p className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          Annonce créée avec succès — elle sera visible publiquement après
-          validation par notre équipe (modération).
-        </p>
+        <div role="status" className="mt-4 flex items-center gap-4 rounded-2xl bg-green-50 px-4 py-3 text-green-800">
+          <Malin pose="validation" classeTaille="h-24" className="shrink-0" />
+          <p>
+            <strong>Bravo, votre annonce est créée !</strong> Elle sera visible publiquement après validation par
+            notre équipe (modération).
+          </p>
+        </div>
       )}
 
       {params.prolongee && (

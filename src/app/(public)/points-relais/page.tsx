@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { JsonLd } from "@/components/JsonLd";
+import { TitreAvecMalin } from "@/components/Malin";
 
 export const metadata = { title: "Nos points relais" };
 
@@ -12,7 +13,7 @@ export default async function PointsRelaisPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-semibold">Nos points relais</h1>
+      <TitreAvecMalin titre="Nos points relais" pose="stockage" />
       <p className="mt-4 text-gray-600">
         Le circuit point relais (click &amp; collect) permet de déposer et
         retirer un objet loué sans contact direct entre propriétaire et

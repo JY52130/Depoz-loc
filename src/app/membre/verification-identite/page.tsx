@@ -7,6 +7,7 @@ import {
   peutLancerVerification,
 } from "@/lib/verificationIdentite";
 import { BoutonEnvoi } from "@/components/BoutonEnvoi";
+import { Malin } from "@/components/Malin";
 import { synchroniserVerification } from "@/lib/stripe/verificationIdentite";
 import { lancerVerificationIdentite, payerVerificationIdentite } from "./actions";
 
@@ -33,7 +34,10 @@ export default async function VerificationIdentitePage({ searchParams }: Props) 
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold">Badge « Identité vérifiée »</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold">Badge « Identité vérifiée »</h1>
+        <Malin pose="validation" classeTaille="h-28" className="shrink-0" />
+      </div>
 
       {params.paye && !verifiee && (
         <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
