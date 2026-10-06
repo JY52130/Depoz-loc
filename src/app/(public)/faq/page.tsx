@@ -45,7 +45,7 @@ export default function FaqPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
       <JsonLd data={faqJsonLd} />
-      <TitreAvecMalin titre="Foire aux questions" pose="contact" />
+      <TitreAvecMalin titre="Foire aux questions" pose="assistance" />
       <div className="mt-6 flex flex-col gap-6">
         {QUESTIONS.map((q) => (
           <div key={q.question}>

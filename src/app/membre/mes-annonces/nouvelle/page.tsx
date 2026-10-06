@@ -13,6 +13,7 @@ export default async function NouvelleAnnoncePage({ searchParams }: Props) {
     orderBy: { ordre: "asc" },
     select: { id: true, nom: true },
   });
+  const relaisDisponibles = (await prisma.relayPoint.count({ where: { actif: true } })) > 0;
 
   return (
     <div>
@@ -30,7 +31,7 @@ export default async function NouvelleAnnoncePage({ searchParams }: Props) {
       )}
 
       <div className="mt-8">
-        <NouvelleAnnonceForm categories={categories} />
+        <NouvelleAnnonceForm categories={categories} relaisDisponibles={relaisDisponibles} />
       </div>
     </div>
   );

@@ -46,7 +46,7 @@ export default async function AdminFinancesPage() {
           <p className="mt-1 text-lg font-semibold">{totalEncaisse.toFixed(2)} €</p>
         </div>
         <div className="rounded-xl border bg-white p-4 shadow-sm">
-          <p className="text-xs text-gray-500">Commissions plateforme</p>
+          <p className="text-xs text-gray-500">Recettes plateforme (dont part des commerçants relais)</p>
           <p className="mt-1 text-lg font-semibold">{totalCommissions.toFixed(2)} €</p>
         </div>
         <div className="rounded-xl border bg-white p-4 shadow-sm">

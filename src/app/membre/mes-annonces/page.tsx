@@ -40,6 +40,7 @@ const LIBELLES_STATUT: Record<string, string> = {
 export default async function MesAnnoncesPage({ searchParams }: Props) {
   const params = await searchParams;
   const user = await getOrCreateUser();
+  const relaisDisponibles = (await prisma.relayPoint.count({ where: { actif: true } })) > 0;
 
   const annonces = user
     ? await prisma.listing.findMany({
@@ -192,6 +193,7 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
                     modesRemise={annonce.modesRemise}
                     prixLivraison={annonce.prixLivraison != null ? Number(annonce.prixLivraison) : null}
                     distanceLivraisonKm={annonce.distanceLivraisonKm}
+                    relaisDisponibles={relaisDisponibles}
                   />
                   <BoutonEnvoi
                     texteEnCours="Enregistrement…"
