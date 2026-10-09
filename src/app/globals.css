@@ -24,7 +24,7 @@
   /* Ombres plus douces, teintées chaud. */
   --shadow-sm: 0 1px 3px 0 rgb(120 72 30 / 0.07), 0 1px 2px -1px rgb(120 72 30 / 0.06);
   --shadow-md: 0 6px 16px -4px rgb(120 72 30 / 0.12), 0 2px 6px -2px rgb(120 72 30 / 0.08);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 html {
