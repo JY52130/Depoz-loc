@@ -206,6 +206,10 @@ export default async function AccueilPage() {
             <Link href="/comment-ca-marche" className="font-medium text-brand hover:text-brand-dark">
               En savoir plus →
             </Link>
+            <span aria-hidden="true" className="mx-3 text-gray-400">·</span>
+            <Link href="/pourquoi-louer" className="font-medium text-brand hover:text-brand-dark">
+              Pourquoi louer plutôt qu&apos;acheter ?
+            </Link>
           </p>
         </div>
       </section>

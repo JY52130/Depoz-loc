@@ -3,6 +3,7 @@ import { LogoIcone } from "@/components/Logo";
 
 const liensAide = [
   { href: "/comment-ca-marche", label: "Comment ça marche" },
+  { href: "/pourquoi-louer", label: "Pourquoi louer ?" },
   { href: "/tarifs", label: "Tarifs & commissions" },
   { href: "/points-relais", label: "Commerçants relais" },
   { href: "/faq", label: "FAQ" },
