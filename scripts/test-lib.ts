@@ -40,6 +40,7 @@ import {
   calculerFraisLocataire,
 } from "../src/lib/constantesReservation";
 import { CATEGORIES } from "../src/lib/categories";
+import { verifierMessageContact } from "../src/lib/contact";
 import { GUIDES_CATEGORIES } from "../src/lib/guidesCategories";
 import { estFormule, lienPublicationValide, prixFormule } from "../src/lib/promotionReseaux";
 
@@ -305,6 +306,16 @@ assertEqual(lienPublicationValide("pas un lien"), null, "promotion : texte refus
 for (const c of CATEGORIES) {
   const g = GUIDES_CATEGORIES[c.slug];
   assertEqual(Boolean(g && g.verifier.length && g.prevoir.length && g.proprietaire.length), true, `guide : ${c.slug}`);
+}
+
+// --- Formulaire de contact ---
+{
+  const ok = verifierMessageContact({ nom: " Jean ", email: " Jean@Exemple.FR ", sujet: "Autre", message: "Bonjour, une question." });
+  assertEqual(ok.erreurs.length, 0, "contact : message valide");
+  assertEqual(ok.valeur?.email, "jean@exemple.fr", "contact : e-mail nettoyé");
+  const ko = verifierMessageContact({ nom: "", email: "pas-un-email", sujet: "Inventé", message: "court" });
+  assertEqual(ko.erreurs.length, 4, "contact : 4 erreurs");
+  assertEqual(ko.valeur, null, "contact : rien enregistré si erreur");
 }
 
 console.log("Terminé.");

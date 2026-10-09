@@ -450,3 +450,17 @@ model PromotionReseaux {
   @@index([statut])
   @@index([listingId])
 }
+
+// Message envoyé depuis le formulaire de la page Contact (src/lib/contact.ts),
+// lu par l'équipe dans /admin/messages.
+model MessageContact {
+  id        String   @id @default(cuid())
+  nom       String
+  email     String
+  sujet     String
+  message   String
+  traite    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([traite])
+}
