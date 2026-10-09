@@ -4,6 +4,7 @@ import { JOURS_GRATUITS, JOURS_PROLONGATION, PRIX_PROLONGATION } from "@/lib/dur
 import { JOURS_MISE_EN_AVANT } from "@/lib/miseEnAvant";
 import { PRIX_ABONNEMENT_PRO } from "@/lib/abonnementPro";
 import { PRIX_VERIFICATION_IDENTITE } from "@/lib/verificationIdentite";
+import { FORMULES_PROMOTION, prixFormule } from "@/lib/promotionReseaux";
 import { TitreAvecMalin } from "@/components/Malin";
 
 export const metadata = { title: "Tarifs & commissions" };
@@ -37,6 +38,11 @@ export default function TarifsPage() {
           Badge « Identité vérifiée » (option) :{" "}
           {PRIX_VERIFICATION_IDENTITE.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} € une seule fois,
           offert aux membres Pro.
+        </li>
+        <li>
+          Promotion sur les réseaux sociaux (option) : {FORMULES_PROMOTION.PUBLICATION.nom.toLowerCase()}{" "}
+          {prixFormule("PUBLICATION")}, ou {FORMULES_PROMOTION.PUBLICITE.nom.toLowerCase()} autour de votre ville{" "}
+          {prixFormule("PUBLICITE")}.
         </li>
         <li>
           Commerçant relais (optionnel) : {FRAIS_POINT_RELAIS} € par location,

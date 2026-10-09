@@ -118,7 +118,22 @@ export default function Page() {
           une fois la vérification commencée.
         </p>
 
-        <h2 className="text-lg font-semibold text-black">10. Facturation</h2>
+        <h2 className="text-lg font-semibold text-black">10. Promotion sur les réseaux sociaux</h2>
+        <p>
+          Le propriétaire d&apos;une annonce en ligne peut payer pour la faire
+          connaître sur les réseaux sociaux de Dépôt Malin. Deux formules sont
+          proposées : la publication de l&apos;annonce sur les pages Facebook et
+          Instagram de Dépôt Malin (2,99 € TTC), ou une publicité Facebook et
+          Instagram ciblée autour de la ville de l&apos;objet pendant 7 jours
+          (9,90 € TTC). La publication est réalisée par notre équipe après le
+          paiement, et le propriétaire en reçoit le lien par e-mail. Dépôt
+          Malin choisit la présentation (photo, texte) et ne garantit ni un
+          nombre de vues ni une location. Si l&apos;annonce ne peut pas être
+          publiée (contenu refusé par le réseau social, annonce retirée avant
+          publication), la somme payée est remboursée.
+        </p>
+
+        <h2 className="text-lg font-semibold text-black">11. Facturation</h2>
         <p>
           Un reçu simple est fourni aux particuliers ; les professionnels
           reçoivent une facture conforme incluant leur SIRET.

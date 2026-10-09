@@ -19,12 +19,13 @@ import {
 import { ChampsModesRemise } from "@/components/ChampsModesRemise";
 import { IdeesObjets } from "@/components/IdeesObjets";
 import { BoutonEnvoi } from "@/components/BoutonEnvoi";
+import { PromotionReseaux } from "@/components/PromotionReseaux";
 import { mettreEnAvant, mettreEnAvantOffert, modifierModesRemise, prolongerAnnonce } from "./actions";
 
 export const metadata = { title: "Mes annonces" };
 
 type Props = {
-  searchParams: Promise<{ creee?: string; prolongee?: string; enavant?: string; remise?: string; erreur?: string }>;
+  searchParams: Promise<{ creee?: string; prolongee?: string; enavant?: string; promotion?: string; remise?: string; erreur?: string }>;
 };
 
 function dateCourte(d: Date): string {
@@ -48,6 +49,7 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
         where: { proprietaireId: user.id },
         include: {
           category: true,
+          promotionsReseaux: { orderBy: { createdAt: "desc" } },
           _count: { select: { bookings: { where: { statut: { in: STATUTS_LOCATION_PAYEE } } } } },
         },
         orderBy: { createdAt: "desc" },
@@ -93,6 +95,13 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
           {params.enavant === "offert"
             ? `C'est fait : votre annonce est « À la une » pendant ${JOURS_MISE_EN_AVANT} jours, offert avec votre abonnement Pro.`
             : `Merci ! Votre paiement est reçu : votre annonce est « À la une » pendant ${JOURS_MISE_EN_AVANT} jours (cela s'affiche dans quelques instants).`}
+        </p>
+      )}
+
+      {params.promotion && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+          Merci ! Votre paiement est reçu. Notre équipe publie votre annonce sur nos réseaux sociaux et vous envoie le
+          lien par e-mail.
         </p>
       )}
 
@@ -184,6 +193,15 @@ export default async function MesAnnoncesPage({ searchParams }: Props) {
                   </div>
                 </div>
               )}
+              {(annonce.statut === "EN_LIGNE" && !estExpiree(annonce.enLigneJusquau)) ||
+              annonce.promotionsReseaux.length > 0 ? (
+                <PromotionReseaux
+                  listingId={annonce.id}
+                  titreAnnonce={annonce.titre}
+                  promotions={annonce.promotionsReseaux}
+                  peutCommander={annonce.statut === "EN_LIGNE" && !estExpiree(annonce.enLigneJusquau)}
+                />
+              ) : null}
               <details className="mt-3 border-t pt-3 text-sm">
                 <summary className="cursor-pointer font-medium text-brand-dark">
                   Remise de l&apos;objet : main à main, commerçant relais, livraison

@@ -29,6 +29,11 @@ const QUESTIONS = [
     reponse:
       "Oui, un compte unique suffit : le statut particulier ou professionnel se choisit lors de votre première mise en location (SIRET requis pour les professionnels). Les professionnels peuvent aussi prendre l'abonnement Pro, depuis leur espace membre, pour des annonces sans limite de durée et une commission réduite.",
   },
+  {
+    question: "Comment faire connaître mon annonce plus vite ?",
+    reponse:
+      "Depuis Mes annonces, vous pouvez mettre votre annonce « À la une » (en tête des résultats pendant 7 jours) ou la faire promouvoir sur nos réseaux sociaux : publication sur nos pages Facebook et Instagram pour 2,99 €, ou publicité ciblée autour de votre ville pendant 7 jours pour 9,90 €. Vous recevez le lien de la publication par e-mail.",
+  },
 ];
 
 export default function FaqPage() {

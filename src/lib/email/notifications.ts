@@ -83,3 +83,23 @@ export async function notifierAnnonceBientotExpiree(params: {
     html: `<p>Votre annonce « ${params.titreAnnonce} » ne sera plus visible après le ${date}.</p><p>Vous pouvez la prolonger de 30 jours ${prix} depuis <a href="${params.lien}">Mes annonces</a>.</p>`,
   });
 }
+
+export async function notifierPromotionDemandee(params: { titreAnnonce: string; formule: string }) {
+  await envoyerEmail({
+    to: ADMIN_EMAIL,
+    subject: "Nouvelle promotion à publier sur les réseaux",
+    html: `<p>Une promotion a été payée : « ${params.formule} » pour l'annonce « ${params.titreAnnonce} ».</p><p>À publier depuis le back-office, rubrique Promotions.</p>`,
+  });
+}
+
+export async function notifierPromotionPubliee(params: {
+  emailProprietaire: string;
+  titreAnnonce: string;
+  lienPublication: string;
+}) {
+  await envoyerEmail({
+    to: params.emailProprietaire,
+    subject: "Votre annonce est publiée sur nos réseaux",
+    html: `<p>Votre annonce « ${params.titreAnnonce} » est maintenant publiée sur les réseaux sociaux de Dépôt Malin.</p><p><a href="${params.lienPublication}">Voir la publication</a></p>`,
+  });
+}

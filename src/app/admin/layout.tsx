@@ -5,6 +5,7 @@ import { getOrCreateUser } from "@/lib/getOrCreateUser";
 const liens = [
   { href: "/admin/utilisateurs-annonces", label: "Utilisateurs & annonces" },
   { href: "/admin/point-relais", label: "Commerçants relais" },
+  { href: "/admin/promotions", label: "Promotions" },
   { href: "/admin/litiges", label: "Litiges" },
   { href: "/admin/finances", label: "Finances" },
 ];
