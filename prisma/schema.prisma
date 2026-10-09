@@ -60,6 +60,17 @@ enum RelayStockStatus {
   RETOURNE
 }
 
+// Service payant « promotion sur les réseaux sociaux » (src/lib/promotionReseaux.ts).
+enum FormulePromotion {
+  PUBLICATION
+  PUBLICITE
+}
+
+enum StatutPromotion {
+  A_FAIRE
+  PUBLIEE
+}
+
 enum DisputeStatus {
   OUVERT
   EN_COURS
@@ -108,6 +119,7 @@ model User {
   bookingsAsLocataire    Booking[]                 @relation("LocataireBookings")
   bookingsAsProprietaire Booking[]                 @relation("ProprietaireBookings")
   conversations          ConversationParticipant[]
+  promotionsReseaux      PromotionReseaux[]
   messagesSent           Message[]
   reviewsWritten         Review[]                  @relation("ReviewAuteur")
   reviewsReceived        Review[]                  @relation("ReviewCible")
@@ -189,8 +201,9 @@ model Listing {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  availabilities Availability[]
-  bookings       Booking[]
+  availabilities    Availability[]
+  bookings          Booking[]
+  promotionsReseaux PromotionReseaux[]
 
   @@index([categoryId])
   @@index([ville])
@@ -415,4 +428,25 @@ model Dispute {
   montantCautionRetenu Decimal?      @db.Decimal(10, 2)
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
+}
+
+// Promotion d'une annonce sur les pages Facebook et Instagram de Dépôt Malin,
+// payée par le propriétaire puis publiée à la main par un administrateur.
+model PromotionReseaux {
+  id                    String           @id @default(cuid())
+  listingId             String
+  listing               Listing          @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  userId                String
+  user                  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  formule               FormulePromotion
+  montant               Decimal          @db.Decimal(10, 2)
+  // Un paiement Stripe ne crée qu'une seule demande, même si l'événement est renvoyé.
+  stripePaymentIntentId String           @unique
+  statut                StatutPromotion  @default(A_FAIRE)
+  lienPublication       String?
+  publieeLe             DateTime?
+  createdAt             DateTime         @default(now())
+
+  @@index([statut])
+  @@index([listingId])
 }

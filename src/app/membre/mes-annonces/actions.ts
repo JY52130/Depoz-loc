@@ -14,6 +14,7 @@ import {
 import { JOURS_MISE_EN_AVANT, dateApresMiseEnAvant, prixMiseEnAvant } from "@/lib/miseEnAvant";
 import { JOURS_ENTRE_MISES_EN_AVANT_OFFERTES, estProActif } from "@/lib/abonnementPro";
 import { lireModesRemise } from "@/lib/livraison";
+import { FORMULES_PROMOTION, estFormule } from "@/lib/promotionReseaux";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -108,6 +109,51 @@ export async function mettreEnAvant(formData: FormData) {
       metadata: { type: "mise_en_avant", listingId: annonce.id },
     },
     success_url: `${siteUrl}/membre/mes-annonces?enavant=1`,
+    cancel_url: `${siteUrl}/membre/mes-annonces`,
+  });
+
+  if (!session.url) {
+    redirect("/membre/mes-annonces?erreur=Le+paiement+n%27a+pas+pu+d%C3%A9marrer.");
+  }
+  redirect(session.url);
+}
+
+// Service payant « promotion sur les réseaux sociaux » (voir
+// src/lib/promotionReseaux.ts) : paiement par Stripe Checkout ; le webhook
+// enregistre la demande, qu'un administrateur publie ensuite.
+export async function promouvoirSurReseaux(formData: FormData) {
+  const user = await getOrCreateUser();
+  if (!user) redirect("/connexion?redirect=/membre/mes-annonces");
+
+  const formule = formData.get("formule");
+  if (!estFormule(formule)) {
+    redirect("/membre/mes-annonces?erreur=Choisissez+une+formule+de+promotion.");
+  }
+  const listingId = String(formData.get("listingId") ?? "");
+  const annonce = await prisma.listing.findUnique({ where: { id: listingId } });
+  if (!annonce || annonce.proprietaireId !== user.id || annonce.statut !== "EN_LIGNE") {
+    redirect("/membre/mes-annonces?erreur=Seule+une+annonce+en+ligne+peut+%C3%AAtre+promue.");
+  }
+
+  const { nom, prix } = FORMULES_PROMOTION[formule];
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer_email: user.email,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(prix * 100),
+          product_data: { name: nom, description: `Annonce « ${annonce.titre} »` },
+        },
+      },
+    ],
+    // Repris par le webhook (payment_intent.succeeded).
+    payment_intent_data: {
+      metadata: { type: "promotion_reseaux", listingId: annonce.id, userId: user.id, formule },
+    },
+    success_url: `${siteUrl}/membre/mes-annonces?promotion=1`,
     cancel_url: `${siteUrl}/membre/mes-annonces`,
   });
 

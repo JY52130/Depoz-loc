@@ -39,6 +39,7 @@ import {
   arrondiCentimes,
   calculerFraisLocataire,
 } from "../src/lib/constantesReservation";
+import { estFormule, lienPublicationValide, prixFormule } from "../src/lib/promotionReseaux";
 
 function assertEqual(actual: unknown, expected: unknown, label: string) {
   const ok = JSON.stringify(actual) === JSON.stringify(expected);
@@ -287,5 +288,15 @@ assertEqual(
   "état des lieux : cases non cochées et remarques"
 );
 assertEqual(notesAvecVerifications("ENTREE", ["inconnu"], "").startsWith("Non coché"), true, "état des lieux : valeur inconnue ignorée");
+
+// --- Promotion sur les réseaux sociaux ---
+assertEqual(prixFormule("PUBLICATION"), "2,99 €", "promotion : prix publication");
+assertEqual(prixFormule("PUBLICITE"), "9,90 €", "promotion : prix publicité");
+assertEqual(estFormule("PUBLICITE"), true, "promotion : formule connue");
+assertEqual(estFormule("AUTRE"), false, "promotion : formule inconnue refusée");
+assertEqual(lienPublicationValide(" https://www.facebook.com/depotmalin/posts/1 "), "https://www.facebook.com/depotmalin/posts/1", "promotion : lien https accepté");
+assertEqual(lienPublicationValide("http://facebook.com/x"), null, "promotion : lien http refusé");
+assertEqual(lienPublicationValide("javascript:alert(1)"), null, "promotion : lien javascript refusé");
+assertEqual(lienPublicationValide("pas un lien"), null, "promotion : texte refusé");
 
 console.log("Terminé.");

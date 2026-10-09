@@ -3,12 +3,13 @@ import { revalidatePath } from "next/cache";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe/client";
 import { prisma } from "@/lib/prisma";
-import { notifierPaiementRecu } from "@/lib/email/notifications";
+import { notifierPaiementRecu, notifierPromotionDemandee } from "@/lib/email/notifications";
 import { dateApresProlongation } from "@/lib/dureeAnnonce";
 import { dateApresMiseEnAvant } from "@/lib/miseEnAvant";
 import { estProActif, finAvantagesPro } from "@/lib/abonnementPro";
 import { finPeriodeGratuite } from "@/lib/dureeAnnonce";
 import { enregistrerEtatVerification } from "@/lib/stripe/verificationIdentite";
+import { FORMULES_PROMOTION, estFormule } from "@/lib/promotionReseaux";
 
 // Webhook Stripe (section 11.1). À configurer dans le dashboard Stripe sur
 // `${SITE_URL}/api/webhooks/stripe` avec les événements :
@@ -52,6 +53,30 @@ async function appliquerMiseEnAvant(listingId: string | undefined, paymentIntent
     },
   });
   revalidatePath("/", "layout");
+}
+
+// Promotion sur les réseaux sociaux : on enregistre la demande, qu'un
+// administrateur traitera dans /admin/promotions.
+async function enregistrerPromotionReseaux(paymentIntent: Stripe.PaymentIntent) {
+  const { listingId, userId, formule } = paymentIntent.metadata ?? {};
+  if (!listingId || !userId || !estFormule(formule)) return;
+  // Stripe peut renvoyer le même événement : une seule demande par paiement.
+  const dejaEnregistree = await prisma.promotionReseaux.findUnique({
+    where: { stripePaymentIntentId: paymentIntent.id },
+  });
+  if (dejaEnregistree) return;
+  const annonce = await prisma.listing.findUnique({ where: { id: listingId }, select: { titre: true } });
+  if (!annonce) return;
+  await prisma.promotionReseaux.create({
+    data: {
+      listingId,
+      userId,
+      formule,
+      montant: paymentIntent.amount_received / 100,
+      stripePaymentIntentId: paymentIntent.id,
+    },
+  });
+  await notifierPromotionDemandee({ titreAnnonce: annonce.titre, formule: FORMULES_PROMOTION[formule].nom });
 }
 
 // Abonnement Pro : Stripe prévient à chaque création, renouvellement,
@@ -150,6 +175,12 @@ export async function POST(request: Request) {
         // Badge « Identité vérifiée » (2,99 €).
         if (paymentIntent.metadata?.type === "verification_identite") {
           await enregistrerPaiementVerification(paymentIntent.metadata.userId, paymentIntent.id);
+          break;
+        }
+
+        // Promotion sur les réseaux sociaux (service payant).
+        if (paymentIntent.metadata?.type === "promotion_reseaux") {
+          await enregistrerPromotionReseaux(paymentIntent);
           break;
         }
 
