@@ -6,6 +6,8 @@ import { AdSlot } from "@/components/AdSlot";
 import { annonceVisible } from "@/lib/dureeAnnonce";
 import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
 import { estMiseEnAvant, trierMisesEnAvant } from "@/lib/miseEnAvant";
+import { GUIDES_CATEGORIES } from "@/lib/guidesCategories";
+import { GuideCategorie } from "@/components/GuideCategorie";
 
 // Page de destination SEO — une par catégorie de 1er niveau (section 12.1).
 // Générée en SSG et revalidée périodiquement (ISR).
@@ -59,6 +61,7 @@ export default async function CategoriePage({ params }: Props) {
     }),
   ]);
   const listings = trierMisesEnAvant(listingsBruts);
+  const guide = GUIDES_CATEGORIES[cat.slug];
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-12">
@@ -104,6 +107,8 @@ export default async function CategoriePage({ params }: Props) {
           </ul>
         )}
       </div>
+
+      {guide && <GuideCategorie nomCategorie={cat.nom} guide={guide} />}
     </main>
   );
 }

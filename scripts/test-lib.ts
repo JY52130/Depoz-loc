@@ -39,6 +39,8 @@ import {
   arrondiCentimes,
   calculerFraisLocataire,
 } from "../src/lib/constantesReservation";
+import { CATEGORIES } from "../src/lib/categories";
+import { GUIDES_CATEGORIES } from "../src/lib/guidesCategories";
 import { estFormule, lienPublicationValide, prixFormule } from "../src/lib/promotionReseaux";
 
 function assertEqual(actual: unknown, expected: unknown, label: string) {
@@ -298,5 +300,11 @@ assertEqual(lienPublicationValide(" https://www.facebook.com/depotmalin/posts/1 
 assertEqual(lienPublicationValide("http://facebook.com/x"), null, "promotion : lien http refusé");
 assertEqual(lienPublicationValide("javascript:alert(1)"), null, "promotion : lien javascript refusé");
 assertEqual(lienPublicationValide("pas un lien"), null, "promotion : texte refusé");
+
+// --- Guides « Bien louer » : un guide complet par catégorie ---
+for (const c of CATEGORIES) {
+  const g = GUIDES_CATEGORIES[c.slug];
+  assertEqual(Boolean(g && g.verifier.length && g.prevoir.length && g.proprietaire.length), true, `guide : ${c.slug}`);
+}
 
 console.log("Terminé.");
