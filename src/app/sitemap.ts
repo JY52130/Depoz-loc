@@ -13,6 +13,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
 const pagesStatiques = [
   "",
   "/comment-ca-marche",
+  "/pourquoi-louer",
   "/points-relais",
   "/tarifs",
   "/blog",
