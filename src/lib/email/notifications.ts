@@ -103,3 +103,20 @@ export async function notifierPromotionPubliee(params: {
     html: `<p>Votre annonce « ${params.titreAnnonce} » est maintenant publiée sur les réseaux sociaux de Dépôt Malin.</p><p><a href="${params.lienPublication}">Voir la publication</a></p>`,
   });
 }
+
+// Texte saisi par un visiteur : on neutralise le HTML avant de l'insérer.
+function echapperHtml(texte: string): string {
+  return texte
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+export async function notifierMessageContact(params: { nom: string; email: string; sujet: string; message: string }) {
+  await envoyerEmail({
+    to: ADMIN_EMAIL,
+    subject: `Contact Dépôt Malin : ${params.sujet}`,
+    html: `<p>Message de ${echapperHtml(params.nom)} (${echapperHtml(params.email)}) :</p><p style="white-space:pre-line">${echapperHtml(params.message)}</p><p>À retrouver dans le back-office, rubrique Messages.</p>`,
+  });
+}
