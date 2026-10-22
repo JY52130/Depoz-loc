@@ -3,7 +3,7 @@
 // jamais bloquer un flux métier (paiement, litige...) à cause d'un email.
 
 const RESEND_API_URL = "https://api.resend.com/emails";
-const EXPEDITEUR_PAR_DEFAUT = process.env.RESEND_FROM_EMAIL ?? "Dépôt Malin <notifications@depotmalin.fr>";
+const EXPEDITEUR_PAR_DEFAUT = process.env.RESEND_FROM_EMAIL ?? "Dépôt Malin <notifications@depot-malin.fr>";
 
 export async function envoyerEmail(params: { to: string; subject: string; html: string }) {
   const apiKey = process.env.RESEND_API_KEY;

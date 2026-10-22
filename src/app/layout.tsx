@@ -8,7 +8,7 @@ const nunito = Nunito({
   variable: "--font-nunito",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

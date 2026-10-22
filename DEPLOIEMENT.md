@@ -78,7 +78,7 @@ ci-dessus.
    - `STRIPE_WEBHOOK_SECRET` : laissez vide pour l'instant, on le
      complètera juste après.
    - `ANTHROPIC_API_KEY`, `RESEND_API_KEY` si vous les avez (étape 4)
-   - `NEXT_PUBLIC_SITE_URL` : laissez `https://depotmalin.fr` pour l'instant,
+   - `NEXT_PUBLIC_SITE_URL` : laissez `https://www.depot-malin.fr` pour l'instant,
      à corriger juste après le premier déploiement (voir étape 6).
    - `ADMIN_EMAIL`, `RESEND_FROM_EMAIL` : valeurs de votre choix.
 4. Cliquez sur **Deploy**. Le premier build peut échouer ou réussir avec

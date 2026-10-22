@@ -66,7 +66,7 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
     (mode) => (mode !== "POINT_RELAIS" || relais.length > 0) && (mode !== "LIVRAISON" || prixLivraison != null)
   );
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr";
   const prixAffiche = listing.prixJournee ?? listing.prixDemiJournee ?? listing.prixSemaine ?? listing.prixMois;
 
   const breadcrumbJsonLd = {

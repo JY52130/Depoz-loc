@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
   // pointez vers votre instance `npm run dev` exposée (ex: via ngrok) pour
   // tester sur un appareil physique.
   server: {
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr",
     cleartext: false,
   },
   ios: {

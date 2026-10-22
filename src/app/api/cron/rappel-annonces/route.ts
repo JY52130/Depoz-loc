@@ -10,7 +10,7 @@ import { JOURS_RAPPEL_AVANT_EXPIRATION, STATUTS_LOCATION_PAYEE } from "@/lib/dur
 // CRON_SECRET est définie ; sans elle, la route refuse tout appel.
 
 const MS_PAR_JOUR = 24 * 60 * 60 * 1000;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr";
 
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;

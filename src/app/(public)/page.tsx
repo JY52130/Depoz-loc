@@ -50,7 +50,7 @@ export const revalidate = 600;
 export default async function AccueilPage() {
   const aLaUne = await annoncesALaUne();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr";
 
   const organisationJsonLd = {
     "@context": "https://schema.org",
