@@ -2,7 +2,7 @@
 // réservation confirmée (paiement reçu), retour/clôture, litige ouvert.
 import { envoyerEmail } from "@/lib/email/envoyerEmail";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "litiges@depotmalin.fr";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "litiges@depot-malin.fr";
 
 export async function notifierPaiementRecu(params: {
   emailLocataire: string;

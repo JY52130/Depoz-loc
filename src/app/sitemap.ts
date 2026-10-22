@@ -8,7 +8,7 @@ import { annonceVisible } from "@/lib/dureeAnnonce";
 
 export const revalidate = 3600;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr";
 
 const pagesStatiques = [
   "",

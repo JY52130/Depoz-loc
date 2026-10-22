@@ -11,7 +11,7 @@ export default async function PointsRelaisPage() {
   const points = await prisma.relayPoint
     .findMany({ where: { actif: true }, orderBy: [{ ville: "asc" }, { nom: "asc" }] })
     .catch(() => []);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://depotmalin.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.depot-malin.fr";
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
