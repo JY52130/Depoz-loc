@@ -7,6 +7,7 @@ const liensAide = [
   { href: "/tarifs", label: "Tarifs & commissions" },
   { href: "/points-relais", label: "Commerçants relais" },
   { href: "/annoncer", label: "Annoncer sur Dépôt Malin" },
+  { href: "/application", label: "L'application" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
