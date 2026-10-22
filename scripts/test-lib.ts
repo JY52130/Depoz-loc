@@ -19,6 +19,13 @@ import {
   trierMisesEnAvant,
 } from "../src/lib/miseEnAvant";
 import {
+  finOffreLancement,
+  lireDateOuverture,
+  offreLancementActive,
+  placeFondateurDisponible,
+} from "../src/lib/offresLancement";
+import { bandeauEnCours, dateFormulaire, lienBandeauValide } from "../src/lib/bandeaux";
+import {
   estProActif,
   finAvantagesPro,
   miseEnAvantOfferteDisponible,
@@ -316,6 +323,34 @@ for (const c of CATEGORIES) {
   const ko = verifierMessageContact({ nom: "", email: "pas-un-email", sujet: "Inventé", message: "court" });
   assertEqual(ko.erreurs.length, 4, "contact : 4 erreurs");
   assertEqual(ko.valeur, null, "contact : rien enregistré si erreur");
+}
+
+// --- Offres de lancement ---
+{
+  const ouverture = lireDateOuverture("2026-11-15")!;
+  assertEqual(lireDateOuverture(undefined), null, "lancement : date vide");
+  assertEqual(lireDateOuverture("15/11/2026"), null, "lancement : format refusé");
+  assertEqual(finOffreLancement(ouverture).toISOString().slice(0, 10), "2027-02-15", "lancement : fin 3 mois après");
+  assertEqual(offreLancementActive(null), true, "lancement : active avant l'ouverture");
+  assertEqual(offreLancementActive(ouverture, new Date("2027-02-14T12:00:00Z")), true, "lancement : active pendant 3 mois");
+  assertEqual(offreLancementActive(ouverture, new Date("2027-02-15T00:00:00Z")), false, "lancement : terminée ensuite");
+  assertEqual(tauxCommissionProprietaire(false, true), 0, "lancement : 0 % particulier");
+  assertEqual(tauxCommissionProprietaire(true, true), 0, "lancement : 0 % Pro");
+  assertEqual(tauxCommissionProprietaire(false, false), 0.15, "lancement : 15 % après l'offre");
+  assertEqual(placeFondateurDisponible(99), true, "fondateur : 100e place libre");
+  assertEqual(placeFondateurDisponible(100), false, "fondateur : complet à 100");
+}
+
+// --- Bandeaux publicitaires ---
+{
+  const debut = dateFormulaire("2026-11-01")!;
+  const fin = dateFormulaire("2026-11-07", true)!;
+  assertEqual(dateFormulaire("2026-13-45"), null, "bandeau : date invalide");
+  assertEqual(bandeauEnCours({ actif: true, debut, fin }, new Date("2026-11-07T20:00:00Z")), true, "bandeau : dernier jour inclus");
+  assertEqual(bandeauEnCours({ actif: true, debut, fin }, new Date("2026-11-08T12:00:00Z")), false, "bandeau : terminé");
+  assertEqual(bandeauEnCours({ actif: false, debut, fin }, new Date("2026-11-03T12:00:00Z")), false, "bandeau : arrêté");
+  assertEqual(lienBandeauValide("https://garage-martin.fr"), "https://garage-martin.fr/", "bandeau : lien https");
+  assertEqual(lienBandeauValide("javascript:alert(1)"), null, "bandeau : lien javascript refusé");
 }
 
 console.log("Terminé.");

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AdSlot } from "@/components/AdSlot";
+import { BandeauPub } from "@/components/BandeauPub";
 import { JsonLd } from "@/components/JsonLd";
 import { CATEGORIES } from "@/lib/categories";
 import { annoncesALaUne } from "@/lib/annoncesALaUne";
@@ -183,7 +183,7 @@ export default async function AccueilPage() {
         </ul>
       </section>
 
-      <AdSlot slot="1234567890" />
+      <BandeauPub emplacement="ACCUEIL" className="mx-auto my-12 max-w-6xl px-4" />
 
       <section className="rounded-t-[3rem] bg-creme-fonce">
         <div className="mx-auto max-w-6xl px-4 py-16">

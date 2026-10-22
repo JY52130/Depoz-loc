@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { AdSlot } from "@/components/AdSlot";
+import { BandeauPub } from "@/components/BandeauPub";
 import { annonceVisible } from "@/lib/dureeAnnonce";
 import { BadgeALaUne, classeCarte } from "@/components/BadgeALaUne";
 import { estMiseEnAvant, trierMisesEnAvant } from "@/lib/miseEnAvant";
@@ -88,7 +88,7 @@ export default async function CategoriePage({ params }: Props) {
         </div>
       )}
 
-      <AdSlot slot="2234567890" />
+      <BandeauPub emplacement="LISTE" className="mt-8" />
 
       <div className="mt-8">
         {listings.length === 0 ? (

@@ -19,7 +19,7 @@ async function getListing(slug: string) {
     where: { slug },
     include: {
       category: true,
-      proprietaire: { select: { nom: true, noteMoyenne: true, statut: true, nomEntreprise: true, proActifJusquau: true, identiteVerifieeLe: true } },
+      proprietaire: { select: { nom: true, noteMoyenne: true, statut: true, nomEntreprise: true, proActifJusquau: true, identiteVerifieeLe: true, fondateurLe: true } },
       availabilities: true,
     },
   });
@@ -178,6 +178,11 @@ export default async function AnnoncePage({ params, searchParams }: Props) {
               {listing.proprietaire.statut === "PRO" && " · Professionnel"}
               {estIdentiteVerifiee(listing.proprietaire) && (
                 <span className="ml-2 font-medium text-green-700">✓ Identité vérifiée</span>
+              )}
+              {listing.proprietaire.fondateurLe && (
+                <span className="ml-2 inline-block rounded bg-accent-light px-1.5 py-0.5 text-xs font-semibold text-ink">
+                  Membre fondateur
+                </span>
               )}
               {listing.proprietaire.noteMoyenne != null && ` · Note ${listing.proprietaire.noteMoyenne}/5`}
             </p>
