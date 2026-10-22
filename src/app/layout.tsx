@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 
@@ -23,6 +23,16 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     siteName: "Dépôt Malin",
   },
+  // Appli installable sur iPhone (« Sur l'écran d'accueil ») : voir manifest.ts.
+  appleWebApp: {
+    capable: true,
+    title: "Dépôt Malin",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f766e",
 };
 
 export default function RootLayout({

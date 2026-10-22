@@ -6,6 +6,7 @@ const liensAide = [
   { href: "/pourquoi-louer", label: "Pourquoi louer ?" },
   { href: "/tarifs", label: "Tarifs & commissions" },
   { href: "/points-relais", label: "Commerçants relais" },
+  { href: "/application", label: "L'application" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
