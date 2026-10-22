@@ -7,6 +7,7 @@ export const SUJETS_CONTACT = [
   "Problème avec mon compte",
   "Paiement ou remboursement",
   "Devenir commerçant relais",
+  "Publicité sur le site",
   "Signaler une annonce",
   "Autre",
 ] as const;

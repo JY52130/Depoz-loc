@@ -23,6 +23,15 @@ export default function Page() {
           diminué d&apos;une commission de 10 % (0,50 € minimum). Dépôt Malin
           n&apos;assure aucun transport.
         </p>
+        <p>
+          Offre de lancement : pendant les trois premiers mois suivant
+          l&apos;ouverture du site, la commission du propriétaire sur le
+          montant de la location est de 0 %. Les cent premiers membres dont
+          une annonce est validée reçoivent le badge « Membre fondateur » et
+          sept jours de mise « À la une » offerts. Pendant la même période,
+          le premier mois d&apos;un premier abonnement Pro est offert ; il
+          peut être résilié avant la fin de ce mois sans frais.
+        </p>
 
         <h2 className="text-lg font-semibold text-black">2. Caution</h2>
         <p>

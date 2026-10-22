@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe/client";
 import { getOrCreateUser } from "@/lib/getOrCreateUser";
 import { PRIX_ABONNEMENT_PRO, estProActif, normaliserSiret, siretValide } from "@/lib/abonnementPro";
+import { JOURS_ESSAI_PRO, offreLancementActive } from "@/lib/offresLancement";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const PAGE = "/membre/abonnement-pro";
@@ -64,8 +65,12 @@ export async function souscrireAbonnementPro(formData: FormData) {
         },
       },
     ],
-    // Repris par le webhook pour retrouver le membre.
-    subscription_data: { metadata: { type: "abonnement_pro", userId: user.id } },
+    // Repris par le webhook pour retrouver le membre. Offre de lancement :
+    // premier mois offert, seulement pour un premier abonnement.
+    subscription_data: {
+      metadata: { type: "abonnement_pro", userId: user.id },
+      ...(offreLancementActive() && !user.stripeSubscriptionId ? { trial_period_days: JOURS_ESSAI_PRO } : {}),
+    },
     success_url: `${siteUrl}${PAGE}?pro=bienvenue`,
     cancel_url: `${siteUrl}${PAGE}`,
   });

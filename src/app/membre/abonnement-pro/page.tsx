@@ -7,6 +7,7 @@ import {
 } from "@/lib/abonnementPro";
 import { TAUX_COMMISSION_PROPRIETAIRE } from "@/lib/constantesReservation";
 import { JOURS_GRATUITS } from "@/lib/dureeAnnonce";
+import { JOURS_ESSAI_PRO, offreLancementActive } from "@/lib/offresLancement";
 import { BoutonEnvoi } from "@/components/BoutonEnvoi";
 import { reprendreAbonnementPro, resilierAbonnementPro, souscrireAbonnementPro } from "./actions";
 
@@ -23,7 +24,7 @@ function dateLongue(d: Date): string {
 
 const MESSAGES: Record<string, string> = {
   bienvenue:
-    "Merci ! Votre paiement est reçu : votre abonnement Pro s'active dans quelques instants (rechargez la page si besoin).",
+    "Merci ! Votre abonnement Pro s'active dans quelques instants (rechargez la page si besoin).",
   resilie: "C'est noté : votre abonnement s'arrêtera à la fin du mois déjà payé. Rien ne sera plus prélevé.",
   repris: "C'est noté : votre abonnement Pro continue.",
 };
@@ -34,6 +35,9 @@ export default async function AbonnementProPage({ searchParams }: Props) {
   const params = await searchParams;
   const user = await getOrCreateUser();
   const actif = estProActif(user);
+  const offreLancement = offreLancementActive();
+  // Offre de lancement : premier mois offert pour un premier abonnement.
+  const essaiOffert = offreLancement && !user?.stripeSubscriptionId;
 
   return (
     <div className="max-w-2xl">
@@ -58,13 +62,20 @@ export default async function AbonnementProPage({ searchParams }: Props) {
           <li>Vos annonces restent en ligne sans limite de durée (au lieu de {JOURS_GRATUITS} jours).</li>
           <li>
             Commission réduite sur vos locations : {pourcent(TAUX_COMMISSION_PRO)} au lieu de{" "}
-            {pourcent(TAUX_COMMISSION_PROPRIETAIRE)}.
+            {pourcent(TAUX_COMMISSION_PROPRIETAIRE)}
+            {offreLancement && " (0 % pour tous pendant l'offre de lancement)"}.
           </li>
           <li>Badge « Pro » avec le nom de votre entreprise sur vos annonces.</li>
           <li>Une mise « À la une » offerte tous les {JOURS_ENTRE_MISES_EN_AVANT_OFFERTES} jours.</li>
           <li>Le badge « Identité vérifiée » offert.</li>
         </ul>
         <p className="mt-3 text-sm text-gray-600">Sans engagement : vous pouvez résilier à tout moment.</p>
+        {essaiOffert && (
+          <p className="mt-3 rounded-lg bg-brand-50 px-3 py-2 text-sm font-medium text-brand-dark">
+            Offre de lancement : votre premier mois est offert. Le premier paiement a lieu {JOURS_ESSAI_PRO} jours
+            après l&apos;inscription, et vous pouvez résilier avant sans rien payer.
+          </p>
+        )}
       </section>
 
       {!user ? null : actif ? (
@@ -135,10 +146,12 @@ export default async function AbonnementProPage({ searchParams }: Props) {
               texteEnCours="Redirection vers le paiement…"
               className="self-start rounded-lg bg-brand px-4 py-2 font-medium text-white transition-colors hover:bg-brand-dark"
             >
-              S&apos;abonner pour {prix} € par mois
+              {essaiOffert ? "Essayer 1 mois gratuitement" : <>S&apos;abonner pour {prix} € par mois</>}
             </BoutonEnvoi>
             <p className="text-sm text-gray-600">
-              Le paiement se fait de façon sécurisée par Stripe, puis chaque mois automatiquement.
+              {essaiOffert
+                ? `Votre carte est enregistrée de façon sécurisée par Stripe. Rien n'est prélevé pendant ${JOURS_ESSAI_PRO} jours, puis ${prix} € chaque mois.`
+                : "Le paiement se fait de façon sécurisée par Stripe, puis chaque mois automatiquement."}
             </p>
           </form>
         </section>
