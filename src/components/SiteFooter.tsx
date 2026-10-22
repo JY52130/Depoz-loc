@@ -1,21 +1,48 @@
 import Link from "next/link";
 import { LogoIcone } from "@/components/Logo";
+import { CATEGORIES } from "@/lib/categories";
 
-// Pied de page (refait le 22 octobre 2026, inspiré de NousLouons) :
-// - les locations les plus demandées, par grand thème (liens vers la
-//   recherche : utile aux visiteurs et au référencement) ;
+// Pied de page (refait le 22 octobre 2026) :
+// - « Un projet ? » : on part du besoin du visiteur (déménager, recevoir…)
+//   vers nos catégories, avec un conseil de Malin ;
 // - les communes autour de Saint-Dizier ;
 // - aide, informations légales, réseaux sociaux et application ;
 // - les garanties de Dépôt Malin, que Leboncoin n'offre pas.
 
-const LOCATIONS_DEMANDEES: { titre: string; categorie: string; objets: string[] }[] = [
-  { titre: "Bricolage", categorie: "outillage-bricolage", objets: ["Perceuse", "Ponceuse", "Échelle", "Shampouineuse"] },
-  { titre: "Jardin", categorie: "jardinage-exterieur", objets: ["Tondeuse", "Taille-haie", "Nettoyeur haute pression", "Broyeur"] },
-  { titre: "Fêtes et réceptions", categorie: "evenementiel-reception", objets: ["Tonnelle", "Tables et chaises", "Sono", "Machine à raclette"] },
-  { titre: "Sport et plein air", categorie: "sport-loisirs", objets: ["Vélo", "Tente", "Paddle", "Glacière"] },
-  { titre: "Bébé et enfant", categorie: "bebe-enfant", objets: ["Poussette", "Lit parapluie", "Siège auto", "Chaise haute"] },
-  { titre: "Auto et vélo", categorie: "auto-moto-velo", objets: ["Remorque", "Coffre de toit", "Porte-vélos", "Barres de toit"] },
+const PROJETS: { titre: string; conseil: string; categories: string[] }[] = [
+  {
+    titre: "Je déménage",
+    conseil: "Une remorque pour un week-end coûte bien moins cher qu'un camion.",
+    categories: ["auto-moto-velo", "outillage-bricolage", "mobilier-deco"],
+  },
+  {
+    titre: "Je reçois du monde",
+    conseil: "Anniversaire, communion, fête des voisins : tout pour accueillir sans rien stocker.",
+    categories: ["evenementiel-reception", "image-son"],
+  },
+  {
+    titre: "J'attends un bébé",
+    conseil: "Les enfants grandissent vite : louez ce qui ne sert que quelques mois.",
+    categories: ["bebe-enfant"],
+  },
+  {
+    titre: "Je pars en vacances",
+    conseil: "Camping, rando, coffre de toit : partez équipé sans acheter.",
+    categories: ["camping-plein-air", "sport-loisirs"],
+  },
+  {
+    titre: "Je fais des travaux",
+    conseil: "Le bon outil pour un chantier ponctuel, chez un voisin.",
+    categories: ["outillage-bricolage", "electromenager"],
+  },
+  {
+    titre: "Je m'occupe du jardin",
+    conseil: "Gros outils de saison : utilisés deux fois par an, loués deux fois par an.",
+    categories: ["jardinage-exterieur"],
+  },
 ];
+
+const nomCategorie = (slug: string) => CATEGORIES.find((c) => c.slug === slug)?.nom ?? slug;
 
 // Saint-Dizier et les communes à moins de 20 km environ.
 const COMMUNES = [
@@ -70,31 +97,30 @@ const rechercher = (parametres: Record<string, string>) => `/recherche?${new URL
 export function SiteFooter() {
   return (
     <footer className="mt-auto bg-ink text-gray-300">
-      <section aria-labelledby="titre-locations-demandees" className="mx-auto max-w-6xl px-4 pt-12">
-        <h2 id="titre-locations-demandees" className="text-base font-semibold text-white">
-          Les locations les plus demandées
+      <section aria-labelledby="titre-projets" className="mx-auto max-w-6xl px-4 pt-12">
+        <h2 id="titre-projets" className="text-base font-semibold text-white">
+          Un projet ? Malin a l&apos;objet qu&apos;il vous faut
         </h2>
-        <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
-          {LOCATIONS_DEMANDEES.map((groupe) => (
-            <div key={groupe.categorie}>
-              <h3 className={titreColonne}>{groupe.titre}</h3>
-              <ul className="mt-3 space-y-2 text-sm">
-                {groupe.objets.map((objet) => (
-                  <li key={objet}>
-                    <Link href={rechercher({ q: objet })} className={lien}>
-                      Location {objet.toLowerCase()}
+        <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {PROJETS.map((projet) => (
+            <li key={projet.titre} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <h3 className={titreColonne}>{projet.titre}</h3>
+              <p className="mt-1 text-sm text-gray-400">{projet.conseil}</p>
+              <ul className="mt-3 flex flex-wrap gap-2 text-sm">
+                {projet.categories.map((slug) => (
+                  <li key={slug}>
+                    <Link
+                      href={`/location/${slug}`}
+                      className="inline-block rounded-full border border-white/20 px-3 py-1 hover:border-white hover:text-white"
+                    >
+                      {nomCategorie(slug)}
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <Link href={`/location/${groupe.categorie}`} className="font-medium text-brand-100 hover:text-white hover:underline">
-                    Voir tout<span className="sr-only"> : {groupe.titre}</span>
-                  </Link>
-                </li>
               </ul>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section aria-labelledby="titre-communes" className="mx-auto max-w-6xl px-4 pt-10">
