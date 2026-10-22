@@ -71,6 +71,12 @@ enum StatutPromotion {
   PUBLIEE
 }
 
+// Bandeau publicitaire vendu aux commerçants locaux (src/lib/bandeaux.ts).
+enum EmplacementBandeau {
+  ACCUEIL
+  LISTE
+}
+
 enum DisputeStatus {
   OUVERT
   EN_COURS
@@ -106,6 +112,8 @@ model User {
   dernierPaiementVerification String?
   stripeVerificationSessionId String?
   statutVerificationIdentite  String? // statut Stripe : processing, requires_input…
+  // Offre de lancement « Membre fondateur » (voir src/lib/offresLancement.ts).
+  fondateurLe                 DateTime?
   noteMoyenne                 Float?
   stripeAccountId             String? // compte Stripe Connect (Express)
   stripeOnboardingDone        Boolean    @default(false)
@@ -463,4 +471,23 @@ model MessageContact {
   createdAt DateTime @default(now())
 
   @@index([traite])
+}
+
+// Bandeau publicitaire d'un commerçant local, ajouté depuis /admin/bandeaux.
+// Affiché entre debut et fin ; vues et clics comptés sans cookie.
+model Bandeau {
+  id              String             @id @default(cuid())
+  annonceur       String
+  imageUrl        String
+  texteAlternatif String
+  lien            String
+  emplacement     EmplacementBandeau
+  debut           DateTime
+  fin             DateTime
+  actif           Boolean            @default(true)
+  vues            Int                @default(0)
+  clics           Int                @default(0)
+  createdAt       DateTime           @default(now())
+
+  @@index([emplacement, debut, fin])
 }

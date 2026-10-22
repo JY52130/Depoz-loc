@@ -15,6 +15,7 @@ import { construirePeriode } from "@/lib/periodeLocation";
 import type { DeliveryMode } from "@prisma/client";
 import { estExpiree } from "@/lib/dureeAnnonce";
 import { estProActif, tauxCommissionProprietaire } from "@/lib/abonnementPro";
+import { offreLancementActive } from "@/lib/offresLancement";
 import { calculerCommissionLivraison, distanceKm } from "@/lib/livraison";
 import { geocoderAdresse } from "@/lib/geocodage";
 
@@ -118,9 +119,10 @@ export async function creerReservation(formData: FormData) {
   });
 
   const fraisServiceLocataire = calculerFraisLocataire(montantLocation);
-  // Commission réduite si le propriétaire a un abonnement Pro en cours.
+  // Commission réduite si le propriétaire a un abonnement Pro en cours,
+  // et nulle pendant l'offre de lancement.
   const commissionProprietaire = arrondiCentimes(
-    montantLocation * tauxCommissionProprietaire(estProActif(listing.proprietaire))
+    montantLocation * tauxCommissionProprietaire(estProActif(listing.proprietaire), offreLancementActive())
   );
   const fraisPointRelais = modeRemise === "POINT_RELAIS" ? FRAIS_POINT_RELAIS : null;
   const fraisLivraison = modeRemise === "LIVRAISON" ? Number(listing.prixLivraison) : null;

@@ -6,6 +6,7 @@ const liensAide = [
   { href: "/pourquoi-louer", label: "Pourquoi louer ?" },
   { href: "/tarifs", label: "Tarifs & commissions" },
   { href: "/points-relais", label: "Commerçants relais" },
+  { href: "/annoncer", label: "Annoncer sur Dépôt Malin" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];

@@ -14,6 +14,7 @@ const pagesStatiques = [
   "",
   "/comment-ca-marche",
   "/pourquoi-louer",
+  "/annoncer",
   "/points-relais",
   "/tarifs",
   "/blog",

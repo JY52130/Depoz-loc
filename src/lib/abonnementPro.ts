@@ -26,8 +26,12 @@ export function estProActif(membre: MembrePro | null | undefined, maintenant: Da
   );
 }
 
-/** Commission prélevée sur la location, selon l'abonnement du propriétaire. */
-export function tauxCommissionProprietaire(proprietaireProActif: boolean): number {
+/**
+ * Commission prélevée sur la location, selon l'abonnement du propriétaire.
+ * Pendant l'offre de lancement (voir offresLancement.ts), elle est de 0 %.
+ */
+export function tauxCommissionProprietaire(proprietaireProActif: boolean, offreLancement = false): number {
+  if (offreLancement) return 0;
   return proprietaireProActif ? TAUX_COMMISSION_PRO : TAUX_COMMISSION_PROPRIETAIRE;
 }
 
